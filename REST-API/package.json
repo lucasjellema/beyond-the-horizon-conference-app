@@ -1,0 +1,17 @@
+{
+  "name": "data-api",
+  "version": "0.0.1",
+  "description": "A Data API that publishes some data sources from an Oracle Database",
+  "main": "dataApi.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "data-api,rest,hrm"
+  ],
+  "author": "Lucas Jellema",
+  "license": "ISC",
+  "dependencies": {
+    "express": "~4.13.4"
+  }
+}
