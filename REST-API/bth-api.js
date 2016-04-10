@@ -128,7 +128,7 @@ function writeAllDepartments(request, response) {
                })
 	          );  
             } else {
-		       console.log('db response is ready '+result.rows);
+		       console.log('db response is ready '+JSON.stringify(result.rows));
               }
 			doRelease(connection);
           }
