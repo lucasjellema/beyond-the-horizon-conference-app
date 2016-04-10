@@ -46,14 +46,9 @@ app.get('/departments/:departmentId', function(req,res){
 } );
 
 function handleDatabaseOperation( request, response, callback) {
-  console.log(request.method + ":" + request.url );
-  response.setHeader('Access-Control-Allow-Origin', '*');
-  response.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-  response.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-  response.setHeader('Access-Control-Allow-Credentials', true);
-  
-  console.log('Handle request: '+request.url);
-  var connectString = process.env.DBAAS_DEFAULT_CONNECT_DESCRIPTOR.replace("PDB1", "demos");
+ //connectString : process.env.NODE_ORACLEDB_CONNECTIONSTRING || "140.86.4.91:1521/demos.lucasjellema.oraclecloud.internal",
+ // var connectString = process.env.DBAAS_DEFAULT_CONNECT_DESCRIPTOR.replace("PDB1", "demos");
+  var connectString = "140.86.4.91:1521/demos.lucasjellema.oraclecloud.internal";
   console.log('ConnectString :' + connectString);
   oracledb.getConnection(
   {
@@ -67,14 +62,6 @@ function handleDatabaseOperation( request, response, callback) {
 	  console.log('Error in acquiring connection ...');
 	  console.log('Error message '+err.message);
 
-      // Error connecting to DB
-      response.writeHead(500, {'Content-Type': 'application/json'});
-      response.end(JSON.stringify({
-                status: 500,
-                message: "Error connecting to DB",
-                detailed_message: err.message
-              }
-	         ));
       return;
     }        
     // do with the connection whatever was supposed to be done
