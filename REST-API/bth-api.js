@@ -143,10 +143,10 @@ function writeSessions(request, response) {
 
 	
 	
-	var plsqlStatement = "begin bth_sessions_api.get_sessions( p_tags => null, p_search_term => null, p_speakers => null, p_sessions => :sessions_tbl); end;";
+	var plsqlStatement = "begin :json:= bth_sessions_api.get_sessions( p_tags => null, p_search_term => null, p_speakers => null); end;";
 	  connection.execute(   plsqlStatement   
 		, {  // bind variables
-    sessions_tbl: { dir: oracledb.BIND_OUT, type: oracledb.STRING, maxSize: 40 },
+    sessions_tbl_json: { dir: oracledb.BIND_OUT, type: oracledb.STRING, maxSize: 32000 },
   },  function (err, result) {
             if (err) {
 			  console.log('Error in execution of select statement'+err.message);

@@ -39,7 +39,7 @@ type speaker_tbl_t as table of speaker_t;
 
 
 create or replace 
-type session_t as object (
+type session_t force as object (
  id number(10) 
 , title varchar2(1000) 
 , abstract clob
@@ -50,7 +50,44 @@ type session_t as object (
 , tags tag_tbl_t
 , speakers speaker_tbl_t
 , planning planning_t
-);
+, constructor function session_t
+              ( title in varchar2
+              , speaker  in varchar2
+              ) return self as result
+, member function to_json
+  return varchar2		  
+) NOT FINAL
+;
+
+create or replace 
+type body session_t as
+
+constructor function session_t
+              ( title in varchar2
+              , speaker  in varchar2
+              ) return self as result
+is
+begin
+  self.title:= title;
+  self.speakers:= speaker_tbl_t();
+  return;
+end;
+
+member function to_json
+return varchar2
+is
+  l_json    varchar2(32600);
+begin
+  l_json:= '{'
+            ||'"sessionId" : "'||self.id||'" '
+            ||'"title" : "'||self.title||'" '
+           -- ||'"abstract" : "'||self.abstract||'" '
+            ||'}';
+  return l_json;         
+end to_json;
+
+end;
+
 
 
 create or replace 
