@@ -157,8 +157,8 @@ function writeSessions(request, response) {
                })
 	          );  
             } else {
-			console.log(sessions_tbl_json);
-		       console.log('db response is ready '+JSON.stringify(sessions_tbl_json));
+			console.log(result);
+		       console.log('db response is ready '+JSON.stringify(result));
               }
 			doRelease(connection);
           }
