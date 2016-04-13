@@ -1,0 +1,17 @@
+{
+  "memory": "1G",
+  "instances": 1,
+  "services": [
+    {
+      "id": "727ae53a-2633-453f-b58f-8acb7194bca6",
+      "name": "MyJCSDB",
+      "type": "DBAAS",
+      "username": "lucas.jellema@amis.nl",
+      "password": "85tgn7Lexa"
+    }
+  ],
+  "environment": {
+    "DB_USER": "hr",
+    "DB_PASSWORD": "hr"
+  }
+}

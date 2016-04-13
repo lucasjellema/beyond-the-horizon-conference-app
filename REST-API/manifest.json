@@ -1,0 +1,9 @@
+{
+  "runtime":{
+    "majorVersion":"0.12"
+  },
+  "command": "node dataApi.js",
+  "release": {},
+  "notes": "REST Data API for AMIS Beyond the Horizon on top of Oracle Database - using node-oracledb, Express"
+}
+
