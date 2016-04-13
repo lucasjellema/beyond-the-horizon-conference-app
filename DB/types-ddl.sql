@@ -158,6 +158,10 @@ begin
   l_json:= '{'
             ||'"sessionId" : "'||self.id||'" '
             ||', "title" : "'||self.title||'" '
+            ||', "targetAudience" : "'||self.target_audience||'" '
+            ||', "duration" : "'||self.duration||'" '
+            ||', "experienceLevel" : "'||self.experience_level||'" '
+            ||', "granularity" : "'||self.granularity||'" '
             ||', "abstract" : "'||self.abstract||'" '
             ||', "speakers" : '||bth_speakers_api.json_speaker_tbl_summary(p_speakers => self.speakers)||' '
             ||'}';
