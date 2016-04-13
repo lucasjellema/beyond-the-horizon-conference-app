@@ -103,9 +103,9 @@ begin
 )
   bulk collect into l_speakers
   from bth_speakers s
---       join
-  --     bth_people p
-    --   on (s.psn_id = p.id)
+       join
+       bth_people p
+       on (s.psn_id = p.id)
   ;
   p_speakers:= l_speakers;
 
@@ -133,6 +133,8 @@ begin
 end get_speakers_json_string_tbl;
 
 end bth_speakers_api;
+
+
 
 
 
@@ -187,8 +189,18 @@ begin
   then
      l_count:= p_speakers.count;
   end if;
+select count(*) into l_count
+from table (p_speakers);
+  with speakers as (
+    select id
+    from   table( p_speakers)
+    union all
+    select psn_id
+    from   bth_speakers spr
+    where  l_count = 0
+  )
   select session_t(
-     id 
+     ssn.id 
    , title
    , abstract    
    , target_audience 
@@ -207,17 +219,12 @@ begin
   )
   bulk collect into l_sessions
   from bth_sessions ssn
-  where  (l_count = 0)
-/*        or
-          ssn.id in ( select ssn_id
-                      from   bth_speaker s
-                      join
-                      ( select * from (table (:speakers))) p
-                      on (s.psn_id = p.id)
-                    )
-        )
-        using l_speakers
- */
+       join
+       bth_speakers skr
+       on (ssn.id = skr.ssn_id)
+       join
+       speakers s       
+       on (s.id = skr.psn_id)                    
   ;
   p_sessions := l_sessions;
 end get_sessions;
