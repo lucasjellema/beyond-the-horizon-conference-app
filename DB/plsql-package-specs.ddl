@@ -47,6 +47,11 @@ function json_session_tbl_summary
 ( p_sessions in session_tbl_t
 ) return clob;
 
+function get_ssn_details_json_str_tbl
+( p_session_id in number
+) return  string_tbl_t
+;
+
 
 end bth_sessions_api;
 

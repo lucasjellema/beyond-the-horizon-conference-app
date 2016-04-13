@@ -189,8 +189,8 @@ begin
   then
      l_count:= p_speakers.count;
   end if;
-select count(*) into l_count
-from table (p_speakers);
+--select count(*) into l_count
+--from table (p_speakers);
   with speakers as (
     select id
     from   table( p_speakers)
@@ -229,6 +229,37 @@ from table (p_speakers);
   p_sessions := l_sessions;
 end get_sessions;
 
+function get_session
+( p_session_id in number
+) return session_t
+is
+  l_session   session_t ;
+begin
+  select session_t(
+     ssn.id 
+   , title
+   , abstract    
+   , target_audience 
+   , experience_level
+   , granularity 
+   , duration 
+   , null /*tags */
+   , ( select cast(collect(speaker_t(p.id, p.first_name, p.last_name)) as speaker_tbl_t)
+       from   bth_speakers s
+              join
+              bth_people p
+              on (s.psn_id = p.id)
+       where  s.ssn_id = ssn.id
+     )
+   , null /*planning planning_t */
+  )
+   into l_session
+  from bth_sessions ssn
+where ssn.id = p_session_id  ;
+  return l_session;
+end get_session;
+
+
 function get_sessions_json
 ( p_tags in tag_tbl_t
 , p_search_term in varchar2
@@ -241,6 +272,15 @@ begin
   get_sessions( p_tags => p_tags, p_search_term => p_search_term, p_speakers => p_speakers, p_sessions => l_sessions);
   return session_tbl_json( p_sessions => l_sessions);
 end get_sessions_json;
+
+function get_session_json
+( p_session_id in number
+) return clob
+is
+begin
+  return get_session( p_session_id => p_session_id).to_json;
+end get_session_json;
+
 
 function get_sessions_json_tbl
 ( p_tags in bth_util.string_tbl_type
@@ -262,6 +302,13 @@ begin
   return bth_util.clob_to_string_tbl_t( get_sessions_json(p_tags => null, p_search_term=> p_search_term, p_speakers=> null));
 end get_sessions_json_string_tbl;
 
+function get_ssn_details_json_str_tbl
+( p_session_id in number
+) return  string_tbl_t
+is
+begin
+  return bth_util.clob_to_string_tbl_t( get_session_json(p_session_id => p_session_id));
+end get_ssn_details_json_str_tbl;
 
 
 
