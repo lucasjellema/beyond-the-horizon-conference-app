@@ -5,7 +5,7 @@ var express = require('express');
 var app = express();
 
 var PORT = process.env.PORT || 3000;
-var APP_VERSION = '0.0.1.16';
+var APP_VERSION = '0.0.1.17';
 
 app.listen(PORT, function () {
   console.log('Server running, version '+APP_VERSION+', Express is listening... at '+PORT+" for /departments and /sessions");
@@ -25,6 +25,10 @@ app.get('/sessions/:sessionId', function(req,res){
 }); 
 
 app.get('/speakers', function(req,res){ handleAllSpeakers(req, res);} );
+app.get('/speakers/:speakerId', function(req,res){
+    var speakerId = req.params.speakerId;
+    handleSpeaker(req, res, speakerId);
+}); 
 
 app.get('/departments/:departmentId', function(req,res){
     var departmentIdentifier = req.params.departmentId;
@@ -194,6 +198,41 @@ console.log(json);
 
 	});
 } //handleAllSpeakers
+
+function handleSpeaker(request, response, speakerId) {
+        console.log('one speaker: '+speakerId);
+    handleDatabaseOperation( request, response, function (request, response, connection) {
+
+	  var selectStatement = "select lines.column_value line from   table( bth_sessions_api.get_skr_details_json_str_tbl( p_speaker_id => :speakerId)) lines";
+	  connection.execute(   selectStatement   
+		, [speakerId], {
+            outFormat: oracledb.OBJECT // Return the result as Object
+        }, function (err, result) {
+            if (err) {
+			  console.log('Error in execution of select statement'+err.message);
+              response.writeHead(500, {'Content-Type': 'application/json'});
+              response.end(JSON.stringify({
+                status: 500,
+                    message: "Error getting the sessions",
+                    detailed_message: err.message
+               })
+	          );  
+            } else {
+               response.writeHead(200, {'Content-Type': 'application/json'});
+               // all rows in result consist of a property with a LINE object; all the line objects should be glued together to form a single string that can be JSON parsed
+               var json='';
+               for (var i=0;i< result.rows.length;i++) {
+                   json=json + result.rows[i].LINE;
+               }// for
+               var session = JSON.parse(json);
+               response.end(JSON.stringify(session));
+              }
+			doRelease(connection);
+          }
+	  );
+
+	});
+} //handleSpeaker
 
 
 
