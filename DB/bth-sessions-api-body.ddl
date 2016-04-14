@@ -60,7 +60,7 @@ begin
   )
   select session_t(
      ssn.id 
-   , title
+   , title||p_search_term
    , abstract    
    , target_audience 
    , experience_level
@@ -83,7 +83,15 @@ begin
        on (ssn.id = skr.ssn_id)
        join
        speakers s       
-       on (s.id = skr.psn_id)                    
+       on (s.id = skr.psn_id)
+  where ( (p_search_term is null or p_search_term ='')
+          or
+          ( instr(lower(title), lower(p_search_term)) > 0
+            or
+            instr(lower(abstract), lower(p_search_term)) > 0
+            
+          ) 
+        )                       
   ;
   p_sessions := l_sessions;
 end get_sessions;

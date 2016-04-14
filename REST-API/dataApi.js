@@ -5,7 +5,7 @@ var express = require('express');
 var app = express();
 
 var PORT = process.env.PORT || 3000;
-var APP_VERSION = '0.0.1.17';
+var APP_VERSION = '0.0.1.18';
 
 app.listen(PORT, function () {
   console.log('Server running, version '+APP_VERSION+', Express is listening... at '+PORT+" for /departments and /sessions");
@@ -14,6 +14,9 @@ app.listen(PORT, function () {
 app.get('/', function (req, res) {
     res.writeHead(200, {'Content-Type': 'text/html'});
     res.write("Version "+APP_VERSION+". No Data Requested, so none is returned; try /departments or /sessions or something else");
+    res.write("Supported URLs:");
+    res.write("/sessions , /sessions?search=YourSearchTerm, /sessions/<sessionId>");
+    res.write("/speakers , /speakers/<speakerId>"); //, /speakers?search=YourSearchTerm
     res.end();
 });
 
@@ -91,13 +94,14 @@ function handleAllDepartments(request, response) {
 
 
 function handleAllSessions(request, response) {
-        console.log('all sessions');
+    var searchTerm=     request.query.search;
+    console.log('all sessions , for search term '+searchTerm);
     handleDatabaseOperation( request, response, function (request, response, connection) {
 //	  var departmentName = request.query.name ||'%';
 
-	  var selectStatement = "select lines.column_value line from   table( bth_sessions_api.get_sessions_json_string_tbl( p_tags => null, p_search_term => null, p_speakers => null)) lines";
+	  var selectStatement = "select lines.column_value line from   table( bth_sessions_api.get_sessions_json_string_tbl( p_tags => null, p_search_term => :searchTerm, p_speakers => null)) lines";
 	  connection.execute(   selectStatement   
-		, [], {
+		, [searchTerm], {
             outFormat: oracledb.OBJECT // Return the result as Object
         }, function (err, result) {
             if (err) {
@@ -163,13 +167,14 @@ function handleSession(request, response, sessionId) {
 
 
 function handleAllSpeakers(request, response) {
-        console.log('all speakers');
+    var searchTerm=     request.query.search;
+        console.log('all speakers - for searchTerm '+searchTerm);
     handleDatabaseOperation( request, response, function (request, response, connection) {
 //	  var departmentName = request.query.name ||'%';
 
-	  var selectStatement = "select lines.column_value line from   table( bth_speakers_api.get_speakers_json_string_tbl( p_tags => null, p_search_term => null)) lines";
+	  var selectStatement = "select lines.column_value line from   table( bth_speakers_api.get_speakers_json_string_tbl( p_tags => null, p_search_term => :searchTerm)) lines";
 	  connection.execute(   selectStatement   
-		, [], {
+		, [searchTerm], {
             outFormat: oracledb.OBJECT // Return the result as Object
         }, function (err, result) {
             if (err) {
@@ -203,7 +208,7 @@ function handleSpeaker(request, response, speakerId) {
         console.log('one speaker: '+speakerId);
     handleDatabaseOperation( request, response, function (request, response, connection) {
 
-	  var selectStatement = "select lines.column_value line from   table( bth_sessions_api.get_skr_details_json_str_tbl( p_speaker_id => :speakerId)) lines";
+	  var selectStatement = "select lines.column_value line from   table( bth_speakers_api.get_skr_details_json_str_tbl( p_speaker_id => :speakerId)) lines";
 	  connection.execute(   selectStatement   
 		, [speakerId], {
             outFormat: oracledb.OBJECT // Return the result as Object
