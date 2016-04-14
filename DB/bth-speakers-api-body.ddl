@@ -39,20 +39,34 @@ procedure get_speakers
   l_speakers speaker_tbl_t;
 begin
   select speaker_t(
-   p.id 
-, p.first_name
-, p.last_name
-, p.company
-, p.country
-, p.biography
-, p.salutation
-, p.community_titles
-)
+     p.id 
+   , p.first_name
+   , p.last_name
+   , p.company
+   , p.country  
+   , p.biography
+   , p.salutation
+   , p.community_titles
+  )
   bulk collect into l_speakers
   from bth_speakers s
        join
        bth_people p
        on (s.psn_id = p.id)
+  where ( (p_search_term is null or p_search_term ='')
+          or
+          ( instr(lower(first_name||' '||last_name), lower(p_search_term)) > 0
+            or
+            instr(lower(biography), lower(p_search_term)) > 0
+            or
+            instr(lower(community_titles), lower(p_search_term)) > 0
+            or
+            instr(lower(country), lower(p_search_term)) > 0
+            or
+            instr(lower(company), lower(p_search_term)) > 0
+            
+          ) 
+        )                       
   ;
   p_speakers:= l_speakers;
 

@@ -60,7 +60,7 @@ begin
   )
   select session_t(
      ssn.id 
-   , title||p_search_term
+   , title
    , abstract    
    , target_audience 
    , experience_level
