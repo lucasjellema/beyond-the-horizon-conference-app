@@ -1,4 +1,3 @@
-
 create or replace
 package body bth_sessions_api
 is
@@ -35,7 +34,7 @@ end json_session_tbl_summary;
 
 
 procedure get_sessions
-( p_tags in tag_tbl_t
+( p_tags in varchar2
 , p_search_term in varchar2
 , p_speakers  in speaker_tbl_t -- only id values matter
 , p_sessions out session_tbl_t
@@ -43,30 +42,62 @@ procedure get_sessions
   l_sessions session_tbl_t;
   l_count number(10):=0;
   l_speakers   speaker_tbl_t ;
+  l_tags string_tbl_t:= string_tbl_t();
 begin
+  if p_tags is not null
+  then
+    l_tags:= bth_util.json_array_to_string_tbl (p_json_array => p_tags);
+  end if;  
   if p_speakers is not null
   then
      l_count:= p_speakers.count;
   end if;
---select count(*) into l_count
---from table (p_speakers);
   with speakers as (
-    select id
+    select distinct id
     from   table( p_speakers)
     union all
-    select psn_id
+    select distinct psn_id
     from   bth_speakers spr
     where  l_count = 0
+  ) 
+  , sessions as (
+    select distinct ssn.id
+    from bth_sessions ssn
+    where ( (p_search_term is null or p_search_term ='')
+          or
+          ( instr(lower(title), lower(p_search_term)) > 0
+            or
+            instr(lower(abstract), lower(p_search_term)) > 0            
+          ) 
+        )                       
+    and l_tags SUBMULTISET OF 
+       (  cast (multiset (select tag.display_label
+                          from   bth_tag_bindings tbg
+                                 join
+                                 bth_tags tag
+                                 on (tag.id = tbg.tag_id)
+                          where tbg.ssn_id = ssn.id
+          ) as string_tbl_t))
   )
   select session_t(
      ssn.id 
    , title
-   , abstract    
+   , null -- abstract
    , target_audience 
    , experience_level
    , granularity 
    , duration 
-   , null /*tags */
+   , ( select cast(collect(tag_t(t.id, t.display_label,t.tcy_id, tcy.display_label, null,t.icon_url, t.icon )) as tag_tbl_t)
+       from   bth_tag_bindings tbg
+              join
+              bth_tags t
+              on (tbg.tag_id = t.id)
+              join
+              bth_tag_categories tcy
+              on
+              (t.tcy_id = tcy.id)
+       where  tbg.ssn_id = ssn.id
+     )
    , ( select cast(collect(speaker_t(p.id, p.first_name, p.last_name)) as speaker_tbl_t)
        from   bth_speakers s
               join
@@ -77,24 +108,36 @@ begin
    , null /*planning planning_t */
   )
   bulk collect into l_sessions
-  from bth_sessions ssn
+  from sessions s
+       join
+       bth_sessions ssn
+       on (s.id = ssn.id)
        join
        bth_speakers skr
        on (ssn.id = skr.ssn_id)
        join
        speakers s       
        on (s.id = skr.psn_id)
-  where ( (p_search_term is null or p_search_term ='')
-          or
-          ( instr(lower(title), lower(p_search_term)) > 0
-            or
-            instr(lower(abstract), lower(p_search_term)) > 0
-            
-          ) 
-        )                       
   ;
   p_sessions := l_sessions;
 end get_sessions;
+
+function get_sessions
+( p_tags in varchar2
+, p_search_term in varchar2
+, p_speakers  in speaker_tbl_t -- only id values matter
+) return session_tbl_t
+ is
+  l_sessions session_tbl_t;
+begin
+  get_sessions
+  ( p_tags 
+  , p_search_term 
+  , p_speakers
+  , l_sessions
+  );
+  return l_sessions;
+end;
 
 function get_session
 ( p_session_id in number
@@ -105,12 +148,22 @@ begin
   select session_t(
      ssn.id 
    , title
-   , abstract    
+   , null -- abstract    
    , target_audience 
    , experience_level
    , granularity 
    , duration 
-   , null /*tags */
+   , ( select cast(collect(tag_t(t.id, t.display_label,t.tcy_id, tcy.display_label, null, t.icon_url, t.icon )) as tag_tbl_t)
+       from   bth_tag_bindings tbg
+              join
+              bth_tags t
+              on (tbg.tag_id = t.id)
+              join
+              bth_tag_categories tcy
+              on
+              (t.tcy_id = tcy.id)
+       where  tbg.ssn_id = ssn.id
+     )
    , ( select cast(collect(speaker_t(p.id, p.first_name, p.last_name)) as speaker_tbl_t)
        from   bth_speakers s
               join
@@ -128,7 +181,7 @@ end get_session;
 
 
 function get_sessions_json
-( p_tags in tag_tbl_t
+( p_tags in varchar2
 , p_search_term in varchar2
 , p_speakers  in speaker_tbl_t -- only id values matter
 ) return clob
@@ -177,10 +230,7 @@ begin
   return bth_util.clob_to_string_tbl_t( get_session_json(p_session_id => p_session_id));
 end get_ssn_details_json_str_tbl;
 
-
-
 end bth_sessions_api;
-
 
 
 declare

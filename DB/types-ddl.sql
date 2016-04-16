@@ -86,14 +86,55 @@ end;
 
 
 create or replace 
-type tag_t as object (
+type tag_t force as object (
   id number(10) 
 , display_label varchar2(100)
 , tcy_id number(10)
 , category varchar2(100)
+, tag_count number(5,0)
 , icon_url varchar2(1000)
 , icon  blob
-);
+, member function to_json
+  return varchar2		  
+, member function to_json_summary
+  return varchar2		  
+) NOT FINAL;
+
+create or replace 
+type body tag_t as
+
+member function to_json
+return varchar2
+is
+  l_json    varchar2(32600);
+begin
+  l_json:= '{'
+            ||'"id" : "'||self.id||'" '
+            ||', "displayLabel" : "'||self.display_label||'" '
+            ||', "category" : "'||self.category||'" '
+            ||', "count" : "'||self.tag_count||'" '
+            ||', "iconUrl" : "'||self.icon_url||'" '
+            ||'}';
+  return l_json;         
+end to_json;
+
+member function to_json_summary
+return varchar2
+is
+  l_json    varchar2(32600);
+begin
+  l_json:= '{'
+            ||'"id" : "'||self.id||'" '
+            ||', "displayLabel" : "'||self.display_label||'" '
+            ||', "category" : "'||self.category||'" '
+            ||', "iconUrl" : "'||self.icon_url||'" '
+            ||'}';
+  return l_json;         
+end to_json_summary;
+
+
+end;
+
 
 create or replace 
 type planning_t as object (
@@ -164,6 +205,7 @@ begin
             ||', "granularity" : "'||self.granularity||'" '
             ||', "abstract" : "'||self.abstract||'" '
             ||', "speakers" : '||bth_speakers_api.json_speaker_tbl_summary(p_speakers => self.speakers)||' '
+            ||', "tags" : '||bth_tags_api.json_tag_tbl_summary(p_tags => self.tags)||' '
             ||'}';
   return l_json;         
 end to_json;

@@ -2,21 +2,24 @@ var http = require('http');
 var fs = require('fs');
 var oracledb = require('oracledb');
 var express = require('express');
+var bodyParser = require('body-parser') // npm install body-parser
 var app = express();
 
 var PORT = process.env.PORT || 3000;
-var APP_VERSION = '0.0.1.18';
+var APP_VERSION = '0.0.1.34';
 
 app.listen(PORT, function () {
   console.log('Server running, version '+APP_VERSION+', Express is listening... at '+PORT+" for /departments and /sessions");
 });
+//app.use(bodyParser.urlencoded({  extended: true}));
 
 app.get('/', function (req, res) {
     res.writeHead(200, {'Content-Type': 'text/html'});
     res.write("Version "+APP_VERSION+". No Data Requested, so none is returned; try /departments or /sessions or something else");
     res.write("Supported URLs:");
     res.write("/sessions , /sessions?search=YourSearchTerm, /sessions/<sessionId>");
-    res.write("/speakers , /speakers/<speakerId>"); //, /speakers?search=YourSearchTerm
+    res.write("/speakers , /speakers?search=YourSearchTerm, /speakers/<speakerId>"); 
+    res.write("/tags , POST for tags with JSON body { 'tagCategories' : ['content','duration'] , 'filterTags' : ['SQL']} "); 
     res.end();
 });
 
@@ -32,6 +35,22 @@ app.get('/speakers/:speakerId', function(req,res){
     var speakerId = req.params.speakerId;
     handleSpeaker(req, res, speakerId);
 }); 
+
+app.get('/tags', function(req,res){ 
+     handleAllTags(req, res,"['SOA']",null,req.query.search);
+    } );
+//function handleAllTags(request, response, filterTags, tagCategories, searchTerm) {
+
+app.use(bodyParser())
+   .post('/tags', function(req,res){
+       console.log("handle post tags ");
+       console.log("body parser: "+bodyParser); 
+       console.log("content type: "+req.get('content-type')); 
+       console.log("url: "+req.url); 
+       console.log("body is "+JSON.stringify(req.body));     
+       handleAllTags(req, res, req.body.filterTags, req.body.tagCategories, req.body.searchTerm);
+} );
+
 
 app.get('/departments/:departmentId', function(req,res){
     var departmentIdentifier = req.params.departmentId;
@@ -99,7 +118,7 @@ function handleAllSessions(request, response) {
     handleDatabaseOperation( request, response, function (request, response, connection) {
 //	  var departmentName = request.query.name ||'%';
 
-	  var selectStatement = "select lines.column_value line from   table( bth_sessions_api.get_sessions_json_string_tbl( p_tags => null, p_search_term => :searchTerm, p_speakers => null)) lines";
+	  var selectStatement = "select lines.column_value line from   table(bth_util.clob_to_string_tbl_t(bth_sessions_api.json_session_tbl_summary( p_sessions=>  bth_sessions_api.get_sessions( p_tags => null, p_search_term => :searchTerm, p_speakers => null)))) lines";
 	  connection.execute(   selectStatement   
 		, [searchTerm], {
             outFormat: oracledb.OBJECT // Return the result as Object
@@ -239,7 +258,52 @@ function handleSpeaker(request, response, speakerId) {
 	});
 } //handleSpeaker
 
+function handleAllTags(request, response, filterTags, tagCategories, searchTerm) {
+   
+    console.log('all tags , for search term '+searchTerm+ '  and filterTags '+ JSON.stringify(filterTags));
+    handleDatabaseOperation( request, response, function (request, response, connection) {
 
+	  var selectStatement = "select lines.column_value line from   table( bth_tags_api.get_tags_json_string_tbl(p_filter_tags_json => :filterTags, p_search_term => :searchTerm)) lines";
+	  connection.execute(   selectStatement   
+		, [JSON.stringify(filterTags), searchTerm], {
+            outFormat: oracledb.OBJECT // Return the result as Object
+        }, function (err, result) {
+            if (err) {
+			  console.log('Error in execution of select statement'+err.message);
+              response.writeHead(500, {'Content-Type': 'application/json'});
+              response.end(JSON.stringify({
+                status: 500,
+                    message: "Error getting the sessions",
+                    detailed_message: err.message
+               })
+	          );  
+            } else {
+               response.writeHead(200, {'Content-Type': 'application/json'});
+               // all rows in result consist of a property with a LINE object; all the line objects should be glued together to form a single string that can be JSON parsed
+               var json='';
+               for (var i=0;i< result.rows.length;i++) {
+                   json=json + result.rows[i].LINE;
+               }// for
+               var tags = JSON.parse(json);
+               response.end(JSON.stringify(tags));
+              }
+			doRelease(connection);
+          }
+	  );
+
+	});
+} //handleAllTags
+
+
+function handleTagsPost(req, res) {
+    // interpret post 
+    // { "tagCategories" : ["content","duration"], "filterTags" : ["SQL"] }
+    console.log("handle tags post for : ");
+    console.log(JSON.stringify(req.body));
+	 
+    handleAllTags(req, res, req.body.filterTags, req.body.tagCategories, req.body.searchTerm);
+    
+}
 
 function handleAllSessionsCLOB(request, response) {
         console.log('all sessions');

@@ -150,3 +150,163 @@ from    bth_people p
         join
         bth_sessions s
         on (skr.ssn_id = s.id)
+
+
+insert into bth_tag_categories (display_label) values ('content');
+insert into bth_tag_categories (display_label) values ('communityTitle');
+insert into bth_tag_categories (display_label) values ('track');
+insert into bth_tag_categories (display_label) values ('duration');
+insert into bth_tag_categories (display_label) values ('experienceLevel');
+        
+        ID LABEL              
+---------- --------------------
+       161 content             
+       162 communityTitle      
+       163 track               
+       164 duration            
+       165 experienceLevel             
+        
+
+-- insert content tags
+declare 
+  l_tags string_tbl_t := string_tbl_t();
+begin
+  for r_tags in ( select tags from raw_sessions) loop
+     l_tags:= l_tags  MULTISET UNION DISTINCT bth_util.get_tokens(r_tags.tags);
+  end loop;
+ insert into bth_tags
+ (display_label, tcy_id)
+ select distinct ltrim(content_tag), 161 
+ from 
+ ( select trim(column_value) content_tag 
+   from   table(l_tags) 
+ ); 
+end;  
+
+declare 
+  l_tags string_tbl_t ;
+begin
+  for r_tags in ( select rs.tags, ssn.id ssn_id from raw_sessions rs join
+            bth_sessions ssn
+            on (ssn.title = rs.PROPOSALTITLE)
+            ) loop
+     l_tags:=  bth_util.get_tokens(r_tags.tags);
+     insert into bth_tag_bindings
+     ( tag_id, ssn_id)
+     select tag.id
+     ,      r_tags.ssn_id
+     from   table (l_tags) tags            
+            join
+            bth_tags tag
+            on ( trim(tags.column_value) = trim(tag.display_label)  and tag.tcy_id = 161)       
+            ;
+  end loop;
+end;
+
+
+
+insert into bth_tags (display_label, tcy_id) values ('Quickie', 164);
+insert into bth_tags (display_label, tcy_id) values ('Masterclass', 164);
+insert into bth_tags (display_label, tcy_id) values ('Regular', 164);
+
+insert into bth_tag_bindings
+( tag_id, ssn_id)
+select tag.id
+,      ssn.id
+from   raw_sessions rs
+       join
+       bth_sessions ssn
+       on (ssn.title = rs.PROPOSALTITLE)
+       join
+       bth_tags tag
+       on ( instr(lower(rs.duration) , lower(case tag.display_label when 'Regular' then 'Normal' else tag.display_label end  ) )>0 and tag.tcy_id = 164)
+       
+       
+       
+
+ insert into bth_tags
+ (display_label, tcy_id)
+ select distinct granularity_level , 165 
+ from raw_sessions
+;
+
+
+
+ insert into bth_tags
+ (display_label, tcy_id)
+ select distinct theme , 163 
+ from raw_sessions
+;
+insert into bth_tag_bindings
+( tag_id, ssn_id)
+select tag.id
+,      ssn.id
+from   raw_sessions rs
+       join
+       bth_sessions ssn
+       on (ssn.title = rs.PROPOSALTITLE)
+       join
+       bth_tags tag
+       on (rs.theme = tag.display_label and tag.tcy_id = 163)
+
+
+ insert into bth_tags
+ (display_label, tcy_id)
+ select distinct experiencelevel, 165 
+ from raw_sessions
+;
+
+insert into bth_tag_bindings
+( tag_id, ssn_id)
+select tag.id
+,      ssn.id
+from   raw_sessions rs
+       join
+       bth_sessions ssn
+       on (ssn.title = rs.PROPOSALTITLE)
+       join
+       bth_tags tag
+       on (rs.experiencelevel = tag.display_label and tag.tcy_id = 165)
+       
+       
+ -- find duplicate people
+ 
+ select id
+,      original_id
+from (
+select id, first_name, last_name
+, row_number() over (partition by first_name||' '||last_name order by id) rn
+, first_value(id) over (partition by first_name||' '||last_name order by id) original_id
+from  bth_people
+)
+where rn>1
+
+
+update bth_speakers
+set psn_id = 9
+where psn_id =11
+      
+      
+ -- remove duplicate speaker entries:
+ delete from bth_speakers
+where id in (
+select id from (
+select id
+,      psn_id
+,      ssn_id
+,      row_number() over (partition by ssn_id, psn_id order by id) rn
+from   bth_speakers
+)
+where rn > 1
+)     
+
+-- duplicate sessions:
+select * from (
+select id
+,      title
+,      row_number() over (partition by title order by id) rn
+from   bth_sessions ssn
+)
+where rn > 1
+
+
