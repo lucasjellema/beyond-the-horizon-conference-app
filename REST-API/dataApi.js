@@ -6,29 +6,33 @@ var bodyParser = require('body-parser') // npm install body-parser
 var app = express();
 
 var PORT = process.env.PORT || 3000;
-var APP_VERSION = '0.0.1.34';
+var APP_VERSION = '0.0.1.35';
 
 app.listen(PORT, function () {
   console.log('Server running, version '+APP_VERSION+', Express is listening... at '+PORT+" for /departments and /sessions");
 });
 //app.use(bodyParser.urlencoded({  extended: true}));
+app.use(bodyParser());
 
 app.get('/', function (req, res) {
     res.writeHead(200, {'Content-Type': 'text/html'});
     res.write("Version "+APP_VERSION+". No Data Requested, so none is returned; try /departments or /sessions or something else");
     res.write("Supported URLs:");
-    res.write("/sessions , /sessions?search=YourSearchTerm, /sessions/<sessionId>");
+    res.write("/sessions , /sessions?search=YourSearchTerm, /sessions/<sessionId>, POST for sessions  with JSON body {  'filterTags' : ['SQL'], 'searchTerm': 'your term'} ");
     res.write("/speakers , /speakers?search=YourSearchTerm, /speakers/<speakerId>"); 
     res.write("/tags , POST for tags with JSON body { 'tagCategories' : ['content','duration'] , 'filterTags' : ['SQL']} "); 
     res.end();
 });
 
 app.get('/departments', function(req,res){ handleAllDepartments(req, res);} );
-app.get('/sessions', function(req,res){ handleAllSessions(req, res);} );
+app.get('/sessions', function(req,res){ handleAllSessions(req, res, null, req.query.search);} );
 app.get('/sessions/:sessionId', function(req,res){
     var sessionId = req.params.sessionId;
     handleSession(req, res, sessionId);
 }); 
+app.post('/sessions', function(req,res){
+       handleAllSessions(req, res, req.body.filterTags, req.body.searchTerm);
+} );
 
 app.get('/speakers', function(req,res){ handleAllSpeakers(req, res);} );
 app.get('/speakers/:speakerId', function(req,res){
@@ -37,17 +41,11 @@ app.get('/speakers/:speakerId', function(req,res){
 }); 
 
 app.get('/tags', function(req,res){ 
-     handleAllTags(req, res,"['SOA']",null,req.query.search);
+     handleAllTags(req, res,null,null,req.query.search);
     } );
 //function handleAllTags(request, response, filterTags, tagCategories, searchTerm) {
 
-app.use(bodyParser())
-   .post('/tags', function(req,res){
-       console.log("handle post tags ");
-       console.log("body parser: "+bodyParser); 
-       console.log("content type: "+req.get('content-type')); 
-       console.log("url: "+req.url); 
-       console.log("body is "+JSON.stringify(req.body));     
+app.post('/tags', function(req,res){
        handleAllTags(req, res, req.body.filterTags, req.body.tagCategories, req.body.searchTerm);
 } );
 
@@ -112,15 +110,15 @@ function handleAllDepartments(request, response) {
 } //handleAllDepartments
 
 
-function handleAllSessions(request, response) {
-    var searchTerm=     request.query.search;
-    console.log('all sessions , for search term '+searchTerm);
+function handleAllSessions(request, response, filterTags, searchTerm) {
+    
+    console.log('all sessions , for search term '+searchTerm+ " and filterTags "+JSON.stringify(filterTags));
     handleDatabaseOperation( request, response, function (request, response, connection) {
 //	  var departmentName = request.query.name ||'%';
 
-	  var selectStatement = "select lines.column_value line from   table(bth_util.clob_to_string_tbl_t(bth_sessions_api.json_session_tbl_summary( p_sessions=>  bth_sessions_api.get_sessions( p_tags => null, p_search_term => :searchTerm, p_speakers => null)))) lines";
+	  var selectStatement = "select lines.column_value line from   table(bth_util.clob_to_string_tbl_t(bth_sessions_api.json_session_tbl_summary( p_sessions=>  bth_sessions_api.get_sessions( p_tags => :filterTags, p_search_term => :searchTerm, p_speakers => null)))) lines";
 	  connection.execute(   selectStatement   
-		, [searchTerm], {
+		, [JSON.stringify(filterTags), searchTerm], {
             outFormat: oracledb.OBJECT // Return the result as Object
         }, function (err, result) {
             if (err) {
