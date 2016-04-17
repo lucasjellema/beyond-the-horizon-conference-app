@@ -6,13 +6,28 @@ var bodyParser = require('body-parser') // npm install body-parser
 var app = express();
 
 var PORT = process.env.PORT || 3000;
-var APP_VERSION = '0.0.1.40';
+var APP_VERSION = '0.0.1.41';
+
+//CORS middleware - taken from http://stackoverflow.com/questions/7067966/how-to-allow-cors-in-express-node-js
+var allowCrossDomain = function(req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    res.header('Access-Control-Allow-Credentials', true);
+ 
+    next();
+}
+
 
 app.listen(PORT, function () {
   console.log('Server running, version '+APP_VERSION+', Express is listening... at '+PORT+" for /departments and /sessions");
 });
-//app.use(bodyParser.urlencoded({  extended: true}));
-app.use(bodyParser());
+// 1.41 disabled:  app.use(bodyParser());
+app.use(bodyParser.json()); // for parsing application/json
+app.use(bodyParser.text({ type: 'text/xml' }));
+app.use(allowCrossDomain);
+
+
 app.use(express.static(__dirname + '/public'))
 app.get('/about', function (req, res) {
     res.writeHead(200, {'Content-Type': 'text/html'});
