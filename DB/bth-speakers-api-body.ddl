@@ -38,6 +38,10 @@ procedure get_speakers
 ) is
   l_speakers speaker_tbl_t;
 begin
+  with speakers as 
+  ( select distinct psn_id
+    from   bth_speakers
+  )
   select speaker_t(
      p.id 
    , p.first_name
@@ -49,7 +53,7 @@ begin
    , p.community_titles
   )
   bulk collect into l_speakers
-  from bth_speakers s
+  from speakers s
        join
        bth_people p
        on (s.psn_id = p.id)
