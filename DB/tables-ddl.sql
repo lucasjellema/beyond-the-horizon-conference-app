@@ -1,7 +1,15 @@
 
 create sequence bth_seq;
 
+
+
 drop table bth_sessions;
+
+
+create table log_tbl 
+( time timestamp
+, text varchar2(2000 CHAR)
+);
 
 
 create table bth_sessions
@@ -310,3 +318,123 @@ from   bth_sessions ssn
 where rn > 1
 
 
+
+-- duplicate tags
+
+select *
+from (
+select id,
+tag
+, row_number() over (partition by tag order by id) rn
+, first_value(id) over (partition by tag order by id) original_id
+from
+(
+select id, lower(substr(display_label,1,20))  tag
+from   bth_tags
+order 
+by     tag
+))
+where rn> 1
+
+
+with dups as
+(select *
+from (
+select id,
+tag
+, row_number() over (partition by tag order by id) rn
+, first_value(id) over (partition by tag order by id) original_id
+from
+(
+select id, lower(substr(display_label,1,20))  tag
+from   bth_tags
+order 
+by     tag
+))
+where rn> 1
+)
+select  dups.tag
+,       dups.id
+,       dups.original_id
+from    dups
+join
+bth_tag_bindings tbg
+on (tbg.tag_id = dups.id)
+
+
+-- create temporary table
+
+create table t as 
+with dups as
+(select *
+from (
+select id,
+tag
+, row_number() over (partition by tag order by id) rn
+, first_value(id) over (partition by tag order by id) original_id
+from
+(
+select id, lower(substr(display_label,1,20))  tag
+from   bth_tags
+order 
+by     tag
+))
+where rn> 1
+)
+select  dups.tag
+,       dups.id
+,       dups.original_id
+,       tbg.id tbg_id
+from    dups
+join
+bth_tag_bindings tbg
+on (tbg.tag_id = dups.id)
+
+
+-- update tag bindings from temporary table
+update bth_tag_bindings 
+set    tag_id = ( select original_id from t where t.tbg_id = bth_tag_bindings.id and t.original_id is not null)
+where  exists (select 'x' from t where t.tbg_id = bth_tag_bindings.id and t.original_id is not null)
+
+
+
+
+
+update bth_tag_bindings tbg
+set    tbg.tag_id = (       
+select dups.original_id
+from   ( select t.id,
+                       t.tag
+                       , row_number() over (partition by tag order by id) rn
+                       , first_value(id) over (partition by tag order by id) original_id
+                from   ( select id, lower(substr(display_label,1,20))  tag
+                         from   bth_tags t
+                         where  t.id = tbg.tag_id
+                         order 
+                         by     tag
+                       ) t              
+       ) dups
+)
+
+-- check on tag usages for duplicate tags
+
+select count(*) occurrences
+,      t.id  tag_id
+from (
+select *
+         from ( select id,
+                       tag
+                       , row_number() over (partition by tag order by id) rn
+                from   ( select id, lower(substr(display_label,1,20))  tag
+                         from   bth_tags
+                         order 
+                         by     tag
+                       )
+               )
+         where rn> 1
+         ) t
+     left outer join
+     bth_tag_bindings tbg
+     on (tbg.tag_id = t.id )
+group
+by    t.id

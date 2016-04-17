@@ -49,7 +49,7 @@ begin
   bth_sessions_api.get_sessions
   ( p_tags => null
   , p_search_term => null
-  , p_speakers  =>  speaker_tbl_t (speaker_t(self.id, self.first_name, self.last_name)) -- only id values matter
+  , p_speakers  =>  '[ {"id":'||self.id||'  , "lastName": "'||self.last_name||'"} ]' 
   , p_sessions => l_sessions
   );
   l_json:= '{'

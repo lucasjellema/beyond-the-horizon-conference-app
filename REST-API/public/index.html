@@ -1,0 +1,79 @@
+<html>
+<head>
+    <title>AMIS25 - Beyond the Horizon - Conference 1-3 June 2016, The Netherlands</title>
+</head>
+<body>
+<h1>AMIS25 - Beyond the Horizon - Conference 1-3 June 2016, The Netherlands</h1>
+<br/>
+<img src="amis-conference.jpg"/>
+<br/>
+<h2>APIs</h2>
+
+<a href="https://data-api-lucasjellema.apaas.em2.oraclecloud.com/sessions">Get All Sessions</a> - https://data-api-lucasjellema.apaas.em2.oraclecloud.com/sessions
+<br/>
+<a href="https://data-api-lucasjellema.apaas.em2.oraclecloud.com/speakers">Get All Speakers</a> - https://data-api-lucasjellema.apaas.em2.oraclecloud.com/speakers
+<br/>
+<a href="https://data-api-lucasjellema.apaas.em2.oraclecloud.com/tags">Get All Tags</a> - https://data-api-lucasjellema.apaas.em2.oraclecloud.com/tags
+<br/>
+<h3>Search Sessions</h3>
+Post Request to https://data-api-lucasjellema.apaas.em2.oraclecloud.com/sessions
+Send JSON message in body:
+<pre>
+{  "filterTags" : ["SOA","JCS"]
+ , "speakers": [ {"id": "34"} , {"id": 43}]
+ , "searchTerm": "search term"
+}
+    </pre>
+- sessions with all of the specified filterTags associated with them
+<br/>
+- sessions with one (or more) of the indicated speakers
+<br/>
+- sessions satisfying the search term with part of their title, abstract     
+<br/>
+
+<h3>Session Details</h3>
+GET Request to https://data-api-lucasjellema.apaas.em2.oraclecloud.com/sessions/<session-id> 
+<br/>
+<a href="https://data-api-lucasjellema.apaas.em2.oraclecloud.com/sessions/61">Get All Sessions</a> - https://data-api-lucasjellema.apaas.em2.oraclecloud.com/sessions/61
+<br/>
+
+
+<h3>Related Sessions</h3>
+GET Request to https://data-api-lucasjellema.apaas.em2.oraclecloud.com/sessions/related/<session-id> 
+<br/>
+<a href="https://data-api-lucasjellema.apaas.em2.oraclecloud.com/sessions/related/61">Get All Sessions</a> - https://data-api-lucasjellema.apaas.em2.oraclecloud.com/sessions/related/61
+<br/>
+Retrieve a list of all sessions that are related to the sessions whose identifier is specified. Relationship is based on
+<br/>
+- tags
+<br/>
+- track
+<br/>
+- speaker
+<br/>
+
+<h3>Speaker Details</h3>
+GET Request to https://data-api-lucasjellema.apaas.em2.oraclecloud.com/speakers/<speaker-id> 
+<a href="https://data-api-lucasjellema.apaas.em2.oraclecloud.com/speakers/26">Get specific speaker</a> - https://data-api-lucasjellema.apaas.em2.oraclecloud.com/speakers/26
+<br/>
+
+
+<h3>Search Tags</h3>
+Post Request to https://data-api-lucasjellema.apaas.em2.oraclecloud.com/tags
+Send JSON message in body:
+<pre>
+{ "tagCategories" : ["content","duration"]
+ , "filterTags" : ["SOA","OSB"]
+ , "searchTerm": ""
+}    </pre>
+<br/>
+- Retrieve Tags for Sessions that have all of the specified filterTags associated with them
+<br/>
+- Retrieve Tags for one of the specified categories (or all categories if no value is indicates)
+<br/>
+- Retrieve tags satisfying the search term with part of their display title
+<br/>
+
+For all tags, show the number of occurrences (sessions) for all tags and sessions that satisfy the search conditions      
+</body>
+</html>

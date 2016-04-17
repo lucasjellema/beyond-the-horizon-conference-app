@@ -38,17 +38,22 @@ end json_tag_tbl_summary;
 
 
 procedure get_tags
-( p_filter_tags in string_tbl_t
+( p_filter_tags in varchar2 -- JSON array: ["SOA","JCS"]
 , p_search_term in varchar2
 , p_tags out tag_tbl_t
 ) is
   l_tags tag_tbl_t;
+  l_filter_tags string_tbl_t:= string_tbl_t();
 begin
-with eligible_sessions as (
+  if p_filter_tags is not null and p_filter_tags <> 'null'
+  then
+    l_filter_tags:= bth_util.json_array_to_string_tbl (p_json_array => lower(p_filter_tags));
+  end if;  
+  with eligible_sessions as (
     select distinct ssn.id
     from bth_sessions ssn
-    where p_filter_tags SUBMULTISET OF 
-       (  cast (multiset (select tag.display_label
+    where l_filter_tags SUBMULTISET OF 
+       (  cast (multiset (select lower(tag.display_label) 
                           from   bth_tag_bindings tbg
                                  join
                                  bth_tags tag
@@ -94,7 +99,7 @@ end get_tags;
 
 
 function get_tags_json
-( p_filter_tags in string_tbl_t
+( p_filter_tags in varchar2
 , p_search_term in varchar2
 ) return clob
 is
@@ -112,7 +117,7 @@ function get_tags_json_string_tbl
 ) return  string_tbl_t
 is
 begin
-  return bth_util.clob_to_string_tbl_t( get_tags_json(p_filter_tags => bth_util.json_array_to_string_tbl (p_json_array=> p_filter_tags_json), p_search_term=> p_search_term));
+  return bth_util.clob_to_string_tbl_t( get_tags_json(p_filter_tags => p_filter_tags_json, p_search_term=> p_search_term));
 end get_tags_json_string_tbl;
 
 

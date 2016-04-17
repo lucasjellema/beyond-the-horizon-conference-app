@@ -24,6 +24,8 @@ FUNCTION json_array_to_string_tbl (
     p_json_array IN VARCHAR2
     ) RETURN string_tbl_t;
 
+procedure log(p_text in varchar2);
+
 end bth_util;
 
 
@@ -37,28 +39,28 @@ is
 procedure get_sessions
 ( p_tags in varchar2
 , p_search_term in varchar2
-, p_speakers  in speaker_tbl_t -- only id values matter
+, p_speakers  in varchar2 -- JSON structure: [ {"lastName": "Jellema"} , {"id": 43}]
 , p_sessions out session_tbl_t
 );
 
 function get_sessions
 ( p_tags in varchar2
 , p_search_term in varchar2
-, p_speakers  in speaker_tbl_t -- only id values matter
+, p_speakers  in varchar2 -- JSON structure: [ {"lastName": "Jellema"} , {"id": 43}]
 ) return  session_tbl_t
 ;
 
 function get_sessions_json
 ( p_tags in varchar2
 , p_search_term in varchar2
-, p_speakers  in speaker_tbl_t -- only id values matter
+, p_speakers  in varchar2 -- JSON structure: [ {"lastName": "Jellema"} , {"id": 43}]
 ) return clob
 ;
 
 function get_sessions_json_string_tbl
 ( p_tags in varchar2
 , p_search_term in varchar2
-, p_speakers  in varchar2 
+, p_speakers  in varchar2 -- JSON structure: [ {"lastName": "Jellema"} , {"id": 43}]
 ) return  string_tbl_t
 ;
 
@@ -70,6 +72,11 @@ function get_ssn_details_json_str_tbl
 ( p_session_id in number
 ) return  string_tbl_t
 ;
+function get_related_json_str_tbl
+( p_session_id in number
+) return  string_tbl_t
+;
+
 
 
 end bth_sessions_api;
@@ -119,13 +126,13 @@ function json_tag_tbl_summary
 ) return clob
 ;
 procedure get_tags
-( p_filter_tags in string_tbl_t
+( p_filter_tags in varchar2
 , p_search_term in varchar2
 , p_tags out tag_tbl_t
 );
 
 function get_tags_json
-( p_filter_tags in string_tbl_t
+( p_filter_tags in varchar2
 , p_search_term in varchar2
 ) return clob
 ;

@@ -1,3 +1,5 @@
+
+
 create or replace
 package body bth_sessions_api
 is
@@ -34,27 +36,47 @@ end json_session_tbl_summary;
 
 
 procedure get_sessions
-( p_tags in varchar2
+( p_tags in varchar2 -- JSON array: ["SOA","JCS"]
 , p_search_term in varchar2
-, p_speakers  in speaker_tbl_t -- only id values matter
+, p_speakers  in varchar2 -- JSON structure: [ {"lastName": "Jellema"} , {"id": 43}]
 , p_sessions out session_tbl_t
 ) is
   l_sessions session_tbl_t;
   l_count number(10):=0;
   l_speakers   speaker_tbl_t ;
   l_tags string_tbl_t:= string_tbl_t();
+  l_speakers_json string_tbl_t:= string_tbl_t();
 begin
-  if p_tags is not null
+  bth_util.log('get_sessions');
+  bth_util.log('tags '||nvl(p_tags,'NULL'));
+  bth_util.log('speakers '||nvl(p_speakers,'NULL'));
+  bth_util.log('search term '||nvl(p_search_term,'NULL'));
+  if p_tags is not null and p_tags <> 'null'
   then
-    l_tags:= bth_util.json_array_to_string_tbl (p_json_array => p_tags);
-  end if;  
-  if p_speakers is not null
+    l_tags:= bth_util.json_array_to_string_tbl (p_json_array => lower(p_tags));
+  end if;
+  -- turn p_speakers (JSON array) into l_speakers (speaker_tbl_t)
+  if p_speakers is not null and p_speakers <> 'null'
   then
-     l_count:= p_speakers.count;
+    with json_doc as 
+    ( select p_speakers doc
+      from   dual
+    )
+    SELECT speaker_t(id, firstName, lastName)
+    bulk collect into l_speakers
+    FROM json_doc
+    ,    json_table(doc, '$[*]'
+            COLUMNS (id number(10) PATH '$.id'
+                    , firstName  VARCHAR2(100) PATH '$.firstName'
+                    , lastName  VARCHAR2(100) PATH '$.lastName'
+                    )
+          ); 
+  
+     l_count:= l_speakers.count;
   end if;
   with speakers as (
     select distinct id
-    from   table( p_speakers)
+    from   table( l_speakers)
     union all
     select distinct psn_id
     from   bth_speakers spr
@@ -71,7 +93,7 @@ begin
           ) 
         )                       
     and l_tags SUBMULTISET OF 
-       (  cast (multiset (select tag.display_label
+       (  cast (multiset (select lower(tag.display_label)
                           from   bth_tag_bindings tbg
                                  join
                                  bth_tags tag
@@ -125,7 +147,7 @@ end get_sessions;
 function get_sessions
 ( p_tags in varchar2
 , p_search_term in varchar2
-, p_speakers  in speaker_tbl_t -- only id values matter
+, p_speakers  in varchar2 -- JSON structure: [ {"lastName": "Jellema"} , {"id": 43}]
 ) return session_tbl_t
  is
   l_sessions session_tbl_t;
@@ -137,7 +159,7 @@ begin
   , l_sessions
   );
   return l_sessions;
-end;
+end get_sessions;
 
 function get_session
 ( p_session_id in number
@@ -183,7 +205,7 @@ end get_session;
 function get_sessions_json
 ( p_tags in varchar2
 , p_search_term in varchar2
-, p_speakers  in speaker_tbl_t -- only id values matter
+, p_speakers  in varchar2 -- JSON structure: [ {"lastName": "Jellema"} , {"id": 43}]
 ) return clob
 is
   l_sessions session_tbl_t:= session_tbl_t();
@@ -209,7 +231,8 @@ function get_sessions_json_tbl
 ) return bth_util.string_tbl_type
 is
 begin
-  return bth_util.clob_to_string_tbl( get_sessions_json(p_tags => null, p_search_term=> p_search_term, p_speakers=> null));
+return bth_util.clob_to_string_tbl( to_clob(''));
+--  return bth_util.clob_to_string_tbl( get_sessions_json(p_tags => p_tags, p_search_term=> p_search_term, p_speakers=> p_speakers));
 end get_sessions_json_tbl;
 
 function get_sessions_json_string_tbl
@@ -219,7 +242,11 @@ function get_sessions_json_string_tbl
 ) return  string_tbl_t
 is
 begin
-  return bth_util.clob_to_string_tbl_t( get_sessions_json(p_tags => null, p_search_term=> p_search_term, p_speakers=> null));
+  bth_util.log(' get_sessions_json_string_tbl');
+  bth_util.log('tags '||nvl(p_tags,'NULL'));
+  bth_util.log('speakers '||nvl(p_speakers,'NULL'));
+  bth_util.log('search term '||nvl(p_search_term,'NULL'));
+  return bth_util.clob_to_string_tbl_t( get_sessions_json(p_tags => p_tags, p_search_term=> p_search_term, p_speakers=> p_speakers));
 end get_sessions_json_string_tbl;
 
 function get_ssn_details_json_str_tbl
@@ -230,26 +257,16 @@ begin
   return bth_util.clob_to_string_tbl_t( get_session_json(p_session_id => p_session_id));
 end get_ssn_details_json_str_tbl;
 
+function get_related_json_str_tbl
+( p_session_id in number
+) return  string_tbl_t
+is
+begin
+  bth_util.log(' get_related_sessions');
+  bth_util.log('session id  '||p_session_id);
+  bth_util.log('session id  '||nvl(p_session_id,'NULL'));
+  return bth_util.clob_to_string_tbl_t( get_session_json(p_session_id => p_session_id));
+end get_related_json_str_tbl;
+
+
 end bth_sessions_api;
-
-
-declare
-  l_sessions_tbl session_tbl_t;
-begin
-  bth_sessions_api.get_sessions( p_tags => null, p_search_term => null, p_speakers => null, p_sessions => l_sessions_tbl);
-  for i in l_sessions_tbl.first .. l_sessions_tbl.last loop
-    dbms_output.put_line('Session '|| l_sessions_tbl(i).title);
-  end loop;
-end;
-
-declare
-  l_sessions_tbl bth_sessions_api.string_tbl_type;
-begin
-  l_sessions_tbl := bth_sessions_api.get_sessions_json_tbl( p_tags => null, p_search_term => null, p_speakers => null);
-  for i in 1 .. l_sessions_tbl.last loop
-    dbms_output.put_line('Session '|| l_sessions_tbl(i));
-  end loop;
-end;
-
-select *
-from   table( bth_sessions_api.get_sessions_json_string_tbl( p_tags => null, p_search_term => null, p_speakers => null))

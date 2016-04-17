@@ -113,6 +113,17 @@ FUNCTION get_tokens(
        return l_string_tbl;
     end json_array_to_string_tbl;
 
+procedure log(p_text in varchar2)
+is
+  pragma autonomous_transaction;
+begin  
+  insert into log_tbl
+  ( time , text)
+  values
+  (systimestamp, p_text);
+  commit;
+end log;    
+
 
 end bth_util;
 

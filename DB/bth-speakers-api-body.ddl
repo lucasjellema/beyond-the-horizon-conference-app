@@ -108,7 +108,7 @@ is
   
 begin
   get_speakers( p_tags => p_tags, p_search_term => p_search_term, p_speakers => l_speakers);
-  return speaker_tbl_json( p_speakers => l_speakers);
+  return json_speaker_tbl_summary( p_speakers => l_speakers);
 end;
 
 
