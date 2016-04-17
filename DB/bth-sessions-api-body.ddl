@@ -53,11 +53,13 @@ begin
   bth_util.log('search term '||nvl(p_search_term,'NULL'));
   if p_tags is not null and p_tags <> 'null'
   then
+    bth_util.log('go create l_tags from '||nvl(p_tags,'NULL'));
     l_tags:= bth_util.json_array_to_string_tbl (p_json_array => lower(p_tags));
   end if;
   -- turn p_speakers (JSON array) into l_speakers (speaker_tbl_t)
   if p_speakers is not null and p_speakers <> 'null'
   then
+    bth_util.log('go create l_speakers from '||nvl(p_speakers,'NULL'));
     with json_doc as 
     ( select p_speakers doc
       from   dual
@@ -74,6 +76,8 @@ begin
   
      l_count:= l_speakers.count;
   end if;
+   bth_util.log('go queryr sessions  ');
+ 
   with speakers as (
     select distinct id
     from   table( l_speakers)
@@ -100,6 +104,7 @@ begin
                                  on (tag.id = tbg.tag_id)
                           where tbg.ssn_id = ssn.id
           ) as string_tbl_t))
+    and  lower(ssn.status) = 'accepted'      
   )
   select session_t(
      ssn.id 
@@ -141,6 +146,8 @@ begin
        speakers s       
        on (s.id = skr.psn_id)
   ;
+     bth_util.log('bulk collect done ');
+ 
   p_sessions := l_sessions;
 end get_sessions;
 
@@ -211,6 +218,11 @@ is
   l_sessions session_tbl_t:= session_tbl_t();
   
 begin
+  bth_util.log(' get_sessions_json');
+  bth_util.log('tags '||nvl(p_tags,'NULL'));
+  bth_util.log('speakers '||nvl(p_speakers,'NULL'));
+  bth_util.log('search term '||nvl(p_search_term,'NULL'));
+
   get_sessions( p_tags => p_tags, p_search_term => p_search_term, p_speakers => p_speakers, p_sessions => l_sessions);
   return session_tbl_json( p_sessions => l_sessions);
 end get_sessions_json;

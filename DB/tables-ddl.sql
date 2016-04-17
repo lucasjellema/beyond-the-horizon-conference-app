@@ -110,14 +110,56 @@ insert into bth_people
 from raw_sessions
 
 
-delete from bth_people where id in (select id from (select id, 
+insert into bth_people
+( first_name  
+, last_name 
+, company  
+, country  
+, email_address  
+, biography 
+, community_titles 
+, job_title
+, mobile_phone_number
+) 
+select distinct firstname, lastname, companyname, country, email,to_char(bio), communitytitles, jobtitle, telephone
+from raws r
+where not exists
+( select 'x' from bth_people p where lower(p.first_name||'-'||p.last_name) = lower(r.firstname||'-'||r.lastname)
+)
+
+
+-- find duplicate people
+
+select id , first_name, last_name, original_id from (select id, 
  first_name  
 , last_name 
 , company  
-, rank() over (partition by first_name, last_name order by id) rnk
+, rank() over (partition by lower(first_name), lower(last_name) order by id) rnk
+, first_value(id) over (partition by lower(first_name), lower(last_name) order by id) original_id
 from bth_people
 )
-where rnk = 2
+where rnk > 1
+
+-- update existing people
+update bth_people p
+set (job_title
+, mobile_phone_number) =
+( select jobtitle, telephone
+from raws rs
+where lower(p.first_name||'-'||p.last_name) = lower(rs.firstname||'-'||rs.lastname)
+and rownum = 1
+)
+
+
+delete from bth_people where id in (select id  from (select id, 
+ first_name  
+, last_name 
+, company  
+, rank() over (partition by lower(first_name), lower(last_name) order by id) rnk
+, first_value(id) over (partition by lower(first_name), lower(last_name) order by id) original_id
+from bth_people
+)
+where rnk > 1
 )
 
 insert into bth_sessions
@@ -127,15 +169,30 @@ insert into bth_sessions
 , experience_level
 , granularity 
 , duration  -- 2, 1, 0.5 for MC, regular and quickie
+, status
+, demos
 ) select
 rs.PROPOSALTITLE
-, rs.SESSIONABSTRACT
+, rs.abstrac
 , rs.TARGETAUDIENCE
-, rs.EXPERIENCELEVEL
-, rs.GRANULARITY_LEVEL
-, case duration when 'Normal length (45 min)' then 1 when 'Quickie (20 min)' then 0.5 when 'Extended (masterclass) (1h 30 min)' then 2 else 0 end
-from raw_sessions rs
+, rs.levelofexperience
+, rs.GRANULARITY
+, case preferredlength when 'Normal length (45 min)' then 1 when 'Quickie (20 min)' then 0.5 when 'Extended (masterclass) (1h 30 min)' then 2 else 0 end
+, rs.status
+,  rs.demos
+from raws rs
+where not exists ( select 'x' from bth_sessions s where lower( s.title) = lower(rs.proposaltitle))
 
+
+-- update existint sessions with status and demos from RAWS
+update bth_sessions s
+set (status, demos) =
+( select rs.status
+,  rs.demos
+from raws rs
+where lower( s.title) = lower(rs.proposaltitle))
+
+-- create speaker records for main speakers
 
 insert into bth_speakers
 ( ssn_id 
@@ -143,15 +200,20 @@ insert into bth_speakers
 , contribution 
 )
 select s.id 
-,     p.id
-, 'main'
-from raw_sessions rs
-join
-bth_people p
-on (p.first_name = rs.voornaam and p.last_name = rs.achternaam)
-join 
-bth_sessions s
-on (rs.PROPOSALTITLE = s.title)
+,      p.id
+,      'main'
+from  raws rs
+      join
+      bth_people p
+      on (lower(p.first_name||'-'||p.last_name) = lower(rs.firstname||'-'||rs.lastname))
+      join 
+      bth_sessions s
+      on (rs.PROPOSALTITLE = s.title)
+      left outer join
+      bth_speakers es
+      on (s.id = es.ssn_id)
+where es.rowid is null -- only insert for sessions for which no speaker records currently exist  
+
 
 
 select  p.first_name
@@ -185,7 +247,7 @@ insert into bth_tag_categories (display_label) values ('experienceLevel');
 declare 
   l_tags string_tbl_t := string_tbl_t();
 begin
-  for r_tags in ( select tags from raw_sessions) loop
+  for r_tags in ( select tags from raws) loop
      l_tags:= l_tags  MULTISET UNION DISTINCT bth_util.get_tokens(r_tags.tags);
   end loop;
  insert into bth_tags
@@ -200,10 +262,14 @@ end;
 declare 
   l_tags string_tbl_t ;
 begin
-  for r_tags in ( select rs.tags, ssn.id ssn_id from raw_sessions rs join
-            bth_sessions ssn
-            on (ssn.title = rs.PROPOSALTITLE)
-            ) loop
+  for r_tags in ( select rs.tags, ssn.id ssn_id 
+                  from   raws rs 
+                         join
+                         bth_sessions ssn
+                         on (lower(ssn.title) = lower(rs.PROPOSALTITLE))
+                   where ssn.id >      1000   -- only for the newly added sessions
+                )                        
+             loop
      l_tags:=  bth_util.get_tokens(r_tags.tags);
      insert into bth_tag_bindings
      ( tag_id, ssn_id)
@@ -227,15 +293,16 @@ insert into bth_tag_bindings
 ( tag_id, ssn_id)
 select tag.id
 ,      ssn.id
-from   raw_sessions rs
+from   raws rs
        join
        bth_sessions ssn
        on (ssn.title = rs.PROPOSALTITLE)
        join
        bth_tags tag
-       on ( instr(lower(rs.duration) , lower(case tag.display_label when 'Regular' then 'Normal' else tag.display_label end  ) )>0 and tag.tcy_id = 164)
-       
-       
+       on ( instr(lower(rs.preferredlength) , lower(case tag.display_label when 'Regular' then 'Normal' else tag.display_label end  ) )>0 and tag.tcy_id = 164)
+where  ssn.id > 1000
+
+
        
 
  insert into bth_tags
@@ -274,15 +341,16 @@ insert into bth_tag_bindings
 ( tag_id, ssn_id)
 select tag.id
 ,      ssn.id
-from   raw_sessions rs
+from   raws rs
        join
        bth_sessions ssn
        on (ssn.title = rs.PROPOSALTITLE)
        join
        bth_tags tag
-       on (rs.experiencelevel = tag.display_label and tag.tcy_id = 165)
-       
-       
+       on (rs.levelofexperience = tag.display_label and tag.tcy_id = 165)
+where ssn.id > 1000
+     
+  
  -- find duplicate people
  
  select id
@@ -342,6 +410,25 @@ by     tag
 ))
 where rn> 1
 
+
+-- delete duplicate tags
+delete bth_tags where id in
+(
+select id
+from (
+select id,
+tag
+, row_number() over (partition by tag order by id) rn
+, first_value(id) over (partition by tag order by id) original_id
+from
+(
+select id, lower(substr(display_label,1,20))  tag
+from   bth_tags
+order 
+by     tag
+))
+where rn> 1
+)
 
 with dups as
 (select *

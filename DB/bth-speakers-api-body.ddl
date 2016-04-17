@@ -92,11 +92,12 @@ begin
 , p.community_titles
 )
   into l_speaker
-  from bth_speakers s
+  from bth_speakers s -- join with bth_speakers to ensure it is a speaker and not a regular person
        join
        bth_people p
        on (s.psn_id = p.id)
   where s.psn_id = p_speaker_id
+  and   rownum=1
   ;
   return l_speaker;
 
