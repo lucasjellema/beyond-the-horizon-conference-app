@@ -20,6 +20,10 @@ create table bth_sessions
 , experience_level varchar2(500)
 , granularity varchar2(500)
 , duration number(2,1) -- 2, 1, 0.5 for MC, regular and quickie
+, submission_identifier number(5,0)
+, status  varchar2(50)
+, demos varchar2(2000)
+, notes  varchar2(2000)
 );
 
 
@@ -28,6 +32,7 @@ create table bth_people
 , first_name  varchar2(500)
 , last_name  varchar2(500)
 , company  varchar2(500)
+, job_title  varchar2(500)
 , country  varchar2(2)
 , email_address  varchar2(200)
 , mobile_phone_number  varchar2(50)
@@ -39,6 +44,7 @@ create table bth_people
 , biography clob
 , salutation varchar2(100)
 , community_titles varchar2(500)
+, notes  varchar2(2000)
 );
 
 create table bth_speakers
