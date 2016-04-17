@@ -97,6 +97,22 @@ FUNCTION get_tokens(
      return l_string_tbl;
   END get_tokens ;
  
+ 
+ /*
+ this call is supported:
+ 
+ select *
+ from table( bth_util.json_array_to_string_tbl('["a","aaa","asda"]'))
+ 
+ as is this one:
+ 
+    SELECT value
+    FROM json_table('["content", "duration"]', '$[*]'
+                     COLUMNS (value PATH '$'
+                    )
+          ) 
+
+ */
  FUNCTION json_array_to_string_tbl (
     p_json_array IN VARCHAR2
     ) RETURN string_tbl_t
@@ -104,11 +120,13 @@ FUNCTION get_tokens(
       l_string_tbl string_tbl_t:= string_tbl_t();
     begin
        if p_json_array is not null and length(p_json_array)>0
-       then            
-         l_string_tbl:= get_tokens( rtrim(ltrim(trim(p_json_array),'['),']'));
-         for i in l_string_tbl.first..l_string_tbl.last loop
-           l_string_tbl(i):= trim(both '"' from trim(both '''' from trim(l_string_tbl(i))));
-         end loop;
+       then
+           SELECT value
+           bulk collect into l_string_tbl
+           FROM json_table( p_json_array, '$[*]'
+                            COLUMNS (value PATH '$'
+                           )
+          ); 
        end if;
        return l_string_tbl;
     end json_array_to_string_tbl;
