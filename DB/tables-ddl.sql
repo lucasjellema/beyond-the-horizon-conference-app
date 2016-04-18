@@ -252,12 +252,18 @@ begin
   end loop;
  insert into bth_tags
  (display_label, tcy_id)
- select distinct ltrim(content_tag), 161 
+ select contenttag, 161
+ from (
+ select distinct ltrim(content_tag) contenttag
  from 
  ( select trim(column_value) content_tag 
    from   table(l_tags) 
- ); 
+ )
+ ) ctg
+ where not exists (select 'x' from bth_tags tg where lower(tg.display_label) = lower(ctg.contenttag))
+ ; 
 end;  
+
 
 declare 
   l_tags string_tbl_t ;

@@ -92,7 +92,9 @@ begin
           or
           ( instr(lower(tag.display_label), lower(p_search_term)) > 0
           ) 
-        )                       
+        )
+   order
+   by    tbg.tag_count desc                            
   ;
   p_tags := l_tags;
 end get_tags;
