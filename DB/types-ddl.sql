@@ -219,6 +219,7 @@ begin
             ||'"sessionId" : "'||self.id||'" '
             ||', "title" : "'||self.title||'" '
             ||', "speakers" : '||bth_speakers_api.json_speaker_tbl_summary(p_speakers => self.speakers)||' '
+            ||', "tags" : '||bth_tags_api.json_tag_tbl_summary(p_tags => self.tags)||' '
             ||'}';
   return l_json;         
 end to_json_summary;
