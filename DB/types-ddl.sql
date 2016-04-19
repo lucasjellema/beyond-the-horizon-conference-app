@@ -123,12 +123,7 @@ return varchar2
 is
   l_json    varchar2(32600);
 begin
-  l_json:= '{'
-            ||'"id" : "'||self.id||'" '
-            ||', "displayLabel" : "'||self.display_label||'" '
-            ||', "category" : "'||self.category||'" '
-            ||', "iconUrl" : "'||self.icon_url||'" '
-            ||'}';
+  l_json:= '"'||self.display_label||'"';
   return l_json;         
 end to_json_summary;
 
