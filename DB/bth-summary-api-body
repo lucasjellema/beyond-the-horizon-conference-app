@@ -1,0 +1,51 @@
+create or replace
+package body bth_summary_api
+is
+
+
+function json_summary
+return clob
+is
+l_json clob := to_clob('');
+  l_first boolean;
+begin
+  l_json := '{ "sessions":  ['; 
+  
+  --  ||ltrim(l_json,',')||']';
+
+  -- get all sessions
+  l_first:= true;
+  for ssn in (  select distinct ssn.id
+                from bth_sessions ssn
+                where lower(ssn.status) = 'accepted' ) loop      
+
+  -- and session details for each session
+      l_json := l_json||case l_first when false then ', ' end||bth_sessions_api.get_session_json( p_session_id=> ssn.id);
+      l_first:= false;
+   end loop;
+   l_json := l_json||'] ';
+
+  l_json := l_json||', "speakers":  ['; 
+  
+  -- get all speakers
+  -- add speaker details for each speaker
+  l_first:= true;
+  for skr in (  select distinct 
+                       s.psn_id  
+                from   bth_speakers s) loop      
+  -- add speaker details for each speaker
+
+      l_json := l_json||case l_first when false then ', ' end||bth_speakers_api.get_speaker_json( p_speaker_id=> skr.psn_id);
+      l_first:= false;
+   end loop;
+   l_json := l_json||'] ';
+
+  l_json := l_json||'} ';
+
+  return l_json;
+end json_summary;
+
+
+end bth_summary_api;
+
+

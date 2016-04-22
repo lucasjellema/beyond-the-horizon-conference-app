@@ -1,0 +1,54 @@
+create or replace
+package body bth_planning_api
+is
+
+
+function get_planning
+( p_round in varchar2
+, p_room in varchar2 
+, p_day in varchar2
+, p_time in varchar2
+) return planning_tbl_t
+is 
+  l_planning_tbl planning_tbl_t:= planning_tbl_t();
+begin
+  select planning_t( rom.id, slt.id, rom.display_label, rom.capacity, rom.location_description, slt.display_label, slt.start_time, pim.ssn_id, ssn.title
+  , (select LISTAGG(psn.first_name||' '||psn.last_name, ',') WITHIN GROUP (ORDER BY last_name) AS speakers
+     from bth_people psn join bth_speakers skr on (skr.psn_id= psn.id) 
+     where skr.ssn_id = ssn.id
+    )
+  )
+  bulk collect into l_planning_tbl
+  from   bth_planning_items pim
+       join
+       bth_rooms rom
+       on (pim.rom_id = rom.id)
+       join
+       bth_slots slt
+       on (pim.slt_id = slt.id)
+       left outer join
+       bth_sessions ssn
+       on (pim.ssn_id = ssn.id)
+;
+
+  return l_planning_tbl;
+end get_planning;
+
+
+function json_pln_tbl_summary
+( p_plan_items in  planning_tbl_t
+) return clob
+is
+  l_json clob := to_clob('');
+begin
+  if p_plan_items is not null and p_plan_items.count > 0
+  then
+    for i in p_plan_items.first .. p_plan_items.last loop
+      l_json := l_json||', '||p_plan_items(i).to_json;
+    end loop;
+  end if;
+  l_json := '{"planning": ['||ltrim(l_json,',')||'] }';
+  return l_json;
+end json_pln_tbl_summary;
+
+end bth_planning_api;

@@ -124,14 +124,22 @@ begin
        where  tbg.ssn_id = ssn.id
      )
    , ( select cast(collect(speaker_t(p.id, p.first_name, p.last_name)) as speaker_tbl_t)
-       from   bth_speakers s
+       from   bth_speakers sp
               join
               bth_people p
-              on (s.psn_id = p.id)
-       where  s.ssn_id = ssn.id
+              on (sp.psn_id = p.id)
+       where  sp.ssn_id = ssn.id
      )
-   , null /*planning planning_t */
-  )
+     , ( select planning_t ( rom.id, slt.id, rom.display_label, rom.capacity, rom.location_description, slt.display_label, slt.start_time, pim.ssn_id, null, null)
+       from   bth_planning_items pim
+              join
+              bth_rooms rom
+              on (pim.rom_id = rom.id)
+              join
+              bth_slots slt
+              on (pim.slt_id = slt.id)
+       where  pim.ssn_id = ssn.id)
+     )
   bulk collect into l_sessions
   from sessions s
        join
@@ -175,7 +183,7 @@ begin
   select session_t(
      ssn.id 
    , title
-   , null -- abstract    
+   , abstract    
    , target_audience 
    , experience_level
    , granularity 
@@ -198,8 +206,16 @@ begin
               on (s.psn_id = p.id)
        where  s.ssn_id = ssn.id
      )
-   , null /*planning planning_t */
-  )
+     , ( select planning_t ( rom.id, slt.id, rom.display_label, rom.capacity, rom.location_description, slt.display_label, slt.start_time, pim.ssn_id, null, null)
+       from   bth_planning_items pim
+              join
+              bth_rooms rom
+              on (pim.rom_id = rom.id)
+              join
+              bth_slots slt
+              on (pim.slt_id = slt.id)
+       where  pim.ssn_id = ssn.id)
+     )
    into l_session
   from bth_sessions ssn
 where ssn.id = p_session_id  ;

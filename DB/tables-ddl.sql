@@ -537,3 +537,38 @@ select *
      on (tbg.tag_id = t.id )
 group
 by    t.id
+
+
+insert into bth_planning_items
+(rom_id, slt_id)
+select  r.id
+,       s.id
+from    bth_rooms r
+        cross join
+        bth_slots s
+where   s.display_label like 'Round%'       
+
+
+
+-- get all planned items
+
+select rom.display_label room
+,      slt.display_label slot
+,      slt.start_time
+,      ssn.title session_title
+,      ssn.duration session_duration
+from   bth_planning_items pim
+       join
+       bth_rooms rom
+       on (pim.rom_id = rom.id)
+       join
+       bth_slots slt
+       on (pim.slt_id = slt.id)
+       left outer join
+       bth_sessions ssn
+       on (pim.ssn_id = ssn.id)
+where  slt.display_label like 'Round%'       
+and    slt.start_time < to_date('03-06-2016','DD-MM-YYYY') 
+order
+by     slt.start_time
+,      room

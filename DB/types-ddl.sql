@@ -132,7 +132,7 @@ end;
 
 
 create or replace 
-type planning_t as object (
+type planning_t force as object (
   rom_id number(10)
 , slt_id number(10)
 , room_display_label varchar2(100)
@@ -140,7 +140,43 @@ type planning_t as object (
 , room_location_description varchar2(2000)
 , slot_display_label varchar2(100)
 , slot_start_time timestamp
+, ssn_id number(10)
+, session_title varchar2(500)
+, speakers varchar2(500)
+, member function to_json
+  return varchar2
 );
+
+
+create or replace 
+type body planning_t as
+
+member function to_json
+return varchar2
+is
+  l_json    varchar2(32600);
+begin
+  l_json:= '{'
+            ||'"romId" : "'||self.rom_id||'" '
+            ||', "sltId" : "'||self.slt_id||'" '
+            ||', "room" : "'||self.room_display_label||'" '
+            ||', "roomCapacity" : "'||self.room_capacity||'" '
+            ||', "roomLocation" : "'||self.room_location_description||'" '
+            ||', "slot" : "'||self.slot_display_label||'" '
+            ||', "slotDate" : "'||to_char(self.slot_start_time,'DD-MM-YYYY')||'" '
+            ||', "slotStartTime" : "'||to_char(self.slot_start_time,'HH24:MI')||'" '
+            ||', "sessionId" : "'||self.ssn_id||'" '
+            ||', "title" : "'||self.session_title||'" '
+            ||', "speakers" : "'||self.speakers||'" '
+            ||'}';
+  return l_json;         
+end to_json;
+end;
+
+create or replace 
+type planning_tbl_t as table of planning_t;
+
+
 
 create or replace 
 type tag_tbl_t as table of tag_t;
@@ -172,6 +208,7 @@ type session_t force as object (
 ) NOT FINAL
 ;
 
+
 create or replace 
 type body session_t as
 
@@ -201,6 +238,7 @@ begin
             ||', "abstract" : "'||self.abstract||'" '
             ||', "speakers" : '||bth_speakers_api.json_speaker_tbl_summary(p_speakers => self.speakers)||' '
             ||', "tags" : '||bth_tags_api.json_tag_tbl_summary(p_tags => self.tags)||' '
+            ||', "planning" : '||case when self.planning is not null then self.planning.to_json else '{}' end||' '
             ||'}';
   return l_json;         
 end to_json;

@@ -29,7 +29,14 @@ procedure log(p_text in varchar2);
 end bth_util;
 
 
+create or replace
+package  bth_summary_api
+is
 
+function json_summary
+return clob;
+
+end bth_summary_api;
 
 
 create or replace
@@ -68,6 +75,10 @@ function json_session_tbl_summary
 ( p_sessions in session_tbl_t
 ) return clob;
 
+function get_session_json
+( p_session_id in number
+) return clob;
+
 function get_ssn_details_json_str_tbl
 ( p_session_id in number
 ) return  string_tbl_t
@@ -77,10 +88,23 @@ function get_related_json_str_tbl
 ) return  string_tbl_t
 ;
 
-
-
 end bth_sessions_api;
 
+create or replace 
+package bth_planning_api
+is
+function json_pln_tbl_summary
+( p_plan_items in  planning_tbl_t
+) return clob;
+
+function get_planning
+( p_round in varchar2
+, p_room in varchar2 
+, p_day in varchar2
+, p_time in varchar2
+) return planning_tbl_t;
+
+end bth_planning_api;
 
 create or replace
 package bth_speakers_api
@@ -101,6 +125,11 @@ function get_speakers_json
 , p_search_term in varchar2
 ) return clob
 ;
+
+function get_speaker_json
+( p_speaker_id in number
+) return clob;
+
 function get_speakers_json_string_tbl
 ( p_tags in tag_tbl_t
 , p_search_term in varchar2
