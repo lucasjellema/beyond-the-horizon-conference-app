@@ -6,7 +6,7 @@ var bodyParser = require('body-parser') // npm install body-parser
 var app = express();
 
 var PORT = process.env.PORT || 3000;
-var APP_VERSION = '0.0.1.41';
+var APP_VERSION = '0.0.1.44';
 
 //CORS middleware - taken from http://stackoverflow.com/questions/7067966/how-to-allow-cors-in-express-node-js
 var allowCrossDomain = function(req, res, next) {
@@ -48,6 +48,15 @@ app.get('/sessions/:sessionId', function(req,res){
 app.post('/sessions', function(req,res){
        handleAllSessions(req, res, req.body.filterTags, req.body.searchTerm,  req.body.speakers);
 } );
+
+app.get('/all', function(req,res){
+       handleAll(req, res);
+} );
+
+app.post('/planning', function(req,res){
+       handlePlanning(req, res, req.body.conferenceRound, req.body.conferenceRoom, req.body.conferenceDay,  req.body.conferenceTime);
+} );
+
 
 app.get('/sessions/related/:sessionId', function(req,res){
     var sessionId = req.params.sessionId;
@@ -130,6 +139,42 @@ function handleAllDepartments(request, response) {
 	});
 } //handleAllDepartments
 
+
+function handlePlanning(request, response, roundId, roomId, conferenceDay, conferenceTime) {
+    
+    console.log('planning , for round '+roundId+ " and roomId "+roomId+" and day and time  "+conferenceDay+"- "+conferenceTime );
+    handleDatabaseOperation( request, response, function (request, response, connection) {
+
+	  var selectStatement = "select lines.column_value line from   table(bth_util.clob_to_string_tbl_t(bth_planning_api.json_pln_tbl_summary( p_plan_items=>  bth_planning_api.get_planning( p_round => :roundId, p_room => :roomId, p_day => :day, p_time => :time)))) lines";
+	  connection.execute(   selectStatement   
+		, [roundId, roomId, conferenceDay,conferenceTime], {
+            outFormat: oracledb.OBJECT // Return the result as Object
+        }, function (err, result) {
+            if (err) {
+			  console.log('Error in execution of select statement'+err.message);
+              response.writeHead(500, {'Content-Type': 'application/json'});
+              response.end(JSON.stringify({
+                status: 500,
+                    message: "Error getting the sessions",
+                    detailed_message: err.message
+               })
+	          );  
+            } else {
+               response.writeHead(200, {'Content-Type': 'application/json'});
+               // all rows in result consist of a property with a LINE object; all the line objects should be glued together to form a single string that can be JSON parsed
+               var json='';
+               for (var i=0;i< result.rows.length;i++) {
+                   json=json + result.rows[i].LINE;
+               }// for
+               var sessions = JSON.parse(json);
+               response.end(JSON.stringify(sessions));
+              }
+			doRelease(connection);
+          }
+	  );
+
+	});
+} //handlePlanning
 
 function handleAllSessions(request, response, filterTags, searchTerm, speakers) {
     
@@ -237,6 +282,43 @@ function handleSession(request, response, sessionId) {
 
 	});
 } //handleSession
+
+
+
+function handleAll(request, response) {
+    
+    console.log('all ');
+    handleDatabaseOperation( request, response, function (request, response, connection) {
+	  var selectStatement = "select lines.column_value line from   table(bth_util.clob_to_string_tbl_t(bth_summary_api.json_summary)) lines";
+	  connection.execute(   selectStatement   
+		, [], {
+            outFormat: oracledb.OBJECT // Return the result as Object
+        }, function (err, result) {
+            if (err) {
+			  console.log('Error in execution of select statement'+err.message);
+              response.writeHead(500, {'Content-Type': 'application/json'});
+              response.end(JSON.stringify({
+                status: 500,
+                    message: "Error getting the sessions",
+                    detailed_message: err.message
+               })
+	          );  
+            } else {
+               response.writeHead(200, {'Content-Type': 'application/json'});
+               // all rows in result consist of a property with a LINE object; all the line objects should be glued together to form a single string that can be JSON parsed
+               var json='';
+               for (var i=0;i< result.rows.length;i++) {
+                   json=json + result.rows[i].LINE;
+               }// for
+               var sessions = JSON.parse(json);
+               response.end(JSON.stringify(sessions));
+              }
+			doRelease(connection);
+          }
+	  );
+
+	});
+} //handleAll
 
 
 function handleAllSpeakers(request, response) {
