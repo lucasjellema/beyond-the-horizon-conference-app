@@ -93,6 +93,12 @@ end bth_sessions_api;
 create or replace 
 package bth_planning_api
 is
+
+procedure plan_session
+( p_pim_id in number -- represents slot and room
+, p_ssn_id in number
+);
+
 function json_pln_tbl_summary
 ( p_plan_items in  planning_tbl_t
 ) return clob;
@@ -104,6 +110,10 @@ function get_planning
 , p_time in varchar2
 ) return planning_tbl_t;
 
+function get_planning_item
+( p_pim_id in number
+) return planning_t
+;
 end bth_planning_api;
 
 create or replace

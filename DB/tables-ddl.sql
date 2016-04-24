@@ -572,3 +572,118 @@ and    slt.start_time < to_date('03-06-2016','DD-MM-YYYY')
 order
 by     slt.start_time
 ,      room
+
+
+-- get all sessions in pivot formated
+
+select *
+from (
+select rom.display_label room
+,      slt.display_label slot
+,      slt.start_time
+,      pim.id
+,      ssn.title session_title
+,      ssn.duration session_duration
+,      (select LISTAGG(psn.first_name||' '||psn.last_name, ',') WITHIN GROUP (ORDER BY last_name) AS speakers
+        from bth_people psn join bth_speakers skr on (skr.psn_id= psn.id) 
+        where skr.ssn_id = ssn.id
+       ) speakers
+from   bth_planning_items pim
+       join
+       bth_rooms rom
+       on (pim.rom_id = rom.id)
+       join
+       bth_slots slt
+       on (pim.slt_id = slt.id)
+       left outer join
+       bth_sessions ssn
+       on (pim.ssn_id = ssn.id)
+where  slt.display_label like 'Round%'       
+and    slt.start_time < to_date('03-06-2016','DD-MM-YYYY') 
+)
+PIVOT (max(planning_t( null, null, null, null, null, null, null, null, session_title
+  , speakers)) as pim 
+  for (room) in ('Room 1' as Room1, 'Room 2' as Room2,'Room 3' as Room3,'Room 4' as Room4,'Room 5' as Room5,'Room 6' as Room6,'Room 7' as Room7,'Room 8' as Room8))
+order
+by     start_time
+
+
+
+-- get all sessions in pivot format - with a planning_t package per planned session
+
+select sch.*
+, (select planning_t( pim.id, ssn.title
+          , (select LISTAGG(psn.first_name||' '||psn.last_name, ',') WITHIN GROUP (ORDER BY last_name) AS speakers
+             from bth_people psn join bth_speakers skr on (skr.psn_id= psn.id) 
+             where skr.ssn_id = ssn.id
+            )
+            , pim.slt_id
+         ) 
+  from   bth_planning_items pim
+       join
+       bth_rooms rom
+       on (pim.rom_id = rom.id)
+       join
+       bth_slots slt
+       on (pim.slt_id = slt.id)
+       left outer join
+       bth_sessions ssn
+       on (pim.ssn_id = ssn.id)
+  where pim.id = sch.room1_pim
+  ) as room1_p
+from (
+select rom.display_label room
+,      slt.display_label slot
+,      slt.start_time
+,      pim.id
+from   bth_planning_items pim
+       join
+       bth_rooms rom
+       on (pim.rom_id = rom.id)
+       join
+       bth_slots slt
+       on (pim.slt_id = slt.id)
+where  slt.display_label like 'Round%'       
+and    slt.start_time < to_date('03-06-2016','DD-MM-YYYY') 
+)
+PIVOT (max(id) as pim 
+  for (room) in ('Room 1' as Room1, 'Room 2' as Room2,'Room 3' as Room3,'Room 4' as Room4,'Room 5' as Room5,'Room 6' as Room6,'Room 7' as Room7,'Room 8' as Room8)
+) sch
+order
+by     start_time
+
+
+
+-- select schedule using get_planning_item function to get single planning_t for a  slot (maybe not super performance but pretty convenien)
+select sch.slot
+,      sch.start_time
+, bth_planning_api.get_planning_item( p_pim_id => sch.room1_pim) as room1_pim
+, bth_planning_api.get_planning_item( p_pim_id => sch.room2_pim) as room2_pim
+, bth_planning_api.get_planning_item( p_pim_id => sch.room3_pim) as room3_pim
+, bth_planning_api.get_planning_item( p_pim_id => sch.room4_pim) as room4_pim
+, bth_planning_api.get_planning_item( p_pim_id => sch.room5_pim) as room5_pim
+, bth_planning_api.get_planning_item( p_pim_id => sch.room6_pim) as room6_pim
+, bth_planning_api.get_planning_item( p_pim_id => sch.room7_pim) as room7_pim
+, bth_planning_api.get_planning_item( p_pim_id => sch.room8_pim) as room8_pim
+from (
+select rom.display_label room
+,      slt.display_label slot
+,      slt.start_time
+,      pim.id
+from   bth_planning_items pim
+       join
+       bth_rooms rom
+       on (pim.rom_id = rom.id)
+       join
+       bth_slots slt
+       on (pim.slt_id = slt.id)
+where  slt.display_label like 'Round%'       
+and    slt.start_time < to_date('03-06-2016','DD-MM-YYYY') 
+)
+PIVOT (max(id) as pim 
+  for (room) in ('Room 1' as Room1, 'Room 2' as Room2,'Room 3' as Room3,'Room 4' as Room4,'Room 5' as Room5,'Room 6' as Room6,'Room 7' as Room7,'Room 8' as Room8)
+) sch
+order
+by     start_time
+
+

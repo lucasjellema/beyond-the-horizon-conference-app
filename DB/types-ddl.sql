@@ -133,7 +133,8 @@ end;
 
 create or replace 
 type planning_t force as object (
-  rom_id number(10)
+  id number(10)  
+ , rom_id number(10)
 , slt_id number(10)
 , room_display_label varchar2(100)
 , room_capacity number(4,0)
@@ -143,6 +144,26 @@ type planning_t force as object (
 , ssn_id number(10)
 , session_title varchar2(500)
 , speakers varchar2(500)
+, constructor function planning_t 
+(  rom_id in number
+, slt_id in number
+, room_display_label in varchar2
+, room_capacity in number
+, room_location_description in varchar2
+, slot_display_label in varchar2
+, slot_start_time in timestamp
+, ssn_id in number
+, session_title in varchar2
+, speakers in varchar2
+) return self as result
+, constructor function planning_t
+              ( id in number
+              , title in varchar2
+              , speakers  in varchar2
+              , slt_id in number
+              ) return self as result
+, map member function map_planning_t
+  return number
 , member function to_json
   return varchar2
 );
@@ -150,6 +171,57 @@ type planning_t force as object (
 
 create or replace 
 type body planning_t as
+
+map member
+function map_planning_t
+return number
+is
+begin  
+  return 1;
+end map_planning_t;  
+
+constructor function planning_t
+              ( id in number
+              , title in varchar2
+              , speakers  in varchar2
+              , slt_id in number
+              ) return self as result
+is
+begin
+  self.id:= id;
+  self.session_title := title;
+  self.speakers:= speakers;
+  self.slt_id:= slt_id;
+  return;
+end;
+
+constructor function planning_t 
+(  rom_id in number
+, slt_id in number
+, room_display_label in varchar2
+, room_capacity in number
+, room_location_description in varchar2
+, slot_display_label in varchar2
+, slot_start_time in timestamp
+, ssn_id in number
+, session_title in varchar2
+, speakers in varchar2
+) return self as result
+is
+begin
+  self.rom_id:= rom_id;
+  self.slt_id:= slt_id;
+  self.ssn_id:= ssn_id;
+  self.slot_display_label := slot_display_label; 
+  self.room_location_description := room_location_description; 
+  self.slot_start_time :=slot_start_time ; 
+  self.room_display_label := room_display_label; 
+  self.room_capacity :=room_capacity ; 
+  self.session_title := session_title;
+  self.speakers:= speakers;
+  return;
+end;
+
 
 member function to_json
 return varchar2
@@ -172,6 +244,10 @@ begin
   return l_json;         
 end to_json;
 end;
+
+
+
+
 
 create or replace 
 type planning_tbl_t as table of planning_t;

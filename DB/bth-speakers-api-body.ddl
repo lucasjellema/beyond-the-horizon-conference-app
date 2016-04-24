@@ -121,8 +121,6 @@ function get_speaker_json
 ( p_speaker_id in number
 ) return clob
 is
-  l_speaker speaker_t;
-  
 begin
   return get_speaker( p_speaker_id => p_speaker_id).to_json;
 end;

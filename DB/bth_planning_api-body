@@ -2,6 +2,23 @@ create or replace
 package body bth_planning_api
 is
 
+procedure plan_session
+( p_pim_id in number -- represents slot and room
+, p_ssn_id in number
+) is
+begin
+  -- the simplest action: update pim and set ssn_id
+  -- regardless of duration of session (could be Quickie or MC) , and of current contents of pim
+  update bth_planning_items pim
+  set pim.ssn_id = case p_ssn_id when -1 then null else p_ssn_id end 
+  where  pim.id = p_pim_id;  
+  -- and: remove ssn from other planning_items where it may currently sit
+  update bth_planning_items pim
+  set pim.ssn_id = null
+  where  pim.id != p_pim_id
+  and    pim.ssn_id = p_ssn_id;  
+end plan_session;
+
 
 function get_planning
 ( p_round in varchar2
@@ -50,5 +67,35 @@ begin
   l_json := '{"planning": ['||ltrim(l_json,',')||'] }';
   return l_json;
 end json_pln_tbl_summary;
+
+function get_planning_item
+( p_pim_id in number
+) return planning_t
+as
+  l_planning planning_t;
+begin
+select planning_t( pim.id, ssn.title
+          , (select LISTAGG(psn.first_name||' '||psn.last_name, ',') WITHIN GROUP (ORDER BY last_name) AS speakers
+             from bth_people psn join bth_speakers skr on (skr.psn_id= psn.id) 
+             where skr.ssn_id = ssn.id
+            )
+            , pim.slt_id
+         ) 
+  into l_planning
+  from   bth_planning_items pim
+       join
+       bth_rooms rom
+       on (pim.rom_id = rom.id)
+       join
+       bth_slots slt
+       on (pim.slt_id = slt.id)
+       left outer join
+       bth_sessions ssn
+       on (pim.ssn_id = ssn.id)
+  where pim.id = p_pim_id
+  ;
+  return l_planning;
+  
+end get_planning_item;  
 
 end bth_planning_api;
