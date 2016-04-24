@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html>
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:af="http://xmlns.oracle.com/adf/faces/rich">
+    <af:document title="Slots.jsf" id="d1">
+        <af:messages id="m1"/>
+        <af:form id="f1">
+            <af:panelSplitter orientation="vertical" splitterPosition="50" id="ps1">
+                <f:facet name="first"/>
+                <f:facet name="second">
+                    <af:panelCollection id="pc1">
+                        <f:facet name="menus"/>
+                        <f:facet name="toolbar">
+                            <af:toolbar id="t2">
+                                <af:button actionListener="#{bindings.Commit.execute}" text="Commit"
+                                           disabled="#{!bindings.Commit.enabled}" id="b1"/>
+                            </af:toolbar>
+                        </f:facet>
+                        <f:facet name="statusbar"/>
+                        <af:table value="#{bindings.BthSlotView1.collectionModel}" var="row"
+                                  rows="#{bindings.BthSlotView1.rangeSize}"
+                                  emptyText="#{bindings.BthSlotView1.viewable ? 'No data to display.' : 'Access Denied.'}"
+                                  rowBandingInterval="0" fetchSize="#{bindings.BthSlotView1.rangeSize}"
+                                  filterModel="#{bindings.BthSlotView1Query.queryDescriptor}"
+                                  queryListener="#{bindings.BthSlotView1Query.processQuery}" filterVisible="true"
+                                  varStatus="vs" id="t1">
+                            <af:column sortProperty="#{bindings.BthSlotView1.hints.Id.name}" filterable="true"
+                                       sortable="true" headerText="#{bindings.BthSlotView1.hints.Id.label}" id="c1">
+                                <af:inputText value="#{row.bindings.Id.inputValue}"
+                                              label="#{bindings.BthSlotView1.hints.Id.label}"
+                                              required="#{bindings.BthSlotView1.hints.Id.mandatory}"
+                                              columns="#{bindings.BthSlotView1.hints.Id.displayWidth}"
+                                              maximumLength="#{bindings.BthSlotView1.hints.Id.precision}"
+                                              shortDesc="#{bindings.BthSlotView1.hints.Id.tooltip}" id="it1">
+                                    <f:validator binding="#{row.bindings.Id.validator}"/>
+                                    <af:convertNumber groupingUsed="false"
+                                                      pattern="#{bindings.BthSlotView1.hints.Id.format}"/>
+                                </af:inputText>
+                            </af:column>
+                            <af:column sortProperty="#{bindings.BthSlotView1.hints.DisplayLabel.name}" filterable="true"
+                                       sortable="true" headerText="#{bindings.BthSlotView1.hints.DisplayLabel.label}"
+                                       id="c2">
+                                <af:inputText value="#{row.bindings.DisplayLabel.inputValue}"
+                                              label="#{bindings.BthSlotView1.hints.DisplayLabel.label}"
+                                              required="#{bindings.BthSlotView1.hints.DisplayLabel.mandatory}"
+                                              columns="#{bindings.BthSlotView1.hints.DisplayLabel.displayWidth}"
+                                              maximumLength="#{bindings.BthSlotView1.hints.DisplayLabel.precision}"
+                                              shortDesc="#{bindings.BthSlotView1.hints.DisplayLabel.tooltip}" id="it2">
+                                    <f:validator binding="#{row.bindings.DisplayLabel.validator}"/>
+                                </af:inputText>
+                            </af:column>
+                            <af:column sortProperty="#{bindings.BthSlotView1.hints.StartTime.name}" filterable="true"
+                                       sortable="true" headerText="#{bindings.BthSlotView1.hints.StartTime.label}"
+                                       id="c3">
+                                <f:facet name="filter">
+                                    <af:inputDate value="#{bindings.BthSlotView1Query.queryDescriptor.filterConjunctionCriterion.criterionMap.StartTime.value}"
+                                                  id="id1">
+                                        <af:convertDateTime pattern="#{bindings.BthSlotView1.hints.StartTime.format}"/>
+                                    </af:inputDate>
+                                </f:facet>
+                                <af:inputDate value="#{row.bindings.StartTime.inputValue}"
+                                              label="#{bindings.BthSlotView1.hints.StartTime.label}"
+                                              required="#{bindings.BthSlotView1.hints.StartTime.mandatory}"
+                                              columns="#{bindings.BthSlotView1.hints.StartTime.displayWidth}"
+                                              shortDesc="#{bindings.BthSlotView1.hints.StartTime.tooltip}" id="id2">
+                                    <f:validator binding="#{row.bindings.StartTime.validator}"/>
+                                    <af:convertDateTime pattern="#{bindings.BthSlotView1.hints.StartTime.format}"/>
+                                </af:inputDate>
+                            </af:column>
+                        </af:table>
+                    </af:panelCollection>
+         
+                </f:facet>
+            </af:panelSplitter>
+        </af:form>
+    </af:document>
+</f:view>

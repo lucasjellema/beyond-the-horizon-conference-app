@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html>
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:af="http://xmlns.oracle.com/adf/faces/rich">
+    <af:document title="Tags2.jsf" id="d1">
+        <af:messages id="m1"/>
+        <af:form id="f1">
+            <af:panelGridLayout id="pgl1">
+                <af:gridRow height="50px" id="gr2">
+                    <af:gridCell width="100%" halign="stretch" valign="stretch" id="gc2">
+                        <!-- Header -->
+                    </af:gridCell>
+                </af:gridRow>
+                <af:gridRow height="100%" id="gr1">
+                    <af:gridCell width="100%" halign="stretch" valign="stretch" id="gc1">
+                        <af:panelSplitter orientation="horizontal" splitterPosition="100" positionedFromEnd="true"
+                                          id="ps1">
+                            <f:facet name="first">
+                                <!-- Content -->
+                            </f:facet>
+                            <f:facet name="second">
+                                <!-- Right -->
+                                <af:table value="#{bindings.BthTagView1.collectionModel}" var="row"
+                                          rows="#{bindings.BthTagView1.rangeSize}"
+                                          emptyText="#{bindings.BthTagView1.viewable ? 'No data to display.' : 'Access Denied.'}"
+                                          rowBandingInterval="0" fetchSize="#{bindings.BthTagView1.rangeSize}" id="t1">
+                                    <af:column sortProperty="#{bindings.BthTagView1.hints.DisplayLabel1.name}"
+                                               sortable="true"
+                                               headerText="#{bindings.BthTagView1.hints.DisplayLabel1.label}" id="c1">
+                                        <af:outputText value="#{row.DisplayLabel1}"
+                                                       shortDesc="#{bindings.BthTagView1.hints.DisplayLabel1.tooltip}"
+                                                       id="ot1"/>
+                                    </af:column>
+                                    <af:column sortProperty="#{bindings.BthTagView1.hints.DisplayLabel.name}"
+                                               sortable="true"
+                                               headerText="#{bindings.BthTagView1.hints.DisplayLabel.label}" id="c2">
+                                        <af:outputText value="#{row.DisplayLabel}"
+                                                       shortDesc="#{bindings.BthTagView1.hints.DisplayLabel.tooltip}"
+                                                       id="ot2"/>
+                                    </af:column>
+                                    <af:column sortProperty="#{bindings.BthTagView1.hints.IconUrl.name}" sortable="true"
+                                               headerText="#{bindings.BthTagView1.hints.IconUrl.label}" id="c3">
+                                        <af:outputText value="#{row.IconUrl}"
+                                                       shortDesc="#{bindings.BthTagView1.hints.IconUrl.tooltip}"
+                                                       id="ot3"/>
+                                    </af:column>
+                                    <af:column sortProperty="#{bindings.BthTagView1.hints.TagBindingCount.name}"
+                                               sortable="true"
+                                               headerText="#{bindings.BthTagView1.hints.TagBindingCount.label}" id="c4">
+                                        <af:outputText value="#{row.TagBindingCount}"
+                                                       shortDesc="#{bindings.BthTagView1.hints.TagBindingCount.tooltip}"
+                                                       id="ot4">
+                                            <af:convertNumber groupingUsed="false"
+                                                              pattern="#{bindings.BthTagView1.hints.TagBindingCount.format}"/>
+                                        </af:outputText>
+                                    </af:column>
+                                </af:table>
+                            </f:facet>
+                        </af:panelSplitter>
+                    </af:gridCell>
+                </af:gridRow>
+            </af:panelGridLayout>
+        </af:form>
+    </af:document>
+</f:view>

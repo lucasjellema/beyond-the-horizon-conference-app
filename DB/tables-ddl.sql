@@ -687,3 +687,40 @@ order
 by     start_time
 
 
+create or replace 
+view planning_schedule
+as
+select sch.slot
+,      sch.start_time
+, bth_planning_api.get_planning_item( p_pim_id => sch.room1_pim) as room1_pim
+, bth_planning_api.get_planning_item( p_pim_id => sch.room2_pim) as room2_pim
+, bth_planning_api.get_planning_item( p_pim_id => sch.room3_pim) as room3_pim
+, bth_planning_api.get_planning_item( p_pim_id => sch.room4_pim) as room4_pim
+, bth_planning_api.get_planning_item( p_pim_id => sch.room5_pim) as room5_pim
+, bth_planning_api.get_planning_item( p_pim_id => sch.room6_pim) as room6_pim
+, bth_planning_api.get_planning_item( p_pim_id => sch.room7_pim) as room7_pim
+, bth_planning_api.get_planning_item( p_pim_id => sch.room8_pim) as room8_pim
+from (
+select rom.display_label room
+,      slt.display_label slot
+,      slt.start_time
+,      pim.id
+from   bth_planning_items pim
+       join
+       bth_rooms rom
+       on (pim.rom_id = rom.id)
+       join
+       bth_slots slt
+       on (pim.slt_id = slt.id)
+where  slt.display_label like 'Round%'       
+)
+PIVOT (max(id) as pim 
+  for (room) in ('Room 1' as Room1, 'Room 2' as Room2,'Room 3' as Room3,'Room 4' as Room4,'Room 5' as Room5,'Room 6' as Room6,'Room 7' as Room7,'Room 8' as Room8)
+) sch
+order
+by     start_time
+
+select * from planning_schedule
+/
+
+

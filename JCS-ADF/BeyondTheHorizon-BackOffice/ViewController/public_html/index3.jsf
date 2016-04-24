@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html>
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:af="http://xmlns.oracle.com/adf/faces/rich">
+    <af:document title="index3.jsf" id="d1">
+        <af:messages id="m1"/>
+        <af:form id="f1">
+            <af:panelGridLayout id="pgl1">
+                <af:gridRow height="50px" id="gr1">
+                    <af:gridCell width="100%" halign="stretch" valign="stretch" id="gc1">
+                        <!-- Header -->
+                        <af:panelHeader text="panelHeader Index 3 1" id="ph1">
+                            <f:facet name="context"/>
+                            <f:facet name="menuBar"/>
+                            <f:facet name="toolbar"/>
+                            <f:facet name="legend"/>
+                            <f:facet name="info"/>
+                        </af:panelHeader>
+                    </af:gridCell>
+                </af:gridRow>
+                <af:gridRow height="100%" id="gr2">
+                    <af:gridCell width="100%" halign="stretch" valign="stretch" id="gc2">
+                        <!-- Content -->
+                        <af:table value="#{bindings.BthRoomView1.collectionModel}" var="row"
+                                  rows="#{bindings.BthRoomView1.rangeSize}"
+                                  emptyText="#{bindings.BthRoomView1.viewable ? 'No data to display.' : 'Access Denied.'}"
+                                  rowBandingInterval="0" fetchSize="#{bindings.BthRoomView1.rangeSize}"
+                                  filterModel="#{bindings.BthRoomView1Query.queryDescriptor}"
+                                  queryListener="#{bindings.BthRoomView1Query.processQuery}" filterVisible="true"
+                                  varStatus="vs" id="t1">
+                            <af:column sortProperty="#{bindings.BthRoomView1.hints.Id.name}" filterable="true"
+                                       sortable="true" headerText="#{bindings.BthRoomView1.hints.Id.label}" id="c1">
+                                <af:inputText value="#{row.bindings.Id.inputValue}"
+                                              label="#{bindings.BthRoomView1.hints.Id.label}"
+                                              required="#{bindings.BthRoomView1.hints.Id.mandatory}"
+                                              columns="#{bindings.BthRoomView1.hints.Id.displayWidth}"
+                                              maximumLength="#{bindings.BthRoomView1.hints.Id.precision}"
+                                              shortDesc="#{bindings.BthRoomView1.hints.Id.tooltip}" id="it1">
+                                    <f:validator binding="#{row.bindings.Id.validator}"/>
+                                    <af:convertNumber groupingUsed="false"
+                                                      pattern="#{bindings.BthRoomView1.hints.Id.format}"/>
+                                </af:inputText>
+                            </af:column>
+                            <af:column sortProperty="#{bindings.BthRoomView1.hints.DisplayLabel.name}" filterable="true"
+                                       sortable="true" headerText="#{bindings.BthRoomView1.hints.DisplayLabel.label}"
+                                       id="c2">
+                                <af:inputText value="#{row.bindings.DisplayLabel.inputValue}"
+                                              label="#{bindings.BthRoomView1.hints.DisplayLabel.label}"
+                                              required="#{bindings.BthRoomView1.hints.DisplayLabel.mandatory}"
+                                              columns="#{bindings.BthRoomView1.hints.DisplayLabel.displayWidth}"
+                                              maximumLength="#{bindings.BthRoomView1.hints.DisplayLabel.precision}"
+                                              shortDesc="#{bindings.BthRoomView1.hints.DisplayLabel.tooltip}" id="it2">
+                                    <f:validator binding="#{row.bindings.DisplayLabel.validator}"/>
+                                </af:inputText>
+                            </af:column>
+                            <af:column sortProperty="#{bindings.BthRoomView1.hints.Capacity.name}" filterable="true"
+                                       sortable="true" headerText="#{bindings.BthRoomView1.hints.Capacity.label}"
+                                       id="c3">
+                                <af:inputText value="#{row.bindings.Capacity.inputValue}"
+                                              label="#{bindings.BthRoomView1.hints.Capacity.label}"
+                                              required="#{bindings.BthRoomView1.hints.Capacity.mandatory}"
+                                              columns="#{bindings.BthRoomView1.hints.Capacity.displayWidth}"
+                                              maximumLength="#{bindings.BthRoomView1.hints.Capacity.precision}"
+                                              shortDesc="#{bindings.BthRoomView1.hints.Capacity.tooltip}" id="it3">
+                                    <f:validator binding="#{row.bindings.Capacity.validator}"/>
+                                    <af:convertNumber groupingUsed="false"
+                                                      pattern="#{bindings.BthRoomView1.hints.Capacity.format}"/>
+                                </af:inputText>
+                            </af:column>
+                            <af:column sortProperty="#{bindings.BthRoomView1.hints.LocationDescription.name}"
+                                       filterable="true" sortable="true"
+                                       headerText="#{bindings.BthRoomView1.hints.LocationDescription.label}" id="c4">
+                                <af:inputText value="#{row.bindings.LocationDescription.inputValue}"
+                                              label="#{bindings.BthRoomView1.hints.LocationDescription.label}"
+                                              required="#{bindings.BthRoomView1.hints.LocationDescription.mandatory}"
+                                              columns="#{bindings.BthRoomView1.hints.LocationDescription.displayWidth}"
+                                              maximumLength="#{bindings.BthRoomView1.hints.LocationDescription.precision}"
+                                              shortDesc="#{bindings.BthRoomView1.hints.LocationDescription.tooltip}"
+                                              id="it4">
+                                    <f:validator binding="#{row.bindings.LocationDescription.validator}"/>
+                                </af:inputText>
+                            </af:column>
+                        </af:table>
+                    </af:gridCell>
+                </af:gridRow>
+            </af:panelGridLayout>
+        </af:form>
+    </af:document>
+</f:view>

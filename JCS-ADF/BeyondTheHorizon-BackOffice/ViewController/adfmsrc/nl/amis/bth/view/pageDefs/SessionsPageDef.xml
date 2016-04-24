@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<pageDefinition xmlns="http://xmlns.oracle.com/adfm/uimodel" version="12.1.3.13.52" id="SessionsPageDef"
+                Package="nl.amis.bth.view.pageDefs">
+  <parameters/>
+  <executables>
+    <variableIterator id="variables">
+      <variable Type="void" Name="execTagsToSession_return" IsQueriable="false" IsUpdateable="0"
+                DefaultValue="${bindings.execTagsToSession.result}"/>
+      <variable Type="java.lang.String" Name="execTagsToSession_tags" IsQueriable="false"/>
+    </variableIterator>
+    <iterator Binds="SessionsView2" RangeSize="25" DataControl="BthAppModuleDataControl" id="SessionsView2Iterator"/>
+    <searchRegion Binds="SessionsView2Iterator" Criteria=""
+                  Customizer="oracle.jbo.uicli.binding.JUSearchBindingCustomizer" id="SessionsView2Query"/>
+    <iterator Binds="BthSessionView2" RangeSize="25" DataControl="BthAppModuleDataControl"
+              id="BthSessionView2Iterator"/>
+    <iterator Binds="BthTagBindingView3" RangeSize="25" DataControl="BthAppModuleDataControl"
+              id="BthTagBindingView3Iterator"/>
+    <iterator Binds="BthSpeakerView3" RangeSize="25" DataControl="BthAppModuleDataControl"
+              id="BthSpeakerView3Iterator"/>
+    <iterator Binds="BthPlanningItemView3" RangeSize="25" DataControl="BthAppModuleDataControl"
+              id="BthPlanningItemView3Iterator"/>
+  </executables>
+  <bindings>
+    <tree IterBinding="SessionsView2Iterator" id="SessionsView2">
+      <nodeDefinition DefName="nl.amis.bth.model.SessionsView" Name="SessionsView20">
+        <AttrNames>
+          <Item Value="Title"/>
+          <Item Value="Speakers"/>
+          <Item Value="Status"/>
+          <Item Value="SsnId"/>
+          <Item Value="PlannedYn"/>
+        </AttrNames>
+      </nodeDefinition>
+    </tree>
+    <attributeValues IterBinding="BthSessionView2Iterator" id="Id">
+      <AttrNames>
+        <Item Value="Id"/>
+      </AttrNames>
+    </attributeValues>
+    <attributeValues IterBinding="BthSessionView2Iterator" id="Title">
+      <AttrNames>
+        <Item Value="Title"/>
+      </AttrNames>
+    </attributeValues>
+    <attributeValues IterBinding="BthSessionView2Iterator" id="Abstract1">
+      <AttrNames>
+        <Item Value="Abstract1"/>
+      </AttrNames>
+    </attributeValues>
+    <attributeValues IterBinding="BthSessionView2Iterator" id="AbstractString">
+      <AttrNames>
+        <Item Value="AbstractString"/>
+      </AttrNames>
+    </attributeValues>
+    <attributeValues IterBinding="BthSessionView2Iterator" id="TargetAudience">
+      <AttrNames>
+        <Item Value="TargetAudience"/>
+      </AttrNames>
+    </attributeValues>
+    <attributeValues IterBinding="BthSessionView2Iterator" id="ExperienceLevel">
+      <AttrNames>
+        <Item Value="ExperienceLevel"/>
+      </AttrNames>
+    </attributeValues>
+    <attributeValues IterBinding="BthSessionView2Iterator" id="Granularity">
+      <AttrNames>
+        <Item Value="Granularity"/>
+      </AttrNames>
+    </attributeValues>
+    <attributeValues IterBinding="BthSessionView2Iterator" id="Duration">
+      <AttrNames>
+        <Item Value="Duration"/>
+      </AttrNames>
+    </attributeValues>
+    <attributeValues IterBinding="BthSessionView2Iterator" id="SubmissionIdentifier">
+      <AttrNames>
+        <Item Value="SubmissionIdentifier"/>
+      </AttrNames>
+    </attributeValues>
+    <attributeValues IterBinding="BthSessionView2Iterator" id="Status">
+      <AttrNames>
+        <Item Value="Status"/>
+      </AttrNames>
+    </attributeValues>
+    <attributeValues IterBinding="BthSessionView2Iterator" id="Demos">
+      <AttrNames>
+        <Item Value="Demos"/>
+      </AttrNames>
+    </attributeValues>
+    <attributeValues IterBinding="BthSessionView2Iterator" id="Notes">
+      <AttrNames>
+        <Item Value="Notes"/>
+      </AttrNames>
+    </attributeValues>
+    <attributeValues IterBinding="BthSessionView2Iterator" id="Cospeakers">
+      <AttrNames>
+        <Item Value="Cospeakers"/>
+      </AttrNames>
+    </attributeValues>
+    <action IterBinding="BthSessionView2Iterator" id="First" RequiresUpdateModel="true" Action="first"/>
+    <action IterBinding="BthSessionView2Iterator" id="Previous" RequiresUpdateModel="true" Action="previous"/>
+    <action IterBinding="BthSessionView2Iterator" id="Next" RequiresUpdateModel="true" Action="next"/>
+    <action IterBinding="BthSessionView2Iterator" id="Last" RequiresUpdateModel="true" Action="last"/>
+    <action id="Commit" RequiresUpdateModel="true" Action="commitTransaction" DataControl="BthAppModuleDataControl"/>
+    <tree IterBinding="BthTagBindingView3Iterator" id="BthTagBindingView3">
+      <nodeDefinition DefName="nl.amis.bth.model.BthTagBindingView" Name="BthTagBindingView30">
+        <AttrNames>
+          <Item Value="Id"/>
+          <Item Value="TagId"/>
+          <Item Value="TagDisplayLabel"/>
+          <Item Value="IconUrl"/>
+          <Item Value="TagCategoryDisplayLabel"/>
+        </AttrNames>
+      </nodeDefinition>
+    </tree>
+    <action IterBinding="BthTagBindingView3Iterator" id="Delete" RequiresUpdateModel="false" Action="removeCurrentRow"/>
+    <methodAction id="execTagsToSession" RequiresUpdateModel="true" Action="invokeMethod" MethodName="execTagsToSession"
+                  IsViewObjectMethod="true" DataControl="BthAppModuleDataControl"
+                  InstanceName="data.BthAppModuleDataControl.BthTagBindingView3"
+                  ReturnName="data.BthAppModuleDataControl.methodResults.execTagsToSession_BthAppModuleDataControl_BthTagBindingView3_execTagsToSession_result">
+      <NamedData NDName="tags" NDType="java.lang.String" NDValue="${bindings.execTagsToSession_tags}"/>
+      <NamedData NDName="ssnId" NDType="java.lang.Integer" NDValue="${bindings.Id.inputValue}"/>
+    </methodAction>
+    <attributeValues IterBinding="variables" id="tags">
+      <AttrNames>
+        <Item Value="execTagsToSession_tags"/>
+      </AttrNames>
+    </attributeValues>
+    <tree IterBinding="BthSpeakerView3Iterator" id="BthSpeakerView3">
+      <nodeDefinition DefName="nl.amis.bth.model.BthSpeakerView" Name="BthSpeakerView30">
+        <AttrNames>
+          <Item Value="Contribution"/>
+          <Item Value="FirstName"/>
+          <Item Value="LastName"/>
+        </AttrNames>
+      </nodeDefinition>
+    </tree>
+    <tree IterBinding="BthPlanningItemView3Iterator" id="BthPlanningItemView3">
+      <nodeDefinition DefName="nl.amis.bth.model.BthPlanningItemView" Name="BthPlanningItemView30">
+        <AttrNames>
+          <Item Value="Slot"/>
+          <Item Value="Room"/>
+        </AttrNames>
+      </nodeDefinition>
+    </tree>
+  </bindings>
+</pageDefinition>

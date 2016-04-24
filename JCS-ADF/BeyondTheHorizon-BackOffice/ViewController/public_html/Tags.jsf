@@ -1,0 +1,112 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html>
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:af="http://xmlns.oracle.com/adf/faces/rich">
+    <af:document title="Tags.jsf" id="d1">
+        <af:messages id="m1"/>
+        <af:form id="f1">
+            <af:panelSplitter orientation="vertical" splitterPosition="120" id="ps1">
+                <f:facet name="first">
+                    <af:panelHeader text="Tags Overview - Beyond the Horizon - Back Office Application" id="ph1">
+                        <f:facet name="context"/>
+                        <f:facet name="menuBar"/>
+                        <f:facet name="toolbar"/>
+                        <f:facet name="legend"/>
+                        <f:facet name="info"/>
+                        <af:panelFormLayout id="pfl1" rows="3">
+                            <af:panelGroupLayout layout="horizontal" id="pgl1">
+                                <f:facet name="separator">
+                                    <af:spacer width="10" height="1" id="s1"/>
+                                </f:facet>
+                                
+                                <af:button actionListener="#{bindings.Commit.execute}" text="Commit"
+                                           disabled="#{!bindings.Commit.enabled}" id="b5"/>
+                            </af:panelGroupLayout>
+                            <af:image source="amis-conference.jpg" id="i1" inlineStyle="height:80px;width:300px"/>
+                        </af:panelFormLayout>
+                    </af:panelHeader>
+                </f:facet>
+                <f:facet name="second">
+                    <af:panelSplitter orientation="horizontal" splitterPosition="300" id="ps1a">
+                        <f:facet name="first"/>
+                        <f:facet name="second">
+                            <af:table value="#{bindings.BthTagView1.collectionModel}" var="row"
+                                      rows="#{bindings.BthTagView1.rangeSize}"
+                                      emptyText="#{bindings.BthTagView1.viewable ? 'No data to display.' : 'Access Denied.'}"
+                                      rowBandingInterval="0" fetchSize="#{bindings.BthTagView1.rangeSize}"
+                                      filterModel="#{bindings.BthTagView1Query.queryDescriptor}"
+                                      queryListener="#{bindings.BthTagView1Query.processQuery}" filterVisible="true"
+                                      varStatus="vs" id="t1" >
+                                <af:column sortProperty="#{bindings.BthTagView1.hints.DisplayLabel1.name}"
+                                           filterable="true" sortable="true"
+                                           headerText="#{bindings.BthTagView1.hints.DisplayLabel1.label}" id="c1">
+                                    <af:inputText value="#{row.bindings.DisplayLabel1.inputValue}"
+                                                  label="#{bindings.BthTagView1.hints.DisplayLabel1.label}"
+                                                  required="#{bindings.BthTagView1.hints.DisplayLabel1.mandatory}"
+                                                  columns="#{bindings.BthTagView1.hints.DisplayLabel1.displayWidth}"
+                                                  maximumLength="#{bindings.BthTagView1.hints.DisplayLabel1.precision}"
+                                                  shortDesc="#{bindings.BthTagView1.hints.DisplayLabel1.tooltip}"
+                                                  id="it1">
+                                        <f:validator binding="#{row.bindings.DisplayLabel1.validator}"/>
+                                    </af:inputText>
+                                </af:column>
+                                <af:column sortProperty="#{bindings.BthTagView1.hints.DisplayLabel.name}"
+                                           filterable="true" sortable="true"
+                                           headerText="#{bindings.BthTagView1.hints.DisplayLabel.label}" id="c2">
+                                    <af:inputText value="#{row.bindings.DisplayLabel.inputValue}"
+                                                  label="#{bindings.BthTagView1.hints.DisplayLabel.label}"
+                                                  required="#{bindings.BthTagView1.hints.DisplayLabel.mandatory}"
+                                                  columns="#{bindings.BthTagView1.hints.DisplayLabel.displayWidth}"
+                                                  maximumLength="#{bindings.BthTagView1.hints.DisplayLabel.precision}"
+                                                  shortDesc="#{bindings.BthTagView1.hints.DisplayLabel.tooltip}"
+                                                  id="it2">
+                                        <f:validator binding="#{row.bindings.DisplayLabel.validator}"/>
+                                    </af:inputText>
+                                </af:column>
+                                <af:column sortProperty="#{bindings.BthTagView1.hints.TagBindingCount.name}"
+                                           sortable="true"
+                                           headerText="#{bindings.BthTagView1.hints.TagBindingCount.label}"
+                                           filterable="true" id="c3">
+                                    <af:inputText value="#{row.bindings.TagBindingCount.inputValue}"
+                                                  label="#{bindings.BthTagView1.hints.TagBindingCount.label}"
+                                                  required="#{bindings.BthTagView1.hints.TagBindingCount.mandatory}"
+                                                  columns="#{bindings.BthTagView1.hints.TagBindingCount.displayWidth}"
+                                                  maximumLength="#{bindings.BthTagView1.hints.TagBindingCount.precision}"
+                                                  shortDesc="#{bindings.BthTagView1.hints.TagBindingCount.tooltip}"
+                                                  id="it3">
+                                        <f:validator binding="#{row.bindings.TagBindingCount.validator}"/>
+                                        <af:convertNumber groupingUsed="false"
+                                                          pattern="#{bindings.BthTagView1.hints.TagBindingCount.format}"/>
+                                    </af:inputText>
+                                </af:column>
+                                <af:column sortProperty="#{bindings.BthTagView1.hints.IconUrl.name}" filterable="true"
+                                           sortable="true" headerText="#{bindings.BthTagView1.hints.IconUrl.label}"
+                                           id="c4">
+                                    <af:inputText value="#{row.bindings.IconUrl.inputValue}"
+                                                  label="#{bindings.BthTagView1.hints.IconUrl.label}"
+                                                  required="#{bindings.BthTagView1.hints.IconUrl.mandatory}"
+                                                  columns="#{bindings.BthTagView1.hints.IconUrl.displayWidth}"
+                                                  maximumLength="#{bindings.BthTagView1.hints.IconUrl.precision}"
+                                                  shortDesc="#{bindings.BthTagView1.hints.IconUrl.tooltip}" id="it4">
+                                        <f:validator binding="#{row.bindings.IconUrl.validator}"/>
+                                    </af:inputText>
+                                </af:column>
+                                <af:column sortProperty="#{bindings.BthTagView1.hints.Icon.name}" sortable="true"
+                                           headerText="#{bindings.BthTagView1.hints.Icon.label}" filterable="true"
+                                           id="c5">
+                                    <af:inputText value="#{row.bindings.Icon.inputValue}"
+                                                  label="#{bindings.BthTagView1.hints.Icon.label}"
+                                                  required="#{bindings.BthTagView1.hints.Icon.mandatory}"
+                                                  columns="#{bindings.BthTagView1.hints.Icon.displayWidth}"
+                                                  maximumLength="#{bindings.BthTagView1.hints.Icon.precision}"
+                                                  shortDesc="#{bindings.BthTagView1.hints.Icon.tooltip}" id="it5">
+                                        <f:validator binding="#{row.bindings.Icon.validator}"/>
+                                    </af:inputText>
+                                </af:column>
+                            </af:table>
+                        </f:facet>
+                    </af:panelSplitter>
+                </f:facet>
+            </af:panelSplitter>
+        </af:form>
+    </af:document>
+</f:view>

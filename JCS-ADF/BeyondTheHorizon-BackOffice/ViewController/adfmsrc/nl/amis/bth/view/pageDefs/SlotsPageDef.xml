@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<pageDefinition xmlns="http://xmlns.oracle.com/adfm/uimodel" version="12.1.3.13.52" id="SlotsPageDef"
+                Package="nl.amis.bth.view.pageDefs">
+  <parameters/>
+  <executables>
+    <variableIterator id="variables"/>
+    <iterator Binds="BthSlotView1" RangeSize="25" DataControl="BthAppModuleDataControl" id="BthSlotView1Iterator"/>
+    <searchRegion Binds="BthSlotView1Iterator" Criteria=""
+                  Customizer="oracle.jbo.uicli.binding.JUSearchBindingCustomizer" id="BthSlotView1Query"/>
+  </executables>
+  <bindings>
+    <tree IterBinding="BthSlotView1Iterator" id="BthSlotView1">
+      <nodeDefinition DefName="nl.amis.bth.model.BthSlotView" Name="BthSlotView10">
+        <AttrNames>
+          <Item Value="Id"/>
+          <Item Value="DisplayLabel"/>
+          <Item Value="StartTime"/>
+        </AttrNames>
+      </nodeDefinition>
+    </tree>
+    <action id="Commit" RequiresUpdateModel="true" Action="commitTransaction" DataControl="BthAppModuleDataControl"/>
+  </bindings>
+</pageDefinition>

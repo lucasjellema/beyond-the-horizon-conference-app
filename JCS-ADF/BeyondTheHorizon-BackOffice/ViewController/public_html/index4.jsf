@@ -1,0 +1,65 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html>
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:af="http://xmlns.oracle.com/adf/faces/rich">
+    <af:document title="index4.jsf" id="d1">
+        <af:messages id="m1"/>
+        <af:form id="f1">
+            <af:panelGridLayout id="pgl1">
+                <af:gridRow height="50px" id="gr1">
+                    <af:gridCell width="100%" halign="stretch" valign="stretch" id="gc2">
+                        <!-- Header -->
+                        <af:panelHeader text="Schedule" id="ph1">
+                            <f:facet name="context"/>
+                            <f:facet name="menuBar"/>
+                            <f:facet name="toolbar"/>
+                            <f:facet name="legend"/>
+                            <f:facet name="info"/>
+                        </af:panelHeader>
+                    </af:gridCell>
+                </af:gridRow>
+                <af:gridRow height="100%" id="gr2">
+                    <af:gridCell width="100%" halign="stretch" valign="stretch" id="gc1">
+                        <!-- Content -->
+                        <af:table value="#{bindings.PlanningScheduleView1.collectionModel}" var="row"
+                                  rows="#{bindings.PlanningScheduleView1.rangeSize}"
+                                  emptyText="#{bindings.PlanningScheduleView1.viewable ? 'No data to display.' : 'Access Denied.'}"
+                                  rowBandingInterval="0" fetchSize="#{bindings.PlanningScheduleView1.rangeSize}"
+                                  filterModel="#{bindings.PlanningScheduleView1Query.queryDescriptor}"
+                                  queryListener="#{bindings.PlanningScheduleView1Query.processQuery}"
+                                  filterVisible="true" varStatus="vs" id="t1">
+                            <af:column sortProperty="#{bindings.PlanningScheduleView1.hints.Slot.name}"
+                                       filterable="true" sortable="true"
+                                       headerText="#{bindings.PlanningScheduleView1.hints.Slot.label}" id="c1">
+                                <af:outputText value="#{row.Slot}"
+                                               shortDesc="#{bindings.PlanningScheduleView1.hints.Slot.tooltip}"
+                                               id="ot1"/>
+                            </af:column>
+                            <af:column sortProperty="#{bindings.PlanningScheduleView1.hints.StartTime.name}"
+                                       filterable="true" sortable="true"
+                                       headerText="#{bindings.PlanningScheduleView1.hints.StartTime.label}" id="c2">
+                                <f:facet name="filter">
+                                    <af:inputDate value="#{bindings.PlanningScheduleView1Query.queryDescriptor.filterConjunctionCriterion.criterionMap.StartTime.value}"
+                                                  id="id1">
+                                        <af:convertDateTime pattern="#{bindings.PlanningScheduleView1.hints.StartTime.format}"/>
+                                    </af:inputDate>
+                                </f:facet>
+                                <af:outputText value="#{row.StartTime}"
+                                               shortDesc="#{bindings.PlanningScheduleView1.hints.StartTime.tooltip}"
+                                               id="ot2">
+                                    <af:convertDateTime pattern="#{bindings.PlanningScheduleView1.hints.StartTime.format}"/>
+                                </af:outputText>
+                            </af:column>
+                            <af:column sortProperty="#{bindings.PlanningScheduleView1.hints.Room1Pim.name}"
+                                       filterable="true" sortable="true"
+                                       headerText="#{bindings.PlanningScheduleView1.hints.Room1Pim.label}" id="c3">
+                                <af:outputText value="#{row.Room1Pim}"
+                                               shortDesc="#{bindings.PlanningScheduleView1.hints.Room1Pim.tooltip}"
+                                               id="ot3"/>
+                            </af:column>
+                        </af:table>
+                    </af:gridCell>
+                </af:gridRow>
+            </af:panelGridLayout>
+        </af:form>
+    </af:document>
+</f:view>

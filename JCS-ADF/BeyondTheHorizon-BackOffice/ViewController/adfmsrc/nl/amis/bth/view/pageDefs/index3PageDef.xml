@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<pageDefinition xmlns="http://xmlns.oracle.com/adfm/uimodel" version="12.1.3.13.52" id="index3PageDef"
+                Package="nl.amis.bth.view.pageDefs">
+  <parameters/>
+  <executables>
+    <variableIterator id="variables"/>
+    <iterator Binds="BthRoomView1" RangeSize="25" DataControl="BthAppModuleDataControl" id="BthRoomView1Iterator"/>
+    <searchRegion Binds="BthRoomView1Iterator" Criteria=""
+                  Customizer="oracle.jbo.uicli.binding.JUSearchBindingCustomizer" id="BthRoomView1Query"/>
+  </executables>
+  <bindings>
+    <tree IterBinding="BthRoomView1Iterator" id="BthRoomView1">
+      <nodeDefinition DefName="nl.amis.bth.model.BthRoomView" Name="BthRoomView10">
+        <AttrNames>
+          <Item Value="Id"/>
+          <Item Value="DisplayLabel"/>
+          <Item Value="Capacity"/>
+          <Item Value="LocationDescription"/>
+        </AttrNames>
+      </nodeDefinition>
+    </tree>
+  </bindings>
+</pageDefinition>

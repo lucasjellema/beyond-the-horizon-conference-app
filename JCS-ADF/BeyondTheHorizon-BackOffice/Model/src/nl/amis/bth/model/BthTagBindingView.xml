@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="windows-1252" ?>
+<!DOCTYPE ViewObject SYSTEM "jbo_03_01.dtd">
+<!---->
+<ViewObject
+  xmlns="http://xmlns.oracle.com/bc4j"
+  Name="BthTagBindingView"
+  Version="12.1.3.13.52"
+  InheritPersonalization="merge"
+  SelectListFlags="1"
+  FromListFlags="1"
+  WhereFlags="1"
+  BindingStyle="OracleName"
+  CustomQuery="false"
+  SelectAllAttributes="false"
+  PageIterMode="Full"
+  ComponentClass="nl.amis.bth.model.BthTagBindingViewImpl"
+  ComponentInterface="nl.amis.bth.model.common.BthTagBindingView"
+  ClientProxyName="nl.amis.bth.model.client.BthTagBindingViewClient">
+  <DesignTime>
+    <Attr Name="_codeGenFlag2" Value="Coll|Prog|VarAccess"/>
+  </DesignTime>
+  <EntityUsage
+    Name="BthTagBinding"
+    Entity="nl.amis.bth.model.BthTagBinding"/>
+  <EntityUsage
+    Name="BthTag"
+    Entity="nl.amis.bth.model.BthTag"
+    Association="nl.amis.bth.model.TagTagBindingAssociation"
+    AssociationEnd="nl.amis.bth.model.TagTagBindingAssociation.BthTag"
+    SourceUsage="nl.amis.bth.model.BthTagBindingView.BthTagBinding"
+    ReadOnly="true"
+    Reference="true"
+    DeleteParticipant="false"
+    JoinType="INNER JOIN">
+    <DesignTime>
+      <AttrArray Name="_srcAttributes">
+        <Item Value="nl.amis.bth.model.BthTagBinding.TagId"/>
+      </AttrArray>
+      <AttrArray Name="_dstAttributes">
+        <Item Value="nl.amis.bth.model.BthTag.Id"/>
+      </AttrArray>
+    </DesignTime>
+  </EntityUsage>
+  <EntityUsage
+    Name="BthTagCategory"
+    Entity="nl.amis.bth.model.BthTagCategory"
+    Association="nl.amis.bth.model.TagCategoryTagAssociation"
+    AssociationEnd="nl.amis.bth.model.TagCategoryTagAssociation.BthTagCategory"
+    SourceUsage="nl.amis.bth.model.BthTagBindingView.BthTag"
+    ReadOnly="true"
+    Reference="true"
+    DeleteParticipant="false"
+    JoinType="INNER JOIN">
+    <DesignTime>
+      <AttrArray Name="_srcAttributes">
+        <Item Value="nl.amis.bth.model.BthTag.TcyId"/>
+      </AttrArray>
+      <AttrArray Name="_dstAttributes">
+        <Item Value="nl.amis.bth.model.BthTagCategory.Id"/>
+      </AttrArray>
+    </DesignTime>
+  </EntityUsage>
+  <ViewAttribute
+    Name="Id"
+    IsNotNull="true"
+    PrecisionRule="true"
+    EntityAttrName="Id"
+    EntityUsage="BthTagBinding"
+    AliasName="ID"/>
+  <ViewAttribute
+    Name="TagId"
+    IsNotNull="true"
+    PrecisionRule="true"
+    EntityAttrName="TagId"
+    EntityUsage="BthTagBinding"
+    AliasName="TAG_ID"/>
+  <ViewAttribute
+    Name="PsnId"
+    PrecisionRule="true"
+    EntityAttrName="PsnId"
+    EntityUsage="BthTagBinding"
+    AliasName="PSN_ID"/>
+  <ViewAttribute
+    Name="SsnId"
+    PrecisionRule="true"
+    EntityAttrName="SsnId"
+    EntityUsage="BthTagBinding"
+    AliasName="SSN_ID"/>
+  <ViewAttribute
+    Name="TagDisplayLabel"
+    PrecisionRule="true"
+    EntityAttrName="DisplayLabel"
+    EntityUsage="BthTag"
+    AliasName="DISPLAY_LABEL"/>
+  <ViewAttribute
+    Name="Id1_Tag"
+    IsNotNull="true"
+    PrecisionRule="true"
+    EntityAttrName="Id"
+    EntityUsage="BthTag"
+    AliasName="ID1"/>
+  <ViewAttribute
+    Name="IconUrl"
+    PrecisionRule="true"
+    EntityAttrName="IconUrl"
+    EntityUsage="BthTag"
+    AliasName="ICON_URL"/>
+  <ViewAttribute
+    Name="TagCategoryDisplayLabel"
+    PrecisionRule="true"
+    EntityAttrName="DisplayLabel"
+    EntityUsage="BthTagCategory"
+    AliasName="DISPLAY_LABEL"/>
+  <ViewAttribute
+    Name="Id1"
+    IsNotNull="true"
+    PrecisionRule="true"
+    EntityAttrName="Id"
+    EntityUsage="BthTagCategory"
+    AliasName="ID1"/>
+  <AttrArray Name="KeyAttributes">
+    <Item Value="Id"/>
+  </AttrArray>
+  <ClientInterface
+    Name="__clientInterface">
+    <Method
+      Name="execTagsToSession"
+      MethodName="execTagsToSession">
+      <Return
+        Name="_return_type_"
+        Type="void"/>
+      <Parameter
+        Name="tags"
+        Type="java.lang.String"/>
+      <Parameter
+        Name="ssnId"
+        Type="java.lang.Integer"/>
+    </Method>
+  </ClientInterface>
+</ViewObject>

@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html>
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:af="http://xmlns.oracle.com/adf/faces/rich"
+        xmlns:ui="http://java.sun.com/jsf/facelets">
+    <af:document title="index.jsf" id="d1">
+        <af:form id="f1">
+            <af:panelSplitter orientation="vertical" splitterPosition="50" id="ps1">
+                <f:facet name="first">
+                    <af:panelHeader text="Beyond the Horizon - Back Office Application" id="ph1">
+                        <f:facet name="context"/>
+                        <f:facet name="menuBar"/>
+                        <f:facet name="toolbar"/>
+                        <f:facet name="legend"/>
+                        <f:facet name="info"/>
+                    </af:panelHeader>
+                </f:facet>
+                <f:facet name="second">
+                    <af:panelBox text="Application Menu" id="pb1">
+                        <af:link text="Slots" id="l1" destination="Slots.jsf"/>
+                        <af:link text="Speakers" id="l2" destination="Speakers.jsf"/>
+                        <af:link text="Sessions" id="l2s" destination="Sessions.jsf"/>
+                        <af:link text="Rooms" id="l21" destination="index3.jsf"/>
+                        <af:link text="Scheduler" id="l3" destination="Schedule.jsf"/>
+                        <af:link text="Tags" id="l4" destination="Tags2.jsf"/>
+                        <af:image source="amis-conference.jpg" id="i1"/>
+                        <f:facet name="toolbar"/>
+                    </af:panelBox>
+                    
+                </f:facet>
+            </af:panelSplitter>
+        </af:form>
+    </af:document>
+</f:view>

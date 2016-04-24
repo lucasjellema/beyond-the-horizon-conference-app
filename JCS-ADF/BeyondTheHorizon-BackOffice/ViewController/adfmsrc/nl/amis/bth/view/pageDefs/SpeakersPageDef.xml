@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<pageDefinition xmlns="http://xmlns.oracle.com/adfm/uimodel" version="12.1.3.13.52" id="SpeakersPageDef"
+                Package="nl.amis.bth.view.pageDefs">
+  <parameters/>
+  <executables>
+    <variableIterator id="variables"/>
+    <iterator Binds="BthPersonView1" RangeSize="25" DataControl="BthAppModuleDataControl" id="BthPersonView1Iterator"/>
+    <searchRegion Binds="BthPersonView1Iterator" Criteria=""
+                  Customizer="oracle.jbo.uicli.binding.JUSearchBindingCustomizer" id="BthPersonView1Query"/>
+    <iterator Binds="SpeakerSessionsView2" RangeSize="25" DataControl="BthAppModuleDataControl"
+              id="SpeakerSessionsView2Iterator"/>
+  </executables>
+  <bindings>
+    <tree IterBinding="BthPersonView1Iterator" id="BthPersonView1">
+      <nodeDefinition DefName="nl.amis.bth.model.BthPersonView" Name="BthPersonView10">
+        <AttrNames>
+          <Item Value="Id"/>
+          <Item Value="FirstName"/>
+          <Item Value="LastName"/>
+          <Item Value="Company"/>
+        </AttrNames>
+      </nodeDefinition>
+    </tree>
+    <attributeValues IterBinding="BthPersonView1Iterator" id="Id">
+      <AttrNames>
+        <Item Value="Id"/>
+      </AttrNames>
+    </attributeValues>
+    <attributeValues IterBinding="BthPersonView1Iterator" id="FirstName">
+      <AttrNames>
+        <Item Value="FirstName"/>
+      </AttrNames>
+    </attributeValues>
+    <attributeValues IterBinding="BthPersonView1Iterator" id="LastName">
+      <AttrNames>
+        <Item Value="LastName"/>
+      </AttrNames>
+    </attributeValues>
+    <attributeValues IterBinding="BthPersonView1Iterator" id="Company">
+      <AttrNames>
+        <Item Value="Company"/>
+      </AttrNames>
+    </attributeValues>
+    <attributeValues IterBinding="BthPersonView1Iterator" id="Country">
+      <AttrNames>
+        <Item Value="Country"/>
+      </AttrNames>
+    </attributeValues>
+    <attributeValues IterBinding="BthPersonView1Iterator" id="EmailAddress">
+      <AttrNames>
+        <Item Value="EmailAddress"/>
+      </AttrNames>
+    </attributeValues>
+    <attributeValues IterBinding="BthPersonView1Iterator" id="MobilePhoneNumber">
+      <AttrNames>
+        <Item Value="MobilePhoneNumber"/>
+      </AttrNames>
+    </attributeValues>
+    <attributeValues IterBinding="BthPersonView1Iterator" id="Birthdate">
+      <AttrNames>
+        <Item Value="Birthdate"/>
+      </AttrNames>
+    </attributeValues>
+    <attributeValues IterBinding="BthPersonView1Iterator" id="TwitterHandle">
+      <AttrNames>
+        <Item Value="TwitterHandle"/>
+      </AttrNames>
+    </attributeValues>
+    <attributeValues IterBinding="BthPersonView1Iterator" id="LinkedinProfile">
+      <AttrNames>
+        <Item Value="LinkedinProfile"/>
+      </AttrNames>
+    </attributeValues>
+    <attributeValues IterBinding="BthPersonView1Iterator" id="FacebookAccount">
+      <AttrNames>
+        <Item Value="FacebookAccount"/>
+      </AttrNames>
+    </attributeValues>
+    <attributeValues IterBinding="BthPersonView1Iterator" id="Picture">
+      <AttrNames>
+        <Item Value="Picture"/>
+      </AttrNames>
+    </attributeValues>
+    <attributeValues IterBinding="BthPersonView1Iterator" id="Biography">
+      <AttrNames>
+        <Item Value="Biography"/>
+      </AttrNames>
+    </attributeValues>
+    <attributeValues IterBinding="BthPersonView1Iterator" id="BiographyString">
+      <AttrNames>
+        <Item Value="BiographyString"/>
+      </AttrNames>
+    </attributeValues>
+    <attributeValues IterBinding="BthPersonView1Iterator" id="Salutation">
+      <AttrNames>
+        <Item Value="Salutation"/>
+      </AttrNames>
+    </attributeValues>
+    <attributeValues IterBinding="BthPersonView1Iterator" id="CommunityTitles">
+      <AttrNames>
+        <Item Value="CommunityTitles"/>
+      </AttrNames>
+    </attributeValues>
+    <attributeValues IterBinding="BthPersonView1Iterator" id="JobTitle">
+      <AttrNames>
+        <Item Value="JobTitle"/>
+      </AttrNames>
+    </attributeValues>
+    <attributeValues IterBinding="BthPersonView1Iterator" id="Notes">
+      <AttrNames>
+        <Item Value="Notes"/>
+      </AttrNames>
+    </attributeValues>
+    <action IterBinding="BthPersonView1Iterator" id="First" RequiresUpdateModel="true" Action="first"/>
+    <action IterBinding="BthPersonView1Iterator" id="Previous" RequiresUpdateModel="true" Action="previous"/>
+    <action IterBinding="BthPersonView1Iterator" id="Next" RequiresUpdateModel="true" Action="next"/>
+    <action IterBinding="BthPersonView1Iterator" id="Last" RequiresUpdateModel="true" Action="last"/>
+    <tree IterBinding="SpeakerSessionsView2Iterator" id="SpeakerSessionsView2">
+      <nodeDefinition DefName="nl.amis.bth.model.SpeakerSessionsView" Name="SpeakerSessionsView20">
+        <AttrNames>
+          <Item Value="Title"/>
+          <Item Value="Speakers"/>
+          <Item Value="Status"/>
+          <Item Value="Cospeakers"/>
+          <Item Value="PlannedYn"/>
+          <Item Value="Duration"/>
+          <Item Value="Notes"/>
+        </AttrNames>
+      </nodeDefinition>
+    </tree>
+  </bindings>
+</pageDefinition>

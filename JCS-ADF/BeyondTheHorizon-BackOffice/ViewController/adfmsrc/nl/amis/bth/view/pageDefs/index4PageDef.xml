@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<pageDefinition xmlns="http://xmlns.oracle.com/adfm/uimodel" version="12.1.3.13.52" id="index4PageDef"
+                Package="nl.amis.bth.view.pageDefs">
+  <parameters/>
+  <executables>
+    <variableIterator id="variables"/>
+    <iterator Binds="PlanningScheduleView1" RangeSize="25" DataControl="BthAppModuleDataControl"
+              id="PlanningScheduleView1Iterator"/>
+    <searchRegion Binds="PlanningScheduleView1Iterator" Criteria=""
+                  Customizer="oracle.jbo.uicli.binding.JUSearchBindingCustomizer" id="PlanningScheduleView1Query"/>
+  </executables>
+  <bindings>
+    <tree IterBinding="PlanningScheduleView1Iterator" id="PlanningScheduleView1">
+      <nodeDefinition DefName="nl.amis.bth.model.PlanningScheduleView" Name="PlanningScheduleView10">
+        <AttrNames>
+          <Item Value="Slot"/>
+          <Item Value="StartTime"/>
+          <Item Value="Room1Pim"/>
+        </AttrNames>
+      </nodeDefinition>
+    </tree>
+  </bindings>
+</pageDefinition>

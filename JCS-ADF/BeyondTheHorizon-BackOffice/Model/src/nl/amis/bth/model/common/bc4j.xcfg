@@ -1,0 +1,16 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<BC4JConfig version="11.1" xmlns="http://xmlns.oracle.com/bc4j/configuration">
+   <AppModuleConfigBag ApplicationName="nl.amis.bth.model.BthAppModule">
+      <AppModuleConfig name="BthAppModuleLocal" jbo.project="nl.amis.bth.model.Model" ApplicationName="nl.amis.bth.model.BthAppModule" DeployPlatform="LOCAL">
+         <Database jbo.TypeMapEntries="OracleApps"/>
+         <Security AppModuleJndiName="nl.amis.bth.model.BthAppModule"/>
+         <Custom ns0:JDBCDataSource="java:comp/env/jdbc/HR_MyJCSDBDS" xmlns:ns0="http://xmlns.oracle.com/bc4j/configuration"/>
+      </AppModuleConfig>
+      <AppModuleConfig DeployPlatform="LOCAL" name="BthAppModuleShared" ApplicationName="nl.amis.bth.model.BthAppModule" jbo.project="nl.amis.bth.model.Model">
+         <AM-Pooling jbo.ampool.isuseexclusive="false" jbo.ampool.resetnontransactionalstate="false" jbo.ampool.dynamicjdbccredentials="false" jbo.ampool.maxpoolsize="1"/>
+         <Database jbo.TypeMapEntries="OracleApps"/>
+         <Security AppModuleJndiName="nl.amis.bth.model.BthAppModule"/>
+         <Custom ns0:ns0="http://xmlns.oracle.com/bc4j/configuration" ns0:JDBCDataSource="java:comp/env/jdbc/HR_MyJCSDBDS" xmlns:ns0="http://xmlns.oracle.com/bc4j/configuration"/>
+      </AppModuleConfig>
+   </AppModuleConfigBag>
+</BC4JConfig>

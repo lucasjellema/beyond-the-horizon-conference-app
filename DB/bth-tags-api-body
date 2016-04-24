@@ -1,126 +1,161 @@
-create or replace
-package body bth_tags_api
-is
+    create or replace
+    package body bth_tags_api
+    is
 
-function tag_tbl_json
-( p_tags in tag_tbl_t)
-return clob
-is
-  l_json clob := to_clob('');
-begin
-  if p_tags is not null and p_tags.count > 0
-  then
-    for i in p_tags.first .. p_tags.last loop
-      l_json := l_json||', '||p_tags(i).to_json;
-    end loop;
-  end if;
-  l_json := '{"tags": ['||ltrim(l_json,',')||'] } ';
-  return l_json;
-end tag_tbl_json;
+    procedure add_tag_to_session
+    ( p_tag in varchar2 
+    , p_ssn_id in number
+    ) is
+    l_tag_id number(10);
 
+    begin
+    begin 
+        select id
+        into   l_tag_id
+        from   bth_tags 
+        where  lower(display_label) = lower(p_tag)
+        ;
+    exception
+        when no_data_found
+        then
+        insert into bth_tags (display_label, tcy_id)      
+        (select p_tag , tcy.id
+        from   bth_tag_categories tcy
+        where tcy.display_label='content'
+        ); 
+        select id
+        into   l_tag_id
+        from   bth_tags 
+        where  lower(display_label) = lower(p_tag)
+        ;    
+    end;
+    insert into bth_tag_bindings tbg
+    (tag_id, ssn_id)
+    values
+    (l_tag_id, p_ssn_id)
+    ;
 
-function json_tag_tbl_summary
-( p_tags in tag_tbl_t
-) return clob
-is
-l_json clob := to_clob('');
-begin
-  if p_tags.count > 0
-  then
-    for i in p_tags.first .. p_tags.last loop
-      l_json := l_json||', '||p_tags(i).to_json_summary;
-    end loop;
-  end if;
-  l_json := '['||ltrim(l_json,',')||']';
-  return l_json;
-end json_tag_tbl_summary;
+    end add_tag_to_session;
 
-
-
-procedure get_tags
-( p_filter_tags in varchar2 -- JSON array: ["SOA","JCS"]
-, p_search_term in varchar2
-, p_tags out tag_tbl_t
-) is
-  l_tags tag_tbl_t;
-  l_filter_tags string_tbl_t:= string_tbl_t();
-begin
-  if p_filter_tags is not null and p_filter_tags <> 'null'
-  then
-    l_filter_tags:= bth_util.json_array_to_string_tbl (p_json_array => lower(p_filter_tags));
-  end if;  
-  with eligible_sessions as (
-    select distinct ssn.id
-    from bth_sessions ssn
-    where l_filter_tags SUBMULTISET OF 
-       (  cast (multiset (select lower(tag.display_label) 
-                          from   bth_tag_bindings tbg
-                                 join
-                                 bth_tags tag
-                                 on (tag.id = tbg.tag_id)
-                          where tbg.ssn_id = ssn.id
-          ) as string_tbl_t))
-
-  )
-  select tag_t(
-     tag.id 
-   , tag.display_label
-   , tag.tcy_id
-   , tcy.display_label
-   , tbg.tag_count
-   , icon_url
-   , null 
-  )
-  bulk collect into l_tags
-  from bth_tags tag
-       join
-       bth_tag_categories tcy
-       on (tag.tcy_id=tcy.id)
-       join
-        ( select count(tbg.id) tag_count
-          ,      tbg.tag_id
-          from   bth_tag_bindings tbg
-                 join
-                 eligible_sessions es
-                 on
-                 (es.id = tbg.ssn_id)
-          group
-          by     tbg.tag_id
-        ) tbg
-        on (tag.id = tbg.tag_id)  
-   where ( (p_search_term is null or p_search_term ='')
-          or
-          ( instr(lower(tag.display_label), lower(p_search_term)) > 0
-          ) 
-        )
-   order
-   by    tbg.tag_count desc                            
-  ;
-  p_tags := l_tags;
-end get_tags;
+    function tag_tbl_json
+    ( p_tags in tag_tbl_t)
+    return clob
+    is
+    l_json clob := to_clob('');
+    begin
+    if p_tags is not null and p_tags.count > 0
+    then
+        for i in p_tags.first .. p_tags.last loop
+        l_json := l_json||', '||p_tags(i).to_json;
+        end loop;
+    end if;
+    l_json := '{"tags": ['||ltrim(l_json,',')||'] } ';
+    return l_json;
+    end tag_tbl_json;
 
 
-function get_tags_json
-( p_filter_tags in varchar2
-, p_search_term in varchar2
-) return clob
-is
-  l_tags tag_tbl_t:= tag_tbl_t();
-  
-begin
-  get_tags( p_filter_tags => p_filter_tags, p_search_term => p_search_term, p_tags => l_tags);
-  return tag_tbl_json( p_tags => l_tags);
-end get_tags_json;
+    function json_tag_tbl_summary
+    ( p_tags in tag_tbl_t
+    ) return clob
+    is
+    l_json clob := to_clob('');
+    begin
+    if p_tags.count > 0
+    then
+        for i in p_tags.first .. p_tags.last loop
+        l_json := l_json||', '||p_tags(i).to_json_summary;
+        end loop;
+    end if;
+    l_json := '['||ltrim(l_json,',')||']';
+    return l_json;
+    end json_tag_tbl_summary;
 
 
-function get_tags_json_string_tbl
-( p_filter_tags_json in varchar2
-, p_search_term in varchar2
-) return  string_tbl_t
-is
-begin
-  return bth_util.clob_to_string_tbl_t( get_tags_json(p_filter_tags => p_filter_tags_json, p_search_term=> p_search_term));
-end get_tags_json_string_tbl;
+
+    procedure get_tags
+    ( p_filter_tags in varchar2 -- JSON array: ["SOA","JCS"]
+    , p_search_term in varchar2
+    , p_tags out tag_tbl_t
+    ) is
+    l_tags tag_tbl_t;
+    l_filter_tags string_tbl_t:= string_tbl_t();
+    begin
+    if p_filter_tags is not null and p_filter_tags <> 'null'
+    then
+        l_filter_tags:= bth_util.json_array_to_string_tbl (p_json_array => lower(p_filter_tags));
+    end if;  
+    with eligible_sessions as (
+        select distinct ssn.id
+        from bth_sessions ssn
+        where l_filter_tags SUBMULTISET OF 
+        (  cast (multiset (select lower(tag.display_label) 
+                            from   bth_tag_bindings tbg
+                                    join
+                                    bth_tags tag
+                                    on (tag.id = tbg.tag_id)
+                            where tbg.ssn_id = ssn.id
+            ) as string_tbl_t))
+
+    )
+    select tag_t(
+        tag.id 
+    , tag.display_label
+    , tag.tcy_id
+    , tcy.display_label
+    , tbg.tag_count
+    , icon_url
+    , null 
+    )
+    bulk collect into l_tags
+    from bth_tags tag
+        join
+        bth_tag_categories tcy
+        on (tag.tcy_id=tcy.id)
+        join
+            ( select count(tbg.id) tag_count
+            ,      tbg.tag_id
+            from   bth_tag_bindings tbg
+                    join
+                    eligible_sessions es
+                    on
+                    (es.id = tbg.ssn_id)
+            group
+            by     tbg.tag_id
+            ) tbg
+            on (tag.id = tbg.tag_id)  
+    where ( (p_search_term is null or p_search_term ='')
+            or
+            ( instr(lower(tag.display_label), lower(p_search_term)) > 0
+            ) 
+            )
+    order
+    by    tbg.tag_count desc                            
+    ;
+    p_tags := l_tags;
+    end get_tags;
 
 
-end bth_tags_api;
+    function get_tags_json
+    ( p_filter_tags in varchar2
+    , p_search_term in varchar2
+    ) return clob
+    is
+    l_tags tag_tbl_t:= tag_tbl_t();
+    
+    begin
+    get_tags( p_filter_tags => p_filter_tags, p_search_term => p_search_term, p_tags => l_tags);
+    return tag_tbl_json( p_tags => l_tags);
+    end get_tags_json;
+
+
+    function get_tags_json_string_tbl
+    ( p_filter_tags_json in varchar2
+    , p_search_term in varchar2
+    ) return  string_tbl_t
+    is
+    begin
+    return bth_util.clob_to_string_tbl_t( get_tags_json(p_filter_tags => p_filter_tags_json, p_search_term=> p_search_term));
+    end get_tags_json_string_tbl;
+
+
+    end bth_tags_api;

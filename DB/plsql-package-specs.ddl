@@ -160,6 +160,13 @@ end bth_speakers_api;
 create or replace
 package bth_tags_api
 is
+
+
+procedure add_tag_to_session
+( p_tag in varchar2 
+ , p_ssn_id in number
+);
+
 function json_tag_tbl_summary
 ( p_tags in tag_tbl_t
 ) return clob

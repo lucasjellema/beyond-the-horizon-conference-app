@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<pageDefinition xmlns="http://xmlns.oracle.com/adfm/uimodel" version="12.1.3.13.52" id="SchedulePageDef1"
+                Package="nl.amis.bth.view.pageDefs">
+  <parameters/>
+  <executables>
+    <variableIterator id="variables">
+      <variable Type="void" Name="execPlanSession_return" IsQueriable="false" IsUpdateable="0"
+                DefaultValue="${bindings.execPlanSession.result}"/>
+      <variable Type="java.lang.Integer" Name="execPlanSession_pimId" IsQueriable="false"/>
+      <variable Type="java.lang.Integer" Name="execPlanSession_ssnId" IsQueriable="false"/>
+    </variableIterator>
+    <iterator Binds="SessionsView1" RangeSize="25" DataControl="BthAppModuleDataControl" id="SessionsView1Iterator"/>
+    <searchRegion Binds="SessionsView1Iterator" Criteria=""
+                  Customizer="oracle.jbo.uicli.binding.JUSearchBindingCustomizer" id="SessionsView1Query"/>
+    <iterator Binds="PlanningScheduleView1" RangeSize="25" DataControl="BthAppModuleDataControl"
+              id="PlanningScheduleView1Iterator"/>
+  </executables>
+  <bindings>
+    <tree IterBinding="SessionsView1Iterator" id="SessionsView1">
+      <nodeDefinition DefName="nl.amis.bth.model.SessionsView" Name="SessionsView10">
+        <AttrNames>
+          <Item Value="PlannedYn"/>
+          <Item Value="Status"/>
+          <Item Value="Speakers"/>
+          <Item Value="Title"/>
+          <Item Value="Duration"/>
+          <Item Value="Cospeakers"/>
+          <Item Value="SsnId"/>
+          <Item Value="Notes"/>
+        </AttrNames>
+      </nodeDefinition>
+    </tree>
+    <tree IterBinding="PlanningScheduleView1Iterator" id="PlanningScheduleView1">
+      <nodeDefinition DefName="nl.amis.bth.model.PlanningScheduleView" Name="PlanningScheduleView10">
+        <AttrNames>
+          <Item Value="Slot"/>
+          <Item Value="StartTime"/>
+        </AttrNames>
+        <Accessors>
+          <Item Value="Room1Pim"/>
+          <Item Value="Room2Pim"/>
+          <Item Value="Room3Pim"/>
+          <Item Value="Room4Pim"/>
+          <Item Value="Room5Pim"/>
+          <Item Value="Room6Pim"/>
+          <Item Value="Room7Pim"/>
+          <Item Value="Room8Pim"/>
+        </Accessors>
+      </nodeDefinition>
+      <nodeDefinition DefName="nl.amis.bth.model.common.PlanningT">
+        <AttrNames>
+          <Item Value="Id"/>
+          <Item Value="RomId"/>
+          <Item Value="SltId"/>
+          <Item Value="RoomDisplayLabel"/>
+          <Item Value="RoomCapacity"/>
+          <Item Value="RoomLocationDescription"/>
+          <Item Value="SlotDisplayLabel"/>
+          <Item Value="SlotStartTime"/>
+          <Item Value="SsnId"/>
+          <Item Value="SessionTitle"/>
+          <Item Value="Speakers"/>
+        </AttrNames>
+      </nodeDefinition>
+    </tree>
+    <methodAction id="execPlanSession" RequiresUpdateModel="true" Action="invokeMethod" MethodName="execPlanSession"
+                  IsViewObjectMethod="true" DataControl="BthAppModuleDataControl"
+                  InstanceName="data.BthAppModuleDataControl.BthPlanningItemView1"
+                  ReturnName="data.BthAppModuleDataControl.methodResults.execPlanSession_BthAppModuleDataControl_BthPlanningItemView1_execPlanSession_result">
+      <NamedData NDName="pimId" NDValue="${bindings.execPlanSession_pimId}" NDType="java.lang.Integer"/>
+      <NamedData NDName="ssnId" NDValue="${bindings.execPlanSession_ssnId}" NDType="java.lang.Integer"/>
+    </methodAction>
+    <attributeValues IterBinding="variables" id="pimId">
+      <AttrNames>
+        <Item Value="execPlanSession_pimId"/>
+      </AttrNames>
+    </attributeValues>
+    <attributeValues IterBinding="variables" id="ssnId">
+      <AttrNames>
+        <Item Value="execPlanSession_ssnId"/>
+      </AttrNames>
+    </attributeValues>
+    <action id="Commit" RequiresUpdateModel="true" Action="commitTransaction" DataControl="BthAppModuleDataControl"/>
+    <action IterBinding="PlanningScheduleView1Iterator" id="Execute" RequiresUpdateModel="true"
+            Action="iteratorExecute"/>
+  </bindings>
+</pageDefinition>

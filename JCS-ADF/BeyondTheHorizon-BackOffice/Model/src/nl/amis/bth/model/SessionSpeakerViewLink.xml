@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="windows-1252" ?>
+<!DOCTYPE ViewLink SYSTEM "jbo_03_01.dtd">
+<!---->
+<ViewLink
+  xmlns="http://xmlns.oracle.com/bc4j"
+  Name="SessionSpeakerViewLink"
+  Version="12.1.3.13.52"
+  InheritPersonalization="merge"
+  EntityAssociation="nl.amis.bth.model.SessionSpeakerAssociation">
+  <Properties>
+    <SchemaBasedProperties>
+      <LABEL
+        ResId="nl.amis.bth.model.SessionSpeakerViewLink_LABEL"/>
+    </SchemaBasedProperties>
+  </Properties>
+  <ViewLinkDefEnd
+    Name="BthSessionView"
+    Cardinality="1"
+    Source="true"
+    Owner="nl.amis.bth.model.BthSessionView">
+    <DesignTime>
+      <Attr Name="_finderName" Value="BthSessionView"/>
+      <Attr Name="_isUpdateable" Value="true"/>
+    </DesignTime>
+    <AttrArray Name="Attributes">
+      <Item Value="nl.amis.bth.model.BthSessionView.Id"/>
+    </AttrArray>
+  </ViewLinkDefEnd>
+  <ViewLinkDefEnd
+    Name="BthSpeakerView"
+    Cardinality="-1"
+    Owner="nl.amis.bth.model.BthSpeakerView">
+    <DesignTime>
+      <Attr Name="_finderName" Value="BthSpeakerView"/>
+      <Attr Name="_isUpdateable" Value="true"/>
+    </DesignTime>
+    <AttrArray Name="Attributes">
+      <Item Value="nl.amis.bth.model.BthSpeakerView.SsnId"/>
+    </AttrArray>
+  </ViewLinkDefEnd>
+  <ResourceBundle>
+    <PropertiesBundle
+      PropertiesFile="nl.amis.bth.model.ModelBundle"/>
+  </ResourceBundle>
+</ViewLink>

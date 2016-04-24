@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Application xmlns="http://xmlns.oracle.com/adfm/application" version="12.1.3.13.52" id="DataBindings"
+             SeparateXMLFiles="false" Package="nl.amis.bth.view" ClientType="Generic">
+  <definitionFactories>
+    <factory nameSpace="http://xmlns.oracle.com/adf/controller/binding"
+             className="oracle.adf.controller.internal.binding.TaskFlowBindingDefFactoryImpl"/>
+    <dtfactory className="oracle.adf.controller.internal.dtrt.binding.BindingDTObjectFactory"/>
+  </definitionFactories>
+  <pageMap>
+    <page path="/index.jsf" usageId="nl_amis_bth_view_indexPageDef"/>
+    <page path="/index3.jsf" usageId="nl_amis_bth_view_index3PageDef"/>
+    <page path="/index4.jsf" usageId="nl_amis_bth_view_index4PageDef"/>    
+    <page path="/Speakers.jsf" usageId="nl_amis_bth_view_SpeakersPageDef"/>
+    <page path="/Slots.jsf" usageId="nl_amis_bth_view_SlotsPageDef"/>
+    <page path="/Schedule.jsf" usageId="nl_amis_bth_view_SchedulePageDef1"/>
+    <page path="/Tags2.jsf" usageId="nl_amis_bth_view_Tags2PageDef"/>
+    <page path="/Sessions.jsf" usageId="nl_amis_bth_view_SessionsPageDef"/>
+  </pageMap>
+  <pageDefinitionUsages>
+    <page id="nl_amis_bth_view_indexPageDef" path="nl.amis.bth.view.pageDefs.indexPageDef"/>
+    <page id="nl_amis_bth_view_index3PageDef" path="nl.amis.bth.view.pageDefs.index3PageDef"/>
+    <page id="nl_amis_bth_view_index4PageDef" path="nl.amis.bth.view.pageDefs.index4PageDef"/>
+    <page id="nl_amis_bth_view_SpeakersPageDef" path="nl.amis.bth.view.pageDefs.SpeakersPageDef"/>
+    <page id="nl_amis_bth_view_SlotsPageDef" path="nl.amis.bth.view.pageDefs.SlotsPageDef"/>
+    <page id="nl_amis_bth_view_SchedulePageDef1" path="nl.amis.bth.view.pageDefs.SchedulePageDef1"/>
+    <page id="nl_amis_bth_view_Tags2PageDef" path="nl.amis.bth.view.pageDefs.Tags2PageDef"/>
+    <page id="nl_amis_bth_view_SessionsPageDef" path="nl.amis.bth.view.pageDefs.SessionsPageDef"/>
+  </pageDefinitionUsages>
+  <dataControlUsages>
+    <BC4JDataControl id="BthAppModuleDataControl" Package="nl.amis.bth.model"
+                     FactoryClass="oracle.adf.model.bc4j.DataControlFactoryImpl" SupportsTransactions="true"
+                     SupportsFindMode="true" SupportsRangesize="true" SupportsResetState="true"
+                     SupportsSortCollection="true" Configuration="BthAppModuleLocal" syncMode="Immediate"
+                     xmlns="http://xmlns.oracle.com/adfm/datacontrol"/>
+  </dataControlUsages>
+</Application>

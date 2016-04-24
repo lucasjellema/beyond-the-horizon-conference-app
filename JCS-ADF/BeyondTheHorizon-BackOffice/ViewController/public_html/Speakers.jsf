@@ -1,0 +1,296 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html>
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:af="http://xmlns.oracle.com/adf/faces/rich">
+    <af:document title="Speakers.jsf" id="d1">
+        <af:messages id="m1"/>
+        <af:form id="f1">
+            <af:panelSplitter orientation="vertical" splitterPosition="120" id="ps1">
+                <f:facet name="first">
+                    <af:panelHeader text="Speaker Manager - Beyond the Horizon - Back Office Application" id="ph1">
+                        <f:facet name="context"/>
+                        <f:facet name="menuBar"/>
+                        <f:facet name="toolbar"/>
+                        <f:facet name="legend"/>
+                        <f:facet name="info"/>
+                        <af:panelFormLayout id="pfl1" rows="3">
+                            <af:image source="amis-conference.jpg" id="i1" inlineStyle="height:80px;width:300px"/>
+                        </af:panelFormLayout>
+                    </af:panelHeader>
+                </f:facet>
+                <f:facet name="second">
+                    <af:panelSplitter orientation="horizontal" splitterPosition="300" id="ps1a">
+                        <f:facet name="first">
+                            <af:panelCollection id="pc1">
+                                <f:facet name="menus"/>
+                                <f:facet name="toolbar"/>
+                                <f:facet name="statusbar"/>
+                                <af:table value="#{bindings.BthPersonView1.collectionModel}" var="row"
+                                          rows="#{bindings.BthPersonView1.rangeSize}"
+                                          emptyText="#{bindings.BthPersonView1.viewable ? 'No data to display.' : 'Access Denied.'}"
+                                          rowBandingInterval="0" fetchSize="#{bindings.BthPersonView1.rangeSize}"
+                                          filterModel="#{bindings.BthPersonView1Query.queryDescriptor}"
+                                          queryListener="#{bindings.BthPersonView1Query.processQuery}"
+                                          filterVisible="true" varStatus="vs" id="t1"
+                                          selectedRowKeys="#{bindings.BthPersonView1.collectionModel.selectedRow}"
+                                          selectionListener="#{bindings.BthPersonView1.collectionModel.makeCurrent}"
+                                          partialTriggers=":::b1 :::b2 :::b3 :::b4" rowSelection="single">
+                                    <af:column sortProperty="#{bindings.BthPersonView1.hints.Id.name}" filterable="true"
+                                               sortable="true" headerText="#{bindings.BthPersonView1.hints.Id.label}"
+                                               id="c1">
+                                        <af:outputText value="#{row.Id}"
+                                                       shortDesc="#{bindings.BthPersonView1.hints.Id.tooltip}" id="ot1">
+                                            <af:convertNumber groupingUsed="false"
+                                                              pattern="#{bindings.BthPersonView1.hints.Id.format}"/>
+                                        </af:outputText>
+                                    </af:column>
+                                    <af:column sortProperty="#{bindings.BthPersonView1.hints.FirstName.name}"
+                                               filterable="true" sortable="true"
+                                               headerText="#{bindings.BthPersonView1.hints.FirstName.label}" id="c2">
+                                        <af:outputText value="#{row.FirstName}"
+                                                       shortDesc="#{bindings.BthPersonView1.hints.FirstName.tooltip}"
+                                                       id="ot2"/>
+                                    </af:column>
+                                    <af:column sortProperty="#{bindings.BthPersonView1.hints.LastName.name}"
+                                               filterable="true" sortable="true"
+                                               headerText="#{bindings.BthPersonView1.hints.LastName.label}" id="c3">
+                                        <af:outputText value="#{row.LastName}"
+                                                       shortDesc="#{bindings.BthPersonView1.hints.LastName.tooltip}"
+                                                       id="ot3"/>
+                                    </af:column>
+                                </af:table>
+                            </af:panelCollection>
+                        </f:facet>
+                        <f:facet name="second">
+                            <af:panelFormLayout id="pfl2" rows="9">
+                                <af:inputText value="#{bindings.Id.inputValue}" label="#{bindings.Id.hints.label}"
+                                              required="#{bindings.Id.hints.mandatory}"
+                                              columns="#{bindings.Id.hints.displayWidth}"
+                                              maximumLength="#{bindings.Id.hints.precision}"
+                                              shortDesc="#{bindings.Id.hints.tooltip}" id="it1" readOnly="true">
+                                    <f:validator binding="#{bindings.Id.validator}"/>
+                                    <af:convertNumber groupingUsed="false" pattern="#{bindings.Id.format}"/>
+                                </af:inputText>
+                                <af:inputText value="#{bindings.FirstName.inputValue}"
+                                              label="#{bindings.FirstName.hints.label}"
+                                              required="#{bindings.FirstName.hints.mandatory}"
+                                              columns="50"
+                                              maximumLength="#{bindings.FirstName.hints.precision}"
+                                              shortDesc="#{bindings.FirstName.hints.tooltip}" id="it2">
+                                    <f:validator binding="#{bindings.FirstName.validator}"/>
+                                </af:inputText>
+                                <af:inputText value="#{bindings.LastName.inputValue}"
+                                              label="#{bindings.LastName.hints.label}"
+                                              required="#{bindings.LastName.hints.mandatory}"
+                                              columns="50"
+                                              maximumLength="#{bindings.LastName.hints.precision}"
+                                              shortDesc="#{bindings.LastName.hints.tooltip}" id="it3">
+                                    <f:validator binding="#{bindings.LastName.validator}"/>
+                                </af:inputText>
+                                <af:inputText value="#{bindings.Company.inputValue}"
+                                              label="#{bindings.Company.hints.label}"
+                                              required="#{bindings.Company.hints.mandatory}"
+                                              columns="50"
+                                              maximumLength="#{bindings.Company.hints.precision}"
+                                              shortDesc="#{bindings.Company.hints.tooltip}" id="it4">
+                                    <f:validator binding="#{bindings.Company.validator}"/>
+                                </af:inputText>
+                                <af:inputText value="#{bindings.Country.inputValue}"
+                                              label="#{bindings.Country.hints.label}"
+                                              required="#{bindings.Country.hints.mandatory}"
+                                              columns="50"
+                                              maximumLength="#{bindings.Country.hints.precision}"
+                                              shortDesc="#{bindings.Country.hints.tooltip}" id="it5">
+                                    <f:validator binding="#{bindings.Country.validator}"/>
+                                </af:inputText>
+                                <af:inputText value="#{bindings.EmailAddress.inputValue}"
+                                              label="#{bindings.EmailAddress.hints.label}"
+                                              required="#{bindings.EmailAddress.hints.mandatory}"
+                                              columns="50"
+                                              maximumLength="#{bindings.EmailAddress.hints.precision}"
+                                              shortDesc="#{bindings.EmailAddress.hints.tooltip}" id="it6">
+                                    <f:validator binding="#{bindings.EmailAddress.validator}"/>
+                                </af:inputText>
+                                <af:inputText value="#{bindings.MobilePhoneNumber.inputValue}"
+                                              label="#{bindings.MobilePhoneNumber.hints.label}"
+                                              required="#{bindings.MobilePhoneNumber.hints.mandatory}"
+                                              columns="50"
+                                              maximumLength="#{bindings.MobilePhoneNumber.hints.precision}"
+                                              shortDesc="#{bindings.MobilePhoneNumber.hints.tooltip}" id="it7">
+                                    <f:validator binding="#{bindings.MobilePhoneNumber.validator}"/>
+                                </af:inputText>
+                                <af:inputDate value="#{bindings.Birthdate.inputValue}"
+                                              label="#{bindings.Birthdate.hints.label}"
+                                              required="#{bindings.Birthdate.hints.mandatory}"
+                                              columns="#{bindings.Birthdate.hints.displayWidth}"
+                                              shortDesc="#{bindings.Birthdate.hints.tooltip}" id="id1">
+                                    <f:validator binding="#{bindings.Birthdate.validator}"/>
+                                    <af:convertDateTime pattern="#{bindings.Birthdate.format}"/>
+                                </af:inputDate>
+                                <af:inputText value="#{bindings.TwitterHandle.inputValue}"
+                                              label="#{bindings.TwitterHandle.hints.label}"
+                                              required="#{bindings.TwitterHandle.hints.mandatory}"
+                                              columns="50"
+                                              maximumLength="#{bindings.TwitterHandle.hints.precision}"
+                                              shortDesc="#{bindings.TwitterHandle.hints.tooltip}" id="it8">
+                                    <f:validator binding="#{bindings.TwitterHandle.validator}"/>
+                                </af:inputText>
+                                <af:inputText value="#{bindings.LinkedinProfile.inputValue}"
+                                              label="#{bindings.LinkedinProfile.hints.label}"
+                                              required="#{bindings.LinkedinProfile.hints.mandatory}"
+                                              columns="50"
+                                              maximumLength="#{bindings.LinkedinProfile.hints.precision}"
+                                              shortDesc="#{bindings.LinkedinProfile.hints.tooltip}" id="it9">
+                                    <f:validator binding="#{bindings.LinkedinProfile.validator}"/>
+                                </af:inputText>
+                                <af:inputText value="#{bindings.FacebookAccount.inputValue}"
+                                              label="#{bindings.FacebookAccount.hints.label}"
+                                              required="#{bindings.FacebookAccount.hints.mandatory}"
+                                              columns="50"
+                                              maximumLength="#{bindings.FacebookAccount.hints.precision}"
+                                              shortDesc="#{bindings.FacebookAccount.hints.tooltip}" id="it10">
+                                    <f:validator binding="#{bindings.FacebookAccount.validator}"/>
+                                </af:inputText>
+                                <af:inputText value="#{bindings.Picture.inputValue}"
+                                              label="#{bindings.Picture.hints.label}"
+                                              required="#{bindings.Picture.hints.mandatory}"
+                                              columns="50"
+                                              maximumLength="#{bindings.Picture.hints.precision}"
+                                              shortDesc="#{bindings.Picture.hints.tooltip}" id="it11">
+                                    <f:validator binding="#{bindings.Picture.validator}"/>
+                                </af:inputText>
+                                                    <af:richTextEditor value="#{bindings.BiographyString.inputValue}"
+                                              label="#{bindings.Biography.hints.label}"
+                                              required="#{bindings.Biography.hints.mandatory}"
+                                              columns="#{bindings.Biography.hints.displayWidth}"
+                                              maximumLength="#{bindings.Biography.hints.precision}"
+                                              shortDesc="#{bindings.Biography.hints.tooltip}" id="it12b">
+                                    <f:facet name="footer"/>
+                                </af:richTextEditor>
+                                <af:inputText value="#{bindings.Salutation.inputValue}"
+                                              label="#{bindings.Salutation.hints.label}"
+                                              required="#{bindings.Salutation.hints.mandatory}"
+                                              columns="50"
+                                              maximumLength="#{bindings.Salutation.hints.precision}"
+                                              shortDesc="#{bindings.Salutation.hints.tooltip}" id="it13">
+                                    <f:validator binding="#{bindings.Salutation.validator}"/>
+                                </af:inputText>
+                                <af:inputText value="#{bindings.CommunityTitles.inputValue}"
+                                              label="#{bindings.CommunityTitles.hints.label}"
+                                              required="#{bindings.CommunityTitles.hints.mandatory}"
+                                              columns="50"
+                                              maximumLength="#{bindings.CommunityTitles.hints.precision}"
+                                              shortDesc="#{bindings.CommunityTitles.hints.tooltip}" id="it14">
+                                    <f:validator binding="#{bindings.CommunityTitles.validator}"/>
+                                </af:inputText>
+                                <af:inputText value="#{bindings.JobTitle.inputValue}"
+                                              label="#{bindings.JobTitle.hints.label}"
+                                              required="#{bindings.JobTitle.hints.mandatory}"
+                                              columns="50"
+                                              maximumLength="#{bindings.JobTitle.hints.precision}"
+                                              shortDesc="#{bindings.JobTitle.hints.tooltip}" id="it15">
+                                    <f:validator binding="#{bindings.JobTitle.validator}"/>
+                                </af:inputText>
+                                <af:inputText value="#{bindings.Notes.inputValue}" label="#{bindings.Notes.hints.label}"
+                                              required="#{bindings.Notes.hints.mandatory}"
+                                              columns="50"
+                                              maximumLength="#{bindings.Notes.hints.precision}"
+                                              shortDesc="#{bindings.Notes.hints.tooltip}" id="it16" rows="3">
+                                    <f:validator binding="#{bindings.Notes.validator}"/>
+                                </af:inputText>
+                                <f:facet name="footer">
+                                    <af:panelGroupLayout layout="vertical" id="pgl1">
+                                        <af:panelGroupLayout layout="horizontal" id="pgl2">
+                                            <af:button actionListener="#{bindings.First.execute}" text="First"
+                                                       disabled="#{!bindings.First.enabled}" partialSubmit="true"
+                                                       id="b1"/>
+                                            <af:button actionListener="#{bindings.Previous.execute}" text="Previous"
+                                                       disabled="#{!bindings.Previous.enabled}" partialSubmit="true"
+                                                       id="b2"/>
+                                            <af:button actionListener="#{bindings.Next.execute}" text="Next"
+                                                       disabled="#{!bindings.Next.enabled}" partialSubmit="true"
+                                                       id="b3"/>
+                                            <af:button actionListener="#{bindings.Last.execute}" text="Last"
+                                                       disabled="#{!bindings.Last.enabled}" partialSubmit="true"
+                                                       id="b4"/>
+                                        </af:panelGroupLayout>
+                                        <af:button text="Submit" id="b5"/>
+                                        <af:panelCollection id="pc2">
+                                            <f:facet name="menus"/>
+                                            <f:facet name="toolbar"/>
+                                            <f:facet name="statusbar"/>
+                                            <af:table value="#{bindings.SpeakerSessionsView2.collectionModel}" var="row"
+                                                      rows="#{bindings.SpeakerSessionsView2.rangeSize}"
+                                                      emptyText="#{bindings.SpeakerSessionsView2.viewable ? 'No data to display.' : 'Access Denied.'}"
+                                                      rowBandingInterval="0"
+                                                      fetchSize="#{bindings.SpeakerSessionsView2.rangeSize}" id="t2">
+                                                <af:column sortProperty="#{bindings.SpeakerSessionsView2.hints.Title.name}"
+                                                           sortable="true"
+                                                           headerText="#{bindings.SpeakerSessionsView2.hints.Title.label}"
+                                                           id="c4">
+                                                    <af:outputText value="#{row.Title}"
+                                                                   shortDesc="#{bindings.SpeakerSessionsView2.hints.Title.tooltip}"
+                                                                   id="ot4"/>
+                                                </af:column>
+                                                <af:column sortProperty="#{bindings.SpeakerSessionsView2.hints.Speakers.name}"
+                                                           sortable="true"
+                                                           headerText="#{bindings.SpeakerSessionsView2.hints.Speakers.label}"
+                                                           id="c5">
+                                                    <af:outputText value="#{row.Speakers}"
+                                                                   shortDesc="#{bindings.SpeakerSessionsView2.hints.Speakers.tooltip}"
+                                                                   id="ot5"/>
+                                                </af:column>
+                                                <af:column sortProperty="#{bindings.SpeakerSessionsView2.hints.Status.name}"
+                                                           sortable="true"
+                                                           headerText="#{bindings.SpeakerSessionsView2.hints.Status.label}"
+                                                           id="c6">
+                                                    <af:outputText value="#{row.Status}"
+                                                                   shortDesc="#{bindings.SpeakerSessionsView2.hints.Status.tooltip}"
+                                                                   id="ot6"/>
+                                                </af:column>
+                                                <af:column sortProperty="#{bindings.SpeakerSessionsView2.hints.Cospeakers.name}"
+                                                           sortable="true"
+                                                           headerText="#{bindings.SpeakerSessionsView2.hints.Cospeakers.label}"
+                                                           id="c7">
+                                                    <af:outputText value="#{row.Cospeakers}"
+                                                                   shortDesc="#{bindings.SpeakerSessionsView2.hints.Cospeakers.tooltip}"
+                                                                   id="ot7"/>
+                                                </af:column>
+                                                <af:column sortProperty="#{bindings.SpeakerSessionsView2.hints.PlannedYn.name}"
+                                                           sortable="true"
+                                                           headerText="#{bindings.SpeakerSessionsView2.hints.PlannedYn.label}"
+                                                           id="c8">
+                                                    <af:outputText value="#{row.PlannedYn}"
+                                                                   shortDesc="#{bindings.SpeakerSessionsView2.hints.PlannedYn.tooltip}"
+                                                                   id="ot8"/>
+                                                </af:column>
+                                                <af:column sortProperty="#{bindings.SpeakerSessionsView2.hints.Duration.name}"
+                                                           sortable="true"
+                                                           headerText="#{bindings.SpeakerSessionsView2.hints.Duration.label}"
+                                                           id="c9">
+                                                    <af:outputText value="#{row.Duration}"
+                                                                   shortDesc="#{bindings.SpeakerSessionsView2.hints.Duration.tooltip}"
+                                                                   id="ot9">
+                                                        <af:convertNumber groupingUsed="false"
+                                                                          pattern="#{bindings.SpeakerSessionsView2.hints.Duration.format}"/>
+                                                    </af:outputText>
+                                                </af:column>
+                                                <af:column sortProperty="#{bindings.SpeakerSessionsView2.hints.Notes.name}"
+                                                           sortable="true"
+                                                           headerText="#{bindings.SpeakerSessionsView2.hints.Notes.label}"
+                                                           id="c10">
+                                                    <af:outputText value="#{row.Notes}"
+                                                                   shortDesc="#{bindings.SpeakerSessionsView2.hints.Notes.tooltip}"
+                                                                   id="ot10"/>
+                                                </af:column>
+                                            </af:table>
+                                        </af:panelCollection>
+                                    </af:panelGroupLayout>
+                                </f:facet>
+                            </af:panelFormLayout>
+                        </f:facet>
+                    </af:panelSplitter>
+                </f:facet>
+            </af:panelSplitter>
+        </af:form>
+    </af:document>
+</f:view>
