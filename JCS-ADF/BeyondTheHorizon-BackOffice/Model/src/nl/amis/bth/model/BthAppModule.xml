@@ -6,7 +6,11 @@
   Name="BthAppModule"
   Version="12.1.3.13.52"
   InheritPersonalization="merge"
-  ClearCacheOnRollback="true">
+  ClearCacheOnRollback="true"
+  ComponentClass="nl.amis.bth.model.BthAppModuleImpl">
+  <DesignTime>
+    <Attr Name="_isCodegen" Value="true"/>
+  </DesignTime>
   <ViewUsage
     Name="BthPersonView1"
     ViewObjectName="nl.amis.bth.model.BthPersonView"/>
@@ -82,6 +86,12 @@
   <ViewUsage
     Name="BthPlanningItemView3"
     ViewObjectName="nl.amis.bth.model.BthPlanningItemView"/>
+  <ViewUsage
+    Name="BthDocumentView1"
+    ViewObjectName="nl.amis.bth.model.BthDocumentView"/>
+  <ViewUsage
+    Name="DocumentAccessView1"
+    ViewObjectName="nl.amis.bth.model.DocumentAccessView"/>
   <ViewLinkUsage
     Name="SpeakerSessionsViewLink1"
     ViewLinkObjectName="nl.amis.bth.model.SpeakerSessionsViewLink"

@@ -45,6 +45,7 @@ create table bth_people
 , salutation varchar2(100)
 , community_titles varchar2(500)
 , notes  varchar2(2000)
+, picture_doc_id number(10) -- reference to bth_documents
 );
 
 create table bth_speakers
@@ -94,6 +95,15 @@ create table bth_tag_bindings
 , ssn_id number(10)
 );
 
+
+create table bth_documents
+( id number(10) default bth_seq.nextval not null primary key
+, name varchar2(500)
+, content_type varchar2(100)
+, content_data blob
+, description varchar2(500)     
+, master_id number(10) -- reference to owning record
+);
 
 -- load demo data
 

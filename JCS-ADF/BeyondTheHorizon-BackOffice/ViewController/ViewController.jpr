@@ -189,6 +189,9 @@
             <hash>
                <url n="content-folder-url" path="adfmsrc/nl/amis/bth/view/"/>
                <list n="pattern-filters">
+                  <string v="+nl/amis/bth/view/documents/ContentTypes.java"/>
+                  <string v="+nl/amis/bth/view/documents/UploadBlob.java"/>
+                  <string v="+nl/amis/bth/view/ImageBean.java"/>
                   <string v="+nl/amis/bth/view/SessionSelectionListener.java"/>
                </list>
                <list n="url-path">
@@ -287,6 +290,10 @@
             <value n="isJDK" v="false"/>
          </hash>
          <hash>
+            <value n="id" v="Commons-io-2.5.jar"/>
+            <value n="isJDK" v="false"/>
+         </hash>
+         <hash>
             <value n="id" v="Oracle XML Parser v2"/>
             <value n="isJDK" v="false"/>
          </hash>
@@ -315,6 +322,19 @@
             <value n="isJDK" v="false"/>
          </hash>
       </list>
+      <hash n="internalDefinitions">
+         <list n="libraryDefinitions">
+            <hash>
+               <list n="classPath">
+                  <url path="public_html/WEB-INF/lib/commons-io-2.5.jar" jar-entry=""/>
+               </list>
+               <value n="deployedByDefault" v="true"/>
+               <value n="description" v="Commons-io-2.5.jar"/>
+               <value n="id" v="Commons-io-2.5.jar"/>
+               <value n="locked" v="true"/>
+            </hash>
+         </list>
+      </hash>
       <list n="libraryReferences">
          <hash>
             <value n="id" v="JSP Runtime"/>
@@ -394,6 +414,10 @@
          </hash>
          <hash>
             <value n="id" v="ADF Faces Databinding Runtime"/>
+            <value n="isJDK" v="false"/>
+         </hash>
+         <hash>
+            <value n="id" v="Commons-io-2.5.jar"/>
             <value n="isJDK" v="false"/>
          </hash>
          <hash>

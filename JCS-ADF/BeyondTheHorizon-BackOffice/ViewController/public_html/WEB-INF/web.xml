@@ -2,76 +2,6 @@
 <web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
          version="3.0">
-  <servlet>
-    <servlet-name>Faces Servlet</servlet-name>
-    <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
-    <load-on-startup>1</load-on-startup>
-  </servlet>
-  <servlet>
-    <servlet-name>resources</servlet-name>
-    <servlet-class>org.apache.myfaces.trinidad.webapp.ResourceServlet</servlet-class>
-  </servlet>
-  <servlet>
-    <servlet-name>BIGRAPHSERVLET</servlet-name>
-    <servlet-class>oracle.adf.view.faces.bi.webapp.GraphServlet</servlet-class>
-  </servlet>
-  <servlet>
-    <servlet-name>BIGAUGESERVLET</servlet-name>
-    <servlet-class>oracle.adf.view.faces.bi.webapp.GaugeServlet</servlet-class>
-  </servlet>
-  <servlet>
-    <servlet-name>MapProxyServlet</servlet-name>
-    <servlet-class>oracle.adf.view.faces.bi.webapp.MapProxyServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>Faces Servlet</servlet-name>
-    <url-pattern>/faces/*</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>resources</servlet-name>
-    <url-pattern>/adf/*</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>resources</servlet-name>
-    <url-pattern>/afr/*</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>BIGRAPHSERVLET</servlet-name>
-    <url-pattern>/servlet/GraphServlet/*</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>BIGAUGESERVLET</servlet-name>
-    <url-pattern>/servlet/GaugeServlet/*</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>MapProxyServlet</servlet-name>
-    <url-pattern>/mapproxy/*</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>resources</servlet-name>
-    <url-pattern>/bi/*</url-pattern>
-  </servlet-mapping>
-  <filter>
-    <filter-name>trinidad</filter-name>
-    <filter-class>org.apache.myfaces.trinidad.webapp.TrinidadFilter</filter-class>
-  </filter>
-  <filter>
-    <filter-name>adfBindings</filter-name>
-    <filter-class>oracle.adf.model.servlet.ADFBindingFilter</filter-class>
-  </filter>
-  <filter-mapping>
-    <filter-name>trinidad</filter-name>
-    <servlet-name>Faces Servlet</servlet-name>
-    <dispatcher>FORWARD</dispatcher>
-    <dispatcher>REQUEST</dispatcher>
-    <dispatcher>ERROR</dispatcher>
-  </filter-mapping>
-  <filter-mapping>
-    <filter-name>adfBindings</filter-name>
-    <servlet-name>Faces Servlet</servlet-name>
-    <dispatcher>FORWARD</dispatcher>
-    <dispatcher>REQUEST</dispatcher>
-  </filter-mapping>
   <context-param>
     <param-name>javax.faces.STATE_SAVING_METHOD</param-name>
     <param-value>client</param-value>
@@ -123,6 +53,110 @@
     <param-name>javax.faces.FACELETS_VIEW_MAPPINGS</param-name>
     <param-value>*.jsf;*.xhtml</param-value>
   </context-param>
+  <filter>
+    <filter-name>trinidad</filter-name>
+    <filter-class>org.apache.myfaces.trinidad.webapp.TrinidadFilter</filter-class>
+  </filter>
+  <filter>
+    <filter-name>adfBindings</filter-name>
+    <filter-class>oracle.adf.model.servlet.ADFBindingFilter</filter-class>
+<!--    <filter-class>nl.amis.bth.view.documents.DocumentsBindingsFilter</filter-class>
+    -->
+    
+  </filter>
+  <filter-mapping>
+    <filter-name>trinidad</filter-name>
+    <servlet-name>Faces Servlet</servlet-name>
+    <dispatcher>FORWARD</dispatcher>
+    <dispatcher>REQUEST</dispatcher>
+    <dispatcher>ERROR</dispatcher>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>adfBindings</filter-name>
+    <servlet-name>Faces Servlet</servlet-name>
+    <dispatcher>FORWARD</dispatcher>
+    <dispatcher>REQUEST</dispatcher>
+  </filter-mapping>
+ <!-- <filter-mapping>
+    <filter-name>adfBindings</filter-name>
+  <url-pattern>/docs/*</url-pattern>
+  </filter-mapping>
+-->
+  <filter-mapping>
+    <filter-name>adfBindings</filter-name>
+    <servlet-name>ImageServlet</servlet-name>
+    <dispatcher>FORWARD</dispatcher>
+    <dispatcher>REQUEST</dispatcher>
+  </filter-mapping>
+  <listener>
+    <listener-class>oracle.adf.mbean.share.connection.ADFConnectionLifeCycleCallBack</listener-class>
+  </listener>
+  <listener>
+    <listener-class>oracle.adf.mbean.share.config.ADFConfigLifeCycleCallBack</listener-class>
+  </listener>
+  <listener>
+    <listener-class>oracle.bc4j.mbean.BC4JConfigLifeCycleCallBack</listener-class>
+  </listener>
+  <servlet>
+    <servlet-name>Faces Servlet</servlet-name>
+    <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet>
+    <servlet-name>resources</servlet-name>
+    <servlet-class>org.apache.myfaces.trinidad.webapp.ResourceServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>BIGRAPHSERVLET</servlet-name>
+    <servlet-class>oracle.adf.view.faces.bi.webapp.GraphServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>BIGAUGESERVLET</servlet-name>
+    <servlet-class>oracle.adf.view.faces.bi.webapp.GaugeServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>MapProxyServlet</servlet-name>
+    <servlet-class>oracle.adf.view.faces.bi.webapp.MapProxyServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <display-name>ImageServlet</display-name>
+    <servlet-name>ImageServlet</servlet-name>
+    <servlet-class>nl.amis.bth.view.documents.ImageServlet</servlet-class>
+    <load-on-startup>100</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>Faces Servlet</servlet-name>
+    <url-pattern>/faces/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>resources</servlet-name>
+    <url-pattern>/adf/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>resources</servlet-name>
+    <url-pattern>/afr/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>BIGRAPHSERVLET</servlet-name>
+    <url-pattern>/servlet/GraphServlet/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>BIGAUGESERVLET</servlet-name>
+    <url-pattern>/servlet/GaugeServlet/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>MapProxyServlet</servlet-name>
+    <url-pattern>/mapproxy/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>resources</servlet-name>
+    <url-pattern>/bi/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>ImageServlet</servlet-name>
+    <url-pattern>/docs/render_image</url-pattern>
+  </servlet-mapping>
+
   <mime-mapping>
     <extension>swf</extension>
     <mime-type>application/x-shockwave-flash</mime-type>
@@ -131,13 +165,4 @@
     <extension>amf</extension>
     <mime-type>application/x-amf</mime-type>
   </mime-mapping>
-  <listener>
-    <listener-class>oracle.adf.mbean.share.config.ADFConfigLifeCycleCallBack</listener-class>
-  </listener>
-  <listener>
-    <listener-class>oracle.adf.mbean.share.connection.ADFConnectionLifeCycleCallBack</listener-class>
-  </listener>
-  <listener>
-    <listener-class>oracle.bc4j.mbean.BC4JConfigLifeCycleCallBack</listener-class>
-  </listener>
 </web-app>

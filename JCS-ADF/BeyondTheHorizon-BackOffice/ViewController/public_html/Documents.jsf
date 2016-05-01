@@ -1,0 +1,100 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html>
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:af="http://xmlns.oracle.com/adf/faces/rich">
+    <af:document title="Documents.jsf" id="d1">
+        <af:messages id="m1"/>
+        <af:form id="f1">
+            <af:panelGridLayout id="pgl1">
+                <af:gridRow height="50px" id="gr1">
+                    <af:gridCell width="100%" halign="stretch" valign="stretch" id="gc2">
+                        <!-- Header -->
+                    </af:gridCell>
+                </af:gridRow>
+                <af:gridRow height="100%" id="gr2">
+                    <af:gridCell width="100%" halign="stretch" valign="stretch" id="gc1">
+                        <af:panelSplitter orientation="horizontal" splitterPosition="100" positionedFromEnd="true"
+                                          id="ps1">
+                            <f:facet name="first">
+                                <!-- Content -->
+                            </f:facet>
+                            <f:facet name="second">
+                                <!-- Right -->
+                                <af:panelFormLayout id="pfl1">
+                                    <af:inputText value="#{bindings.Id.inputValue}" label="#{bindings.Id.hints.label}"
+                                                  required="#{bindings.Id.hints.mandatory}"
+                                                  columns="#{bindings.Id.hints.displayWidth}"
+                                                  maximumLength="#{bindings.Id.hints.precision}"
+                                                  shortDesc="#{bindings.Id.hints.tooltip}" id="it1">
+                                        <f:validator binding="#{bindings.Id.validator}"/>
+                                        <af:convertNumber groupingUsed="false" pattern="#{bindings.Id.format}"/>
+                                    </af:inputText>
+                                    <af:inputText value="#{bindings.Name.inputValue}"
+                                                  label="#{bindings.Name.hints.label}"
+                                                  required="#{bindings.Name.hints.mandatory}"
+                                                  columns="#{bindings.Name.hints.displayWidth}"
+                                                  maximumLength="#{bindings.Name.hints.precision}"
+                                                  shortDesc="#{bindings.Name.hints.tooltip}" id="it2">
+                                        <f:validator binding="#{bindings.Name.validator}"/>
+                                    </af:inputText>
+                                    <af:inputText value="#{bindings.ContentType.inputValue}"
+                                                  label="#{bindings.ContentType.hints.label}"
+                                                  required="#{bindings.ContentType.hints.mandatory}"
+                                                  columns="#{bindings.ContentType.hints.displayWidth}"
+                                                  maximumLength="#{bindings.ContentType.hints.precision}"
+                                                  shortDesc="#{bindings.ContentType.hints.tooltip}" id="it3">
+                                        <f:validator binding="#{bindings.ContentType.validator}"/>
+                                    </af:inputText>
+                                    <af:button text="Download Data" id="cb3"
+                                               visible="#{bindings.ContentData.inputValue ne null}"
+                                               binding="#{ImageBean.downloadButton}">
+                                        <af:fileDownloadActionListener contentType="#{bindings.ContentType.inputValue}"
+                                                                       filename="#{bindings.Name.inputValue}"
+                                                                       method="#{ImageBean.downloadImage}"/>
+                                    </af:button>
+                                    <af:image source="/docs/render_image?id=#{bindings.Id.inputValue}" id="i1" shortDesc="#{bindings.Name.inputValue}"
+                                              inlineStyle="width:200px;"/>
+                                    <af:inputText value="#{bindings.Description.inputValue}"
+                                                  label="#{bindings.Description.hints.label}"
+                                                  required="#{bindings.Description.hints.mandatory}"
+                                                  columns="#{bindings.Description.hints.displayWidth}"
+                                                  maximumLength="#{bindings.Description.hints.precision}"
+                                                  shortDesc="#{bindings.Description.hints.tooltip}" id="it5">
+                                        <f:validator binding="#{bindings.Description.validator}"/>
+                                    </af:inputText>
+                                    <af:inputText value="#{bindings.MasterId.inputValue}"
+                                                  label="#{bindings.MasterId.hints.label}"
+                                                  required="#{bindings.MasterId.hints.mandatory}"
+                                                  columns="#{bindings.MasterId.hints.displayWidth}"
+                                                  maximumLength="#{bindings.MasterId.hints.precision}"
+                                                  shortDesc="#{bindings.MasterId.hints.tooltip}" id="it6">
+                                        <f:validator binding="#{bindings.MasterId.validator}"/>
+                                        <af:convertNumber groupingUsed="false" pattern="#{bindings.MasterId.format}"/>
+                                    </af:inputText>
+                                    <f:facet name="footer">
+                                        <af:panelGroupLayout layout="vertical" id="pgl2">
+                                            <af:panelGroupLayout layout="horizontal" id="pgl3">
+                                                <af:button actionListener="#{bindings.First.execute}" text="First"
+                                                           disabled="#{!bindings.First.enabled}" partialSubmit="true"
+                                                           id="b1"/>
+                                                <af:button actionListener="#{bindings.Previous.execute}" text="Previous"
+                                                           disabled="#{!bindings.Previous.enabled}" partialSubmit="true"
+                                                           id="b2"/>
+                                                <af:button actionListener="#{bindings.Next.execute}" text="Next"
+                                                           disabled="#{!bindings.Next.enabled}" partialSubmit="true"
+                                                           id="b3"/>
+                                                <af:button actionListener="#{bindings.Last.execute}" text="Last"
+                                                           disabled="#{!bindings.Last.enabled}" partialSubmit="true"
+                                                           id="b4"/>
+                                            </af:panelGroupLayout>
+                                            <af:button text="Submit" id="b5"/>
+                                        </af:panelGroupLayout>
+                                    </f:facet>
+                                </af:panelFormLayout>
+                            </f:facet>
+                        </af:panelSplitter>
+                    </af:gridCell>
+                </af:gridRow>
+            </af:panelGridLayout>
+        </af:form>
+    </af:document>
+</f:view>

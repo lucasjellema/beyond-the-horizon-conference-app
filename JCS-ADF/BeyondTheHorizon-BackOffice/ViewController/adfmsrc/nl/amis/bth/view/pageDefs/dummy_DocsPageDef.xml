@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<pageDefinition xmlns="http://xmlns.oracle.com/adfm/uimodel" version="12.1.3.13.52" id="DummyDocsPageDef"
+                Package="nl.amis.bth.view.pageDefs">
+  <parameters/>
+  <executables>
+    <variableIterator id="variables"/>
+    <iterator id="DocumentAccessView1Iterator" Binds="DocumentAccessView1" DataControl="BthAppModuleDataControl"
+              RangeSize="25"/>
+  </executables>
+  <bindings>
+    <methodAction id="getImageById" RequiresUpdateModel="true" Action="invokeMethod" MethodName="getImageById"
+                  IsViewObjectMethod="true" DataControl="BthAppModuleDataControl"
+                  InstanceName="data.BthAppModuleDataControl.DocumentAccessView1"
+                  ReturnName="data.BthAppModuleDataControl.methodResults.getImageById_BthAppModuleDataControl_DocumentAccessView1_getImageById_result">
+      <NamedData NDName="aId" NDType="oracle.jbo.domain.Number"/>
+    </methodAction>
+  </bindings>
+</pageDefinition>

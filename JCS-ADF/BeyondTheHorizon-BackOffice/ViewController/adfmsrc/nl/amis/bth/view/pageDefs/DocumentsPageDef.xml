@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<pageDefinition xmlns="http://xmlns.oracle.com/adfm/uimodel" version="12.1.3.13.52" id="DocumentsPageDef"
+                Package="nl.amis.bth.view.pageDefs">
+  <parameters/>
+  <executables>
+    <variableIterator id="variables"/>
+    <iterator Binds="BthDocumentView1" RangeSize="25" DataControl="BthAppModuleDataControl"
+              id="BthDocumentView1Iterator"/>
+  </executables>
+  <bindings>
+    <attributeValues IterBinding="BthDocumentView1Iterator" id="Id">
+      <AttrNames>
+        <Item Value="Id"/>
+      </AttrNames>
+    </attributeValues>
+    <attributeValues IterBinding="BthDocumentView1Iterator" id="Name">
+      <AttrNames>
+        <Item Value="Name"/>
+      </AttrNames>
+    </attributeValues>
+    <attributeValues IterBinding="BthDocumentView1Iterator" id="ContentType">
+      <AttrNames>
+        <Item Value="ContentType"/>
+      </AttrNames>
+    </attributeValues>
+    <attributeValues IterBinding="BthDocumentView1Iterator" id="ContentData">
+      <AttrNames>
+        <Item Value="ContentData"/>
+      </AttrNames>
+    </attributeValues>
+    <attributeValues IterBinding="BthDocumentView1Iterator" id="Description">
+      <AttrNames>
+        <Item Value="Description"/>
+      </AttrNames>
+    </attributeValues>
+    <attributeValues IterBinding="BthDocumentView1Iterator" id="MasterId">
+      <AttrNames>
+        <Item Value="MasterId"/>
+      </AttrNames>
+    </attributeValues>
+    <action IterBinding="BthDocumentView1Iterator" id="First" RequiresUpdateModel="true" Action="first"/>
+    <action IterBinding="BthDocumentView1Iterator" id="Previous" RequiresUpdateModel="true" Action="previous"/>
+    <action IterBinding="BthDocumentView1Iterator" id="Next" RequiresUpdateModel="true" Action="next"/>
+    <action IterBinding="BthDocumentView1Iterator" id="Last" RequiresUpdateModel="true" Action="last"/>
+  </bindings>
+</pageDefinition>

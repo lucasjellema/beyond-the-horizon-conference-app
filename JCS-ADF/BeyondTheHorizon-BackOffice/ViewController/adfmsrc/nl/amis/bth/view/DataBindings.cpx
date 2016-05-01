@@ -8,13 +8,14 @@
   </definitionFactories>
   <pageMap>
     <page path="/index.jsf" usageId="nl_amis_bth_view_indexPageDef"/>
-    <page path="/index3.jsf" usageId="nl_amis_bth_view_index3PageDef"/>
+   <page path="/index3.jsf" usageId="nl_amis_bth_view_index3PageDef"/>
     <page path="/index4.jsf" usageId="nl_amis_bth_view_index4PageDef"/>    
     <page path="/Speakers.jsf" usageId="nl_amis_bth_view_SpeakersPageDef"/>
     <page path="/Slots.jsf" usageId="nl_amis_bth_view_SlotsPageDef"/>
     <page path="/Schedule.jsf" usageId="nl_amis_bth_view_SchedulePageDef1"/>
     <page path="/Tags2.jsf" usageId="nl_amis_bth_view_Tags2PageDef"/>
     <page path="/Sessions.jsf" usageId="nl_amis_bth_view_SessionsPageDef"/>
+    <page path="/Documents.jsf" usageId="nl_amis_bth_view_DocumentsPageDef"/>
   </pageMap>
   <pageDefinitionUsages>
     <page id="nl_amis_bth_view_indexPageDef" path="nl.amis.bth.view.pageDefs.indexPageDef"/>
@@ -25,6 +26,8 @@
     <page id="nl_amis_bth_view_SchedulePageDef1" path="nl.amis.bth.view.pageDefs.SchedulePageDef1"/>
     <page id="nl_amis_bth_view_Tags2PageDef" path="nl.amis.bth.view.pageDefs.Tags2PageDef"/>
     <page id="nl_amis_bth_view_SessionsPageDef" path="nl.amis.bth.view.pageDefs.SessionsPageDef"/>
+    <page id="nl_amis_bth_view_DocumentsPageDef" path="nl.amis.bth.view.pageDefs.DocumentsPageDef"/>
+    <page id="nl_amis_bth_view_DummyDocsPageDef" path="nl.amis.bth.view.pageDefs.dummy_DocsPageDef"/>
   </pageDefinitionUsages>
   <dataControlUsages>
     <BC4JDataControl id="BthAppModuleDataControl" Package="nl.amis.bth.model"

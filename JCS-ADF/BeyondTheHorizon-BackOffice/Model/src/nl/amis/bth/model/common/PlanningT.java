@@ -156,6 +156,7 @@ public class PlanningT extends Struct {
         setAttribute(10, value);
     }
 
+
     public void initStructureDef() {
         DomainAttributeDef[] attrs = new DomainAttributeDef[11];
         if (mStructureDef == null) {
