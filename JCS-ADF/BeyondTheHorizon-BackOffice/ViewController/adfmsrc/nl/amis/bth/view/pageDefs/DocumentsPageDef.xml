@@ -3,9 +3,12 @@
                 Package="nl.amis.bth.view.pageDefs">
   <parameters/>
   <executables>
-    <variableIterator id="variables"/>
+     <variableIterator id="variables">
+      <variable Name="TemporaryFile" Type="java.lang.String"/>
+    </variableIterator>
     <iterator Binds="BthDocumentView1" RangeSize="25" DataControl="BthAppModuleDataControl"
-              id="BthDocumentView1Iterator"/>
+              id="BthDocumentView1Iterator" ChangeEventPolicy="none"/>
+              <!-- to resolve issue No Data In this entry (https://community.oracle.com/thread/3781988?start=0&tstart=0)-->
   </executables>
   <bindings>
     <attributeValues IterBinding="BthDocumentView1Iterator" id="Id">
@@ -38,9 +41,18 @@
         <Item Value="MasterId"/>
       </AttrNames>
     </attributeValues>
+ <attributeValues IterBinding="variables" id="TemporaryFile1">
+      <AttrNames>
+        <Item Value="TemporaryFile"/>
+      </AttrNames>
+    </attributeValues>
     <action IterBinding="BthDocumentView1Iterator" id="First" RequiresUpdateModel="true" Action="first"/>
     <action IterBinding="BthDocumentView1Iterator" id="Previous" RequiresUpdateModel="true" Action="previous"/>
     <action IterBinding="BthDocumentView1Iterator" id="Next" RequiresUpdateModel="true" Action="next"/>
     <action IterBinding="BthDocumentView1Iterator" id="Last" RequiresUpdateModel="true" Action="last"/>
+    <action id="Commit" RequiresUpdateModel="true" Action="commitTransaction" DataControl="BthAppModuleDataControl"/>
+    <action IterBinding="BthDocumentView1Iterator" id="CreateInsert" RequiresUpdateModel="true"
+            Action="createInsertRow"/>
+    <action IterBinding="BthDocumentView1Iterator" id="Delete" RequiresUpdateModel="false" Action="removeCurrentRow"/>
   </bindings>
 </pageDefinition>

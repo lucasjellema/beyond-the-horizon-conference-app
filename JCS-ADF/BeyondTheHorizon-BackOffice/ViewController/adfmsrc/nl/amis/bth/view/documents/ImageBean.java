@@ -11,6 +11,8 @@ import java.io.OutputStream;
 
 import java.util.List;
 
+import java.util.logging.Level;
+
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
@@ -43,6 +45,11 @@ public class ImageBean {
     private Integer randomVal = 0;
 
     public ImageBean() {
+    }
+
+    private void lg(String txt) {
+        logger.log(Level.WARNING, txt);
+        
     }
 
     /**
@@ -95,29 +102,53 @@ public class ImageBean {
      * @param valueChangeEvent
      */
     public void uploadFileValueChangeEvent(ValueChangeEvent valueChangeEvent) {
-        // The event give access to an Uploade dFile which contains data about the file and its content
-        UploadedFile file = (UploadedFile) valueChangeEvent.getNewValue();
-        // Get the original file name
-        String fileName = file.getFilename();
-        // get the mime type
-        String contentType = ContentTypes.get(fileName);
-        // get the current roew from the ImagesView2Iterator via the binding
-        DCBindingContainer lBindingContainer = (DCBindingContainer) BindingContext.getCurrent().getCurrentBindingsEntry();
-        DCIteratorBinding lBinding = lBindingContainer.findIteratorBinding("ImagesView2Iterator");
-        Row newRow = lBinding.getCurrentRow();
-        // set the file name
-        newRow.setAttribute("ImageName", fileName);
-        // create the BlobDomain and set it into the row
-        UploadBlob blob = createBlobDomain(file, Boolean.TRUE);
-        newRow.setAttribute("ImageData", blob.getDataBlob());
-        // set the mime type
-        newRow.setAttribute("ContentType", contentType);
-        String tmp = (blob.getTempFileAvailabe() ? blob.getTempFile() : null);
-        setTemporaryFileVar(tmp);
-        UIComponent ui = (UIComponent) valueChangeEvent.getSource();
-        // PPR refresh a jsf component
-        ui = ui.getParent();
-        AdfFacesContext.getCurrentInstance().addPartialTarget(ui);
+        try {
+            // The event give access to an Uploade dFile which contains data about the file and its content
+            lg("uoloadfile value change");
+            UploadedFile file = (UploadedFile) valueChangeEvent.getNewValue();
+            lg("uploaded fuile " + file);
+            // Get the original file name
+            String fileName = file.getFilename();
+            lg("filename " + fileName);
+            // get the mime type
+            String contentType = ContentTypes.get(fileName);
+            lg("content type: " + contentType);
+            // get the current roew from the ImagesView2Iterator via the binding
+            DCBindingContainer lBindingContainer =
+                (DCBindingContainer) BindingContext.getCurrent().getCurrentBindingsEntry();
+            lg("getcurrentbinding container " + lBindingContainer);
+            DCIteratorBinding lBinding = lBindingContainer.findIteratorBinding("BthDocumentView1Iterator");
+            lg("found iteratorbinding " + lBinding);
+            Row newRow = lBinding.getCurrentRow();
+            // set the file name
+            lg("new row " + newRow);
+
+            newRow.setAttribute("Name", fileName);
+            lg("set attribute name");
+            // create the BlobDomain and set it into the row
+            UploadBlob blob = createBlobDomain(file, Boolean.TRUE);
+            lg("created blob");
+            newRow.setAttribute("ContentData", blob.getDataBlob());
+            // set the mime type
+            lg("set content data");
+            newRow.setAttribute("ContentType", contentType);
+            lg("set content type");
+            String tmp = (blob.getTempFileAvailabe() ? blob.getTempFile() : null);
+            lg("tmp" + tmp);
+            setTemporaryFileVar(tmp);
+            lg("set temporartyfile");
+            UIComponent ui = (UIComponent) valueChangeEvent.getSource();
+            // PPR refresh a jsf component
+            lg("ui = " + ui);
+            ui = ui.getParent();
+            lg("ui = " + ui);
+            AdfFacesContext.getCurrentInstance().addPartialTarget(ui);
+            lg("add partial target");
+        } catch (Exception e) {
+            // TODO: Add catch code
+        lg("error "+e.getMessage());
+            e.printStackTrace();
+        }
 
     }
 

@@ -3,7 +3,7 @@
 <f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:af="http://xmlns.oracle.com/adf/faces/rich">
     <af:document title="Documents.jsf" id="d1">
         <af:messages id="m1"/>
-        <af:form id="f1">
+        <af:form id="f1" usesUpload="true">
             <af:panelGridLayout id="pgl1">
                 <af:gridRow height="50px" id="gr1">
                     <af:gridCell width="100%" halign="stretch" valign="stretch" id="gc2">
@@ -19,7 +19,7 @@
                             </f:facet>
                             <f:facet name="second">
                                 <!-- Right -->
-                                <af:panelFormLayout id="pfl1">
+                                <af:panelFormLayout id="pfl1" partialTriggers="b5 b6 b7 b8 b1 b2 b3 b4">
                                     <af:inputText value="#{bindings.Id.inputValue}" label="#{bindings.Id.hints.label}"
                                                   required="#{bindings.Id.hints.mandatory}"
                                                   columns="#{bindings.Id.hints.displayWidth}"
@@ -51,8 +51,16 @@
                                                                        filename="#{bindings.Name.inputValue}"
                                                                        method="#{ImageBean.downloadImage}"/>
                                     </af:button>
-                                    <af:image source="/docs/render_image?id=#{bindings.Id.inputValue}" id="i1" shortDesc="#{bindings.Name.inputValue}"
-                                              inlineStyle="width:200px;"/>
+                                    <af:image source="/docs/render_image?id=#{bindings.Id.inputValue}&amp;tmp=#{bindings.TemporaryFile1.inputValue}"
+                                              id="i1a" shortDesc="#{bindings.Name.inputValue}"
+                                              inlineStyle="width:200px;" partialTriggers="cb3" visible="true"/>
+                                    <af:spacer width="10" height="10" id="s3"/>
+                                    <!--
+                                    <af:image source="/docs/render_image?id=#{bindings.Id.inputValue}" id="i1"
+                                              shortDesc="#{bindings.Name.inputValue}" inlineStyle="width:200px;"/>
+                                   -->
+                                    <af:inputFile label="Select new file" id="if1" autoSubmit="true"
+                                                  valueChangeListener="#{ImageBean.uploadFileValueChangeEvent}"/>
                                     <af:inputText value="#{bindings.Description.inputValue}"
                                                   label="#{bindings.Description.hints.label}"
                                                   required="#{bindings.Description.hints.mandatory}"
@@ -87,6 +95,13 @@
                                                            id="b4"/>
                                             </af:panelGroupLayout>
                                             <af:button text="Submit" id="b5"/>
+                                            <af:button actionListener="#{bindings.Commit.execute}" text="Commit"
+                                                       id="b6"/>
+                                            <af:button actionListener="#{bindings.CreateInsert.execute}"
+                                                       text="Create New Document Record"
+                                                       disabled="#{!bindings.CreateInsert.enabled}" id="b7"/>
+                                            <af:button actionListener="#{bindings.Delete.execute}" text="Delete"
+                                                       disabled="#{!bindings.Delete.enabled}" id="b8"/>
                                         </af:panelGroupLayout>
                                     </f:facet>
                                 </af:panelFormLayout>

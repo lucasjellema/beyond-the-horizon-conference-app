@@ -11,4 +11,7 @@
   <library-ref>
     <library-name>adf.oracle.domain</library-name>
   </library-ref>
+  <prefer-application-packages>
+  <package-name>org.apache.commons.io</package-name>
+</prefer-application-packages>
 </weblogic-application>
