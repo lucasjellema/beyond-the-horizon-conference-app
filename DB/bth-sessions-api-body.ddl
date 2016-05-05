@@ -130,7 +130,7 @@ begin
               on (sp.psn_id = p.id)
        where  sp.ssn_id = ssn.id
      )
-     , ( select planning_t ( rom.id, slt.id, rom.display_label, rom.capacity, rom.location_description, slt.display_label, slt.start_time, pim.ssn_id, null, null)
+     , ( select planning_t ( rom.id, slt.id, rom.display_label, rom.capacity, rom.location_description, slt.display_label, slt.start_time, pim.ssn_id, ssn.title, null,ssn.duration, tag.display_label)
        from   bth_planning_items pim
               join
               bth_rooms rom
@@ -139,6 +139,8 @@ begin
               bth_slots slt
               on (pim.slt_id = slt.id)
        where  pim.ssn_id = ssn.id)
+     , ssn.submission_identifier
+     , tag.display_label
      )
   bulk collect into l_sessions
   from sessions s
@@ -151,6 +153,9 @@ begin
        join
        speakers s       
        on (s.id = skr.psn_id)
+       left outer join
+       bth_tags tag
+       on (ssn.track_tag_id = tag.id)
   ;
      bth_util.log('bulk collect done ');
  
@@ -206,7 +211,7 @@ begin
               on (s.psn_id = p.id)
        where  s.ssn_id = ssn.id
      )
-     , ( select planning_t ( rom.id, slt.id, rom.display_label, rom.capacity, rom.location_description, slt.display_label, slt.start_time, pim.ssn_id, null, null)
+     , ( select planning_t ( rom.id, slt.id, rom.display_label, rom.capacity, rom.location_description, slt.display_label, slt.start_time, pim.ssn_id,  ssn.title, null,ssn.duration,tag.display_label)
        from   bth_planning_items pim
               join
               bth_rooms rom
@@ -215,9 +220,14 @@ begin
               bth_slots slt
               on (pim.slt_id = slt.id)
        where  pim.ssn_id = ssn.id)
+     , ssn.submission_identifier
+     , tag.display_label
      )
    into l_session
   from bth_sessions ssn
+       left outer join
+       bth_tags tag
+       on (ssn.track_tag_id = tag.id)
 where ssn.id = p_session_id  ;
   return l_session;
 end get_session;
@@ -301,6 +311,8 @@ with same_tags as
        where  s.ssn_id = ssn.id
      )
    , null /*planning planning_t */
+     , ssn.submission_identifier
+     , tag.display_label
   )
   bulk collect into l_sessions
   from bth_sessions ssn
@@ -318,6 +330,9 @@ with same_tags as
                 )
        ) scs
        on (scs.ssn_id = ssn.id)
+       left outer join
+       bth_tags tag
+       on (ssn.track_tag_id = tag.id)
    where  rn < 8       
    and    ssn_id <> p_session_id
    order
@@ -412,3 +427,5 @@ end get_related_json_str_tbl;
 
 
 end bth_sessions_api;
+
+

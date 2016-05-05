@@ -34,6 +34,7 @@ begin
      from bth_people psn join bth_speakers skr on (skr.psn_id= psn.id) 
      where skr.ssn_id = ssn.id
     )
+    , ssn.duration, tag.display_label
   )
   bulk collect into l_planning_tbl
   from   bth_planning_items pim
@@ -46,6 +47,10 @@ begin
        left outer join
        bth_sessions ssn
        on (pim.ssn_id = ssn.id)
+       left outer join
+       bth_tags tag
+       on
+       (ssn.track_tag_id = tag.id)
 ;
 
   return l_planning_tbl;

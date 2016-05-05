@@ -144,6 +144,8 @@ type planning_t force as object (
 , ssn_id number(10)
 , session_title varchar2(500)
 , speakers varchar2(500)
+, session_duration  number(2,1)
+, track varchar2(100)
 , constructor function planning_t 
 (  rom_id in number
 , slt_id in number
@@ -155,6 +157,8 @@ type planning_t force as object (
 , ssn_id in number
 , session_title in varchar2
 , speakers in varchar2
+, session_duration in number
+, track varchar2
 ) return self as result
 , constructor function planning_t
               ( id in number
@@ -206,6 +210,8 @@ constructor function planning_t
 , ssn_id in number
 , session_title in varchar2
 , speakers in varchar2
+, session_duration in number
+, track in  varchar2
 ) return self as result
 is
 begin
@@ -219,6 +225,8 @@ begin
   self.room_capacity :=room_capacity ; 
   self.session_title := session_title;
   self.speakers:= speakers;
+  self.session_duration:= session_duration;
+  self.track:=track;
   return;
 end;
 
@@ -237,6 +245,9 @@ begin
             ||', "slot" : "'||self.slot_display_label||'" '
             ||', "slotDate" : "'||to_char(self.slot_start_time,'DD-MM-YYYY')||'" '
             ||', "slotStartTime" : "'||to_char(self.slot_start_time,'HH24:MI')||'" '
+            ||', "sessionStartTime" : "'||to_char(self.slot_start_time,'HH24:MI')||'" '
+            ||', "sessionEndTime" : "'||to_char(self.slot_start_time +nvl(self.session_duration,1)*50/60/24 ,'HH24:MI')||'" '
+            ||', "sessionDuration" : "'||self.session_duration||'" '
             ||', "sessionId" : "'||self.ssn_id||'" '
             ||', "title" : "'||self.session_title||'" '
             ||', "speakers" : "'||self.speakers||'" '
@@ -273,9 +284,12 @@ type session_t force as object (
 , tags tag_tbl_t
 , speakers speaker_tbl_t
 , planning planning_t
+, session_identifier varchar2(50)  -- identifier used in mobile app and web site submission page
+, track varchar2(250) 
 , constructor function session_t
               ( title in varchar2
               , speaker  in varchar2
+              , track   in varchar2
               ) return self as result
 , member function to_json
   return varchar2		  
@@ -291,11 +305,13 @@ type body session_t as
 constructor function session_t
               ( title in varchar2
               , speaker  in varchar2
+              , track   in varchar2
               ) return self as result
 is
 begin
   self.title:= title;
   self.speakers:= speaker_tbl_t();
+  self.track:= track;
   return;
 end;
 
@@ -315,6 +331,9 @@ begin
             ||', "speakers" : '||bth_speakers_api.json_speaker_tbl_summary(p_speakers => self.speakers)||' '
             ||', "tags" : '||bth_tags_api.json_tag_tbl_summary(p_tags => self.tags)||' '
             ||', "planning" : '||case when self.planning is not null then self.planning.to_json else '{}' end||' '
+            ||', "sessionAppIdentifier" : "'||nvl(self.session_identifier, self.id)||'" '
+            ||', "track" : "'||self.track||'" '
+            ||', "themes" : "-" '
             ||'}';
   return l_json;         
 end to_json;
@@ -329,6 +348,7 @@ begin
             ||', "title" : "'||self.title||'" '
             ||', "speakers" : '||bth_speakers_api.json_speaker_tbl_summary(p_speakers => self.speakers)||' '
             ||', "tags" : '||bth_tags_api.json_tag_tbl_summary(p_tags => self.tags)||' '
+            ||', "track" : "'||self.track||'" '
             ||'}';
   return l_json;         
 end to_json_summary;

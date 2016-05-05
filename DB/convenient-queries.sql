@@ -1,253 +1,4 @@
 
-create sequence bth_seq;
-
-
-
-drop table bth_sessions;
-
-
-create table log_tbl 
-( time timestamp
-, text varchar2(2000 CHAR)
-);
-
-
-create table bth_sessions
-( id number(10) default bth_seq.nextval not null primary key
-, title varchar2(1000) not null
-, abstract clob
-, target_audience varchar2(500)
-, experience_level varchar2(500)
-, granularity varchar2(500)
-, duration number(2,1) -- 2, 1, 0.5 for MC, regular and quickie
-, submission_identifier number(5,0)
-, status  varchar2(50)
-, demos varchar2(2000)
-, notes  varchar2(2000)
-, track_tag_id  number(10)
-);
-
-
-create table bth_people
-( id number(10) default bth_seq.nextval not null primary key
-, first_name  varchar2(500)
-, last_name  varchar2(500)
-, company  varchar2(500)
-, job_title  varchar2(500)
-, country  varchar2(2)
-, email_address  varchar2(200)
-, mobile_phone_number  varchar2(50)
-, birthdate date
-, twitter_handle varchar2(500)
-, linkedin_profile varchar2(500)
-, facebook_account  varchar2(500) 
-, picture blob
-, biography clob
-, salutation varchar2(100)
-, community_titles varchar2(500)
-, notes  varchar2(2000)
-, picture_doc_id number(10) -- reference to bth_documents
-);
-
-create table bth_speakers
-( id number(10) default bth_seq.nextval not null primary key
-, ssn_id number(10) not null
-, psn_id number(10) not null
-, contribution varchar2(500)
-);
-
-create table bth_rooms
-( id number(10) default bth_seq.nextval not null primary key
-, display_label varchar2(100)
-, capacity number(4,0)
-, location_description varchar2(2000)
-);
-
-create table bth_slots
-( id number(10) default bth_seq.nextval not null primary key
-, display_label varchar2(100)
-, start_time timestamp
-);
-
-create table bth_planning_items
-( id number(10) default bth_seq.nextval not null primary key
-, rom_id number(10)
-, slt_id number(10)
-, ssn_id  number(10)
-);
-
-create table bth_tags
-( id number(10) default bth_seq.nextval not null primary key
-, display_label varchar2(100)
-, tcy_id number(10)
-, icon_url varchar2(1000)
-, icon  blob
-);
-
-create table bth_tag_categories
-( id number(10) default bth_seq.nextval not null primary key
-, display_label varchar2(500)
-);
-
-create table bth_tag_bindings
-( id number(10) default bth_seq.nextval not null primary key
-, tag_id number(10) not null
-, psn_id number(10)
-, ssn_id number(10)
-);
-
-
-create table bth_documents
-( id number(10) default bth_seq.nextval not null primary key
-, name varchar2(500)
-, content_type varchar2(100)
-, content_data blob
-, description varchar2(500)     
-, master_id number(10) -- reference to owning record
-, purpose varchar2(10) -- indication of the role played by this document for the master
-);
-
--- load demo data
-
-insert into bth_people
-( first_name  
-, last_name 
-, company  
-, country  
-, email_address  
-, biography 
-, salutation 
-, community_titles 
-) select voornaam, achternaam, bedrijfsnaam, land, email,biography, aanhef,communitytitles
-from raw_sessions
-
-
-insert into bth_people
-( first_name  
-, last_name 
-, company  
-, country  
-, email_address  
-, biography 
-, community_titles 
-, job_title
-, mobile_phone_number
-) 
-select distinct firstname, lastname, companyname, country, email,to_char(bio), communitytitles, jobtitle, telephone
-from raws r
-where not exists
-( select 'x' from bth_people p where lower(p.first_name||'-'||p.last_name) = lower(r.firstname||'-'||r.lastname)
-)
-
-
--- RAWA3:
-
-insert into bth_people
-( first_name  
-, last_name 
-, company  
-, country  
-, email_address  
-, biography 
-, community_titles 
-, job_title
-, mobile_phone_number
-) 
-select distinct first_name, last_name, company_name, country, email,to_char(biography), community_titles, job_title, telephone
-from raws3 r
-where not exists
-( select 'x' from bth_people p where lower(p.first_name||'-'||p.last_name) = lower(r.first_name||'-'||r.last_name)
-)
-
-
--- find duplicate people
-
-select id , first_name, last_name, original_id from (select id, 
- first_name  
-, last_name 
-, company  
-, rank() over (partition by lower(first_name), lower(last_name) order by id) rnk
-, first_value(id) over (partition by lower(first_name), lower(last_name) order by id) original_id
-from bth_people
-)
-where rnk > 1
-
--- update existing people
-update bth_people p
-set (job_title
-, mobile_phone_number) =
-( select jobtitle, telephone
-from raws rs
-where lower(p.first_name||'-'||p.last_name) = lower(rs.firstname||'-'||rs.lastname)
-and rownum = 1
-)
-
-
-delete from bth_people where id in (select id  from (select id, 
- first_name  
-, last_name 
-, company  
-, rank() over (partition by lower(first_name), lower(last_name) order by id) rnk
-, first_value(id) over (partition by lower(first_name), lower(last_name) order by id) original_id
-from bth_people
-)
-where rnk > 1
-)
-
-insert into bth_sessions
-( title 
-, abstract 
-, target_audience 
-, experience_level
-, granularity 
-, duration  -- 2, 1, 0.5 for MC, regular and quickie
-, status
-, demos
-) select
-rs.PROPOSALTITLE
-, rs.abstrac
-, rs.TARGETAUDIENCE
-, rs.levelofexperience
-, rs.GRANULARITY
-, case preferredlength when 'Normal length (45 min)' then 1 when 'Quickie (20 min)' then 0.5 when 'Extended (masterclass) (1h 30 min)' then 2 else 0 end
-, rs.status
-,  rs.demos
-from raws rs
-where not exists ( select 'x' from bth_sessions s where lower( s.title) = lower(rs.proposaltitle))
-
-
--- update existint sessions with status and demos from RAWS
-update bth_sessions s
-set (status, demos) =
-( select rs.status
-,  rs.demos
-from raws rs
-where lower( s.title) = lower(rs.proposaltitle))
-
--- create speaker records for main speakers
-
-insert into bth_speakers
-( ssn_id 
-, psn_id 
-, contribution 
-)
-select s.id 
-,      p.id
-,      'main'
-from  raws rs
-      join
-      bth_people p
-      on (lower(p.first_name||'-'||p.last_name) = lower(rs.firstname||'-'||rs.lastname))
-      join 
-      bth_sessions s
-      on (rs.PROPOSALTITLE = s.title)
-      left outer join
-      bth_speakers es
-      on (s.id = es.ssn_id)
-where es.rowid is null -- only insert for sessions for which no speaker records currently exist  
-
-
-
 select  p.first_name
 ,       p.last_name
 ,       s.title
@@ -775,3 +526,48 @@ from   bth_sessions ssn
        join 
        bth_people psn
        on (skr.psn_id = psn.id)
+
+
+-- speaker query voor app
+
+select id
+, null tags
+, salutation title
+, company company
+,      psn.first_name firstname
+, null tussenvoegsel
+,      psn.last_name lastname
+, null email
+, job_title position
+, null image
+, '"'||biography||'"' description
+, null phone
+, null website
+, null linkedInUrl
+, null twitterurl
+from   bth_people psn
+
+
+select psn.first_name||' '||psn.last_name
+, ssn.title
+from   bth_sessions ssn
+join 
+bth_speakers skr
+on (ssn.id=skr.ssn_id)
+join
+bth_people psn
+on (skr.psn_id = psn.id)
+where ssn.status='accepted'
+and psn.last_name in (
+'Wright',
+'Munoz Alvarez',
+'Kammermann',
+'Orhan',
+'Antoniou',
+'Shmeltzer',
+'Borges',
+'Hahn',
+'Schmiedel',
+'Rost',
+'Penumuru'
+)
