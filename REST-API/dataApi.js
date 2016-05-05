@@ -3,10 +3,11 @@ var fs = require('fs');
 var oracledb = require('oracledb');
 var express = require('express');
 var bodyParser = require('body-parser') // npm install body-parser
+var json2csv = require('json2csv'); /* https://www.npmjs.com/package/json2csv , http://stackoverflow.com/questions/30292930/how-can-i-cause-a-newly-created-csv-file-to-be-downloaded-to-the-user, http://stackoverflow.com/questions/17450412/how-to-create-an-excel-file-with-nodejs, https://www.npmjs.com/package/json2csv   */
 var app = express();
 
 var PORT = process.env.PORT || 3000;
-var APP_VERSION = '0.0.1.44';
+var APP_VERSION = '0.0.1.60';
 
 //CORS middleware - taken from http://stackoverflow.com/questions/7067966/how-to-allow-cors-in-express-node-js
 var allowCrossDomain = function(req, res, next) {
@@ -40,6 +41,8 @@ app.get('/about', function (req, res) {
 });
 
 app.get('/departments', function(req,res){ handleAllDepartments(req, res);} );
+app.get('/app/bth-speakers', function(req,res){ generateAppSpeakers(req, res);} );
+app.get('/app/bth-sessions', function(req,res){ generateAppSessions(req, res);} );
 app.get('/sessions', function(req,res){ handleAllSessions(req, res, null, req.query.search);} );
 app.get('/sessions/:sessionId', function(req,res){
     var sessionId = req.params.sessionId;
@@ -107,6 +110,189 @@ app.get('/departments/:departmentId', function(req,res){
 	  );
 	});
 } );
+
+
+
+function generateAppSpeakers(request, response) {
+    console.log("produce app data - speakers  ");
+    handleDatabaseOperation( request, response, function (request, response, connection) {
+	  var selectStatement = "select lines.column_value line from   table(bth_util.clob_to_string_tbl_t(bth_summary_api.json_summary)) lines";
+	  connection.execute(   selectStatement   
+		, [], { "outFormat": oracledb.OBJECT 
+              , "maxRows": 500  
+        }, function (err, result) {
+            if (err) {
+			  console.log('Error in execution of select statement'+err.message);
+              response.writeHead(500, {'Content-Type': 'application/json'});
+              response.end(JSON.stringify({
+                status: 500,
+                    message: "Error getting the sessions",
+                    detailed_message: err.message
+               })
+	          );  
+            } else {
+               // all rows in result consist of a property with a LINE object; all the line objects should be glued together to form a single string that can be JSON parsed
+               console.log('The number of result rows:'+result.rows.length);
+               var json='';
+               for (var i=0;i< result.rows.length;i++) {                   
+                   json=json + result.rows[i].LINE;               
+                }// for
+               var bthJson = JSON.parse(json);
+               var fieldNames = ['ID','Tags'            , 'title','company', 'firstname','tussenvoegsel','lastname','email','position','image','description','phone','website','linkedInUrl','twitterurl'];  
+               var fields     = ['id', 'communityTitles', 'X'    ,'company', 'firstName','X'            ,'lastName','X'    ,'X'       ,'X'    ,'biography'  ,'X'    ,'X'      ,'X'          ,'X'];
+               json2csv({ data:  bthJson.speakers, fields: fields,fieldNames: fieldNames , del: '\t'  }, function(err, csv) {
+                   if (err) {
+                      console.log(err);
+                      response.writeHead(500, {'Content-Type': 'application/json'});
+                      response.end(JSON.stringify({
+                        status: 500,
+                        message: "Error getting the data for the app",
+                        detailed_message: err.message
+                      })
+	                  );  
+                   }
+                  else { 
+                   response.set({
+                     'Content-Disposition': 'attachment; filename=bth-speakers.xls',
+                     'Content-Type': 'text/csv'
+                   });
+                   response.send(csv);
+                  }  
+               });//json2csv
+              }//else 
+			doRelease(connection);
+          }// callback connection.execute
+	  );//connection.execute
+    });//handleDatabaseOperation
+}// generateAppSpeakers
+
+
+
+function generateAppSessions(request, response) {
+    console.log("produce app data - sessions  ");
+    handleDatabaseOperation( request, response, function (request, response, connection) {
+	  var selectStatement = "select lines.column_value line from   table(bth_util.clob_to_string_tbl_t(bth_summary_api.json_summary)) lines";
+	  connection.execute(   selectStatement   
+		, [], { "outFormat": oracledb.OBJECT 
+              , "maxRows": 500  
+        }, function (err, result) {
+            if (err) {
+			  console.log('Error in execution of select statement'+err.message);
+              response.writeHead(500, {'Content-Type': 'application/json'});
+              response.end(JSON.stringify({
+                status: 500,
+                    message: "Error getting the sessions",
+                    detailed_message: err.message
+               })
+	          );  
+            } else {
+               // all rows in result consist of a property with a LINE object; all the line objects should be glued together to form a single string that can be JSON parsed
+               console.log('The number of result rows:'+result.rows.length);
+               var json='';
+               for (var i=0;i< result.rows.length;i++) {                   
+                   json=json + result.rows[i].LINE;               
+                }// for
+               var bthJson = JSON.parse(json);
+               //var fieldNames = ['ID','tags'            , 'title','scheduleItemStartDateTime', 'scheduleItemEndDateTime','location-name'  ,'description','Is session','sessions','speakers'           ,'organization','image','Rating'];  
+               //var fields     = ['sessionId', 'tags','title', 'planning.slotDate'    ,'planning.slotStartTime'          , 'planning.room' ,'abstract'   ,'TRUE'     ,'X'         ,'speakers.id'       ,'X'           ,'X'   ,'X'    ,'X'     ];
+// documentation: https://www.npmjs.com/package/json2csv               
+               var fields=  [
+    {
+      label: 'ID', // (optional, column will be labeled 'path.to.something' if not defined) 
+      value: 'sessionId', // data.path.to.something 
+      default: 'NULL' // default if value is not found (optional, overrides `defaultValue` for column) 
+    },
+    {
+      label: 'tags', // (optional, column will be labeled 'path.to.something' if not defined) 
+      value: 'X', // data.path.to.something 
+      default: 'NULL' // default if value is not found (optional, overrides `defaultValue` for column) 
+    },
+    {
+      label: 'title', // (optional, column will be labeled 'path.to.something' if not defined) 
+      value: 'title', // data.path.to.something 
+      default: 'NULL' // default if value is not found (optional, overrides `defaultValue` for column) 
+    },
+    {
+      label: 'scheduleItemStartDateTime', 
+      value: function(row) {
+          if (row.planning) {
+        return row.planning.slotDate + ' '+  row.planning.slotStartTime;
+          } else return ;
+      },
+      default: 'NULL' // default if value fn returns falsy 
+    } 
+    , {
+      label: 'scheduleItemEndDateTime', 
+      value: function(row) {
+          if (row.planning) {
+        return row.planning.slotDate + ' '+ row.planning.slotEndTime;
+          } else return ;
+      },
+      default: 'NULL' // default if value fn returns falsy 
+    } 
+    , {
+      label: 'location-name', 
+      value: function(row) {
+          if (row.planning) {
+        return row.planning.room;
+          } else return ;
+      },
+      default: 'NULL' // default if value fn returns falsy 
+    } 
+    , {
+      label: 'description', 
+      value: 'abstract',
+      default: 'NULL' // default if value fn returns falsy 
+    } 
+    , {
+      label: 'Is Session', 
+      value: 'X',
+      default: 'TRUE' // default if value fn returns falsy 
+    } 
+    , {
+      label: 'sessions', 
+      value: 'X',
+      default: 'null' // default if value fn returns falsy 
+    } 
+    , {
+      label: 'speakers', // comma separated list of id's for all speakers associated with this session
+      value: function(row) {
+          if (row.speakers) {
+        return row.speakers[0].id ;// TODO: csv list for all speakers
+          } else return ;
+      },
+      default: 'NULL' // default if value fn returns falsy 
+    } 
+  ];
+               
+               
+               
+               json2csv({ data:  bthJson.sessions, fields: fields, del: '\t'  }, function(err, csv) {
+                   if (err) {
+                      console.log(err);
+                      response.writeHead(500, {'Content-Type': 'application/json'});
+                      response.end(JSON.stringify({
+                        status: 500,
+                        message: "Error getting the data for the app",
+                        detailed_message: err.message
+                      })
+	                  );  
+                   }
+                  else { 
+                   response.set({
+                     'Content-Disposition': 'attachment; filename=bth-sessions.xls',
+                     'Content-Type': 'text/csv'
+                   });
+                   response.send(csv);
+                  }  
+               });//json2csv
+              }//else 
+			doRelease(connection);
+          }// callback connection.execute
+	  );//connection.execute
+    });//handleDatabaseOperation
+}// generateAppSessions
+
 
 function handleAllDepartments(request, response) {
     console.log("handle all departments ");
@@ -291,8 +477,8 @@ function handleAll(request, response) {
     handleDatabaseOperation( request, response, function (request, response, connection) {
 	  var selectStatement = "select lines.column_value line from   table(bth_util.clob_to_string_tbl_t(bth_summary_api.json_summary)) lines";
 	  connection.execute(   selectStatement   
-		, [], {
-            outFormat: oracledb.OBJECT // Return the result as Object
+		, [], { "outFormat": oracledb.OBJECT 
+              , "maxRows": 500  
         }, function (err, result) {
             if (err) {
 			  console.log('Error in execution of select statement'+err.message);
@@ -306,6 +492,7 @@ function handleAll(request, response) {
             } else {
                response.writeHead(200, {'Content-Type': 'application/json'});
                // all rows in result consist of a property with a LINE object; all the line objects should be glued together to form a single string that can be JSON parsed
+              console.log('The number of result rows:'+result.rows.length);
                var json='';
                for (var i=0;i< result.rows.length;i++) {
                    json=json + result.rows[i].LINE;
