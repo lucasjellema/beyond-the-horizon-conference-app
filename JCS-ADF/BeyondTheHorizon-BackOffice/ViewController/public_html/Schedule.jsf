@@ -1,6 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!DOCTYPE html>
-<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:af="http://xmlns.oracle.com/adf/faces/rich">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:af="http://xmlns.oracle.com/adf/faces/rich"
+        xmlns:fn="http://java.sun.com/jsp/jstl/functions" 
+        >
     <af:document title="Schedule.jsf" id="d1">
         <af:messages id="m1"/>
         <af:form id="f1">
@@ -78,6 +80,13 @@
                                                                     type="action"/>
                                         </af:button>
                                     </af:column>
+                                    <af:column sortProperty="#{bindings.SessionsView1.hints.Track.name}"
+                                               filterable="true" sortable="true"
+                                               headerText="#{bindings.SessionsView1.hints.Track.label}" id="c2t">
+                                        <af:outputText value="#{row.Track}"
+                                                       shortDesc="#{bindings.SessionsView1.hints.Track.tooltip}"
+                                                       id="ot2t"/>
+                                    </af:column>
                                     <af:column sortProperty="#{bindings.SessionsView1.hints.Status.name}"
                                                filterable="true" sortable="true"
                                                headerText="#{bindings.SessionsView1.hints.Status.label}" id="c2">
@@ -95,7 +104,7 @@
                                     <af:column sortProperty="#{bindings.SessionsView1.hints.Title.name}"
                                                filterable="true" sortable="true"
                                                headerText="#{bindings.SessionsView1.hints.Title.label}" id="c4">
-                                        <af:link text="#{row.Title}" id="sessionTitleLink">
+                                        <af:link text="#{row.Title}" id="sessionTitleLink" shortDesc="#{row.Track}">
                                             <af:setPropertyListener from="#{row.SsnId}"
                                                                     to="#{bindings.ssnId.inputValue}" type="action"/>
                                             <af:setPropertyListener from="#{row.Title}"
@@ -173,9 +182,15 @@
                                         </af:outputText>
                                     </af:column>
                                     <af:column headerText="Room 1" id="c11">
-                                        <af:outputText value="#{row.Room1Pim.bindings.Speakers.inputValue} - #{row.Room1Pim.bindings.SessionTitle.inputValue} "
-                                                       shortDesc="#{bindings.PlanningScheduleView1.hints.Room1Pim.Id.tooltip}"
-                                                       rendered="#{row.Room1Pim != null}" id="ot11"></af:outputText>
+                                        <af:outputText value="#{row.Room1Pim.bindings.Speakers.inputValue} "
+                                                       shortDesc="#{row.Room1Pim.bindings.Track.inputValue}"
+                                                       rendered="#{row.Room1Pim != null}" id="ot11"
+                                                       inlineStyle="background-color:red;"></af:outputText>
+                                        <af:outputText value="#{row.Room1Pim.bindings.SessionTitle.inputValue} "
+                                                       shortDesc="#{row.Room1Pim.bindings.Track.inputValue}"
+                                                       rendered="#{row.Room1Pim != null}" id="ot11b"
+                                                       inlineStyle="background-color:#{fn:startsWith(row.Room1Pim.bindings.Track.inputValue, 'D')?'red':'green'};">
+                                                       </af:outputText>
                                         <af:link text="#{row.Room1Pim.bindings.Id.inputValue}" id="b4"
                                                  shortDesc="#{row.Room1Pim.bindings.Speakers.inputValue} - #{row.Room1Pim.bindings.SessionTitle.inputValue}">
                                             <af:setPropertyListener to="#{bindings.pimId.inputValue}" type="action"

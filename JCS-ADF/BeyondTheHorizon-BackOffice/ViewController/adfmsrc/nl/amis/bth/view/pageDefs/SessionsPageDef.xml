@@ -19,11 +19,14 @@
               id="BthSpeakerView3Iterator"/>
     <iterator Binds="BthPlanningItemView3" RangeSize="25" DataControl="BthAppModuleDataControl"
               id="BthPlanningItemView3Iterator"/>
+    <iterator Binds="ThemeTagBindings" RangeSize="25" DataControl="BthAppModuleDataControl"
+              id="ThemeTagBindingsIterator" ChangeEventPolicy="ppr"/>
   </executables>
   <bindings>
     <tree IterBinding="SessionsView2Iterator" id="SessionsView2">
       <nodeDefinition DefName="nl.amis.bth.model.SessionsView" Name="SessionsView20">
         <AttrNames>
+          <Item Value="Track"/>
           <Item Value="Title"/>
           <Item Value="Speakers"/>
           <Item Value="Status"/>
@@ -143,5 +146,46 @@
         </AttrNames>
       </nodeDefinition>
     </tree>
+    <list IterBinding="BthSessionView2Iterator" StaticList="false" Uses="LOV_TrackTagId" id="TrackTagId"
+          DTSupportsMRU="false" SelectItemValueMode="ListObject"/>
+    <attributeValues IterBinding="BthTagBindingView3Iterator" id="Id1">
+      <AttrNames>
+        <Item Value="Id"/>
+      </AttrNames>
+    </attributeValues>
+    <attributeValues IterBinding="BthTagBindingView3Iterator" id="TagId">
+      <AttrNames>
+        <Item Value="TagId"/>
+      </AttrNames>
+    </attributeValues>
+    <attributeValues IterBinding="BthTagBindingView3Iterator" id="TagDisplayLabel">
+      <AttrNames>
+        <Item Value="TagDisplayLabel"/>
+      </AttrNames>
+    </attributeValues>
+    <attributeValues IterBinding="BthTagBindingView3Iterator" id="TagCategoryDisplayLabel">
+      <AttrNames>
+        <Item Value="TagCategoryDisplayLabel"/>
+      </AttrNames>
+    </attributeValues>
+    <action IterBinding="BthTagBindingView3Iterator" id="First1" RequiresUpdateModel="true" Action="first"/>
+    <action IterBinding="BthTagBindingView3Iterator" id="Previous1" RequiresUpdateModel="true" Action="previous"/>
+    <action IterBinding="BthTagBindingView3Iterator" id="Next1" RequiresUpdateModel="true" Action="next"/>
+    <action IterBinding="BthTagBindingView3Iterator" id="Last1" RequiresUpdateModel="true" Action="last"/>
+    <action IterBinding="BthTagBindingView3Iterator" id="CreateInsert" RequiresUpdateModel="true"
+            Action="createInsertRow"/>
+    <listOfValues IterBinding="BthTagBindingView3Iterator" StaticList="false" Uses="LOV_TagId" id="TagId1"/>
+    <tree IterBinding="ThemeTagBindingsIterator" id="ThemeTagBindings">
+      <nodeDefinition DefName="nl.amis.bth.model.BthTagBindingView" Name="ThemeTagBindings0">
+        <AttrNames>
+          <Item Value="Id"/>
+          <Item Value="TagId"/>
+          <Item Value="TagDisplayLabel"/>
+          <Item Value="TagCategoryDisplayLabel"/>
+        </AttrNames>
+      </nodeDefinition>
+    </tree>
+    <action IterBinding="ThemeTagBindingsIterator" id="CreateInsert1" RequiresUpdateModel="true"
+            Action="createInsertRow"/>
   </bindings>
 </pageDefinition>

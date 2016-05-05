@@ -27,6 +27,7 @@
           <Item Value="Cospeakers"/>
           <Item Value="SsnId"/>
           <Item Value="Notes"/>
+          <Item Value="Track"/>
         </AttrNames>
       </nodeDefinition>
     </tree>
@@ -60,6 +61,8 @@
           <Item Value="SsnId"/>
           <Item Value="SessionTitle"/>
           <Item Value="Speakers"/>
+          <Item Value="Track"/>
+          <Item Value="SessionDuration"/>
         </AttrNames>
       </nodeDefinition>
     </tree>

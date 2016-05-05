@@ -21,8 +21,7 @@
     ColumnType="NUMBER"
     TableName="BTH_SESSIONS"
     PrimaryKey="true">
-    <TransientExpression
-      trustMode="untrusted"><![CDATA[(new oracle.jbo.server.SequenceImpl("bth_seq", adf.object.getDBTransaction())).getSequenceNumber()]]></TransientExpression>
+    <TransientExpression><![CDATA[(new oracle.jbo.server.SequenceImpl("bth_seq", adf.object.getDBTransaction())).getSequenceNumber()]]></TransientExpression>
   </Attribute>
   <Attribute
     Name="Title"
@@ -147,6 +146,15 @@
       <Attr Name="_DisplaySize" Value="2000"/>
     </DesignTime>
   </Attribute>
+  <Attribute
+    Name="TrackTagId"
+    Precision="10"
+    Scale="0"
+    ColumnName="TRACK_TAG_ID"
+    SQLType="NUMERIC"
+    Type="java.lang.Long"
+    ColumnType="NUMBER"
+    TableName="BTH_SESSIONS"/>
   <AccessorAttribute
     Name="BthTagBinding"
     Association="nl.amis.bth.model.SessionTagBindingAssociation"
@@ -168,6 +176,13 @@
     AssociationOtherEnd="nl.amis.bth.model.SessionPimAssociation.BthSession"
     Type="oracle.jbo.RowIterator"
     IsUpdateable="false"/>
+  <AccessorAttribute
+    Name="BthTag"
+    Association="nl.amis.bth.model.SessionTrackTagAssociation"
+    AssociationEnd="nl.amis.bth.model.SessionTrackTagAssociation.BthTag"
+    AssociationOtherEnd="nl.amis.bth.model.SessionTrackTagAssociation.BthSession"
+    Type="oracle.jbo.server.EntityImpl"
+    IsUpdateable="true"/>
   <Key
     Name="SysC0014952"
     PrimaryKey="true">
@@ -176,6 +191,17 @@
     </DesignTime>
     <AttrArray Name="Attributes">
       <Item Value="nl.amis.bth.model.BthSession.Id"/>
+    </AttrArray>
+  </Key>
+  <Key
+    Name="fk_BthSession">
+    <DesignTime>
+      <Attr Name="_referencedKey" Value="SYS_C0014966"/>
+      <Attr Name="_isForeign" Value="true"/>
+      <Attr Name="_DBObjectName" Value="FK_BTH_SESSION"/>
+    </DesignTime>
+    <AttrArray Name="Attributes">
+      <Item Value="nl.amis.bth.model.BthSession.TrackTagId"/>
     </AttrArray>
   </Key>
 </Entity>

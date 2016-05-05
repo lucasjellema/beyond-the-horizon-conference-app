@@ -34,6 +34,13 @@
                                           filterModel="#{bindings.SessionsView2Query.queryDescriptor}"
                                           queryListener="#{bindings.SessionsView2Query.processQuery}"
                                           filterVisible="true" varStatus="vs" id="t1">
+                                    <af:column sortProperty="#{bindings.SessionsView2.hints.Track.name}"
+                                               filterable="true" sortable="true"
+                                               headerText="#{bindings.SessionsView2.hints.Track.label}" id="c1A">
+                                        <af:outputText value="#{row.Track}"
+                                                       shortDesc="#{bindings.SessionsView2.hints.Track.tooltip}"
+                                                       id="ot1A"/>
+                                    </af:column>
                                     <af:column sortProperty="#{bindings.SessionsView2.hints.Title.name}"
                                                filterable="true" sortable="true"
                                                headerText="#{bindings.SessionsView2.hints.Title.label}" id="c1">
@@ -77,7 +84,13 @@
                         </f:facet>
                         <f:facet name="second">
                             <af:panelFormLayout id="pfl2" rows="5">
-                               
+                                <af:selectOneRadio value="#{bindings.TrackTagId.inputValue}"
+                                                   label="#{bindings.TrackTagId.label}"
+                                                   required="#{bindings.TrackTagId.hints.mandatory}"
+                                                   shortDesc="#{bindings.TrackTagId.hints.tooltip}" id="sor1">
+                                    <f:selectItems value="#{bindings.TrackTagId.items}" id="si1"/>
+                                    <f:validator binding="#{bindings.TrackTagId.validator}"/>
+                                </af:selectOneRadio>
                                 <af:inputText value="#{bindings.Title.inputValue}" label="#{bindings.Title.hints.label}"
                                               required="#{bindings.Title.hints.mandatory}"
                                               columns="60"
@@ -207,7 +220,8 @@
                                                                   selectionListener="#{bindings.BthTagBindingView3.collectionModel.makeCurrent}"
                                                                   rowSelection="single"
                                                                   fetchSize="#{bindings.BthTagBindingView3.rangeSize}"
-                                                                  id="t2" partialTriggers="b1">
+                                                                  id="t2"
+                                                                  partialTriggers="b1 :::b3 :::b4 :::b5 :::b7 :::b9">
                                                             <af:column sortProperty="#{bindings.BthTagBindingView3.hints.Id.name}"
                                                                        sortable="true"
                                                                        headerText="#{bindings.BthTagBindingView3.hints.Id.label}"
@@ -338,6 +352,161 @@
                                                             </af:column>
                                                         </af:table>
                                                     </af:panelCollection>
+                                                </af:showDetailItem>
+                                                <af:showDetailItem text="Edit Tags" id="sdi3">
+                                                    <af:panelFormLayout id="pfl4">
+                                                        <af:inputText value="#{bindings.Id1.inputValue}"
+                                                                      label="#{bindings.Id1.hints.label}"
+                                                                      required="#{bindings.Id1.hints.mandatory}"
+                                                                      columns="#{bindings.Id1.hints.displayWidth}"
+                                                                      maximumLength="#{bindings.Id1.hints.precision}"
+                                                                      shortDesc="#{bindings.Id1.hints.tooltip}"
+                                                                      id="it19">
+                                                            <f:validator binding="#{bindings.Id1.validator}"/>
+                                                            <af:convertNumber groupingUsed="false"
+                                                                              pattern="#{bindings.Id1.format}"/>
+                                                        </af:inputText>
+                                                        <af:inputText value="#{bindings.TagId.inputValue}"
+                                                                      label="#{bindings.TagId.hints.label}"
+                                                                      required="#{bindings.TagId.hints.mandatory}"
+                                                                      columns="#{bindings.TagId.hints.displayWidth}"
+                                                                      maximumLength="#{bindings.TagId.hints.precision}"
+                                                                      shortDesc="#{bindings.TagId.hints.tooltip}"
+                                                                      id="it20">
+                                                            <f:validator binding="#{bindings.TagId.validator}"/>
+                                                            <af:convertNumber groupingUsed="false"
+                                                                              pattern="#{bindings.TagId.format}"/>
+                                                        </af:inputText>
+                                                        <af:inputComboboxListOfValues id="tagId1Id"
+                                                                                      popupTitle="Search and Select: #{bindings.TagId1.hints.label}"
+                                                                                      value="#{bindings.TagId1.inputValue}"
+                                                                                      label="#{bindings.TagId1.hints.label}"
+                                                                                      model="#{bindings.TagId1.listOfValuesModel}"
+                                                                                      required="#{bindings.TagId1.hints.mandatory}"
+                                                                                      columns="#{bindings.TagId1.hints.displayWidth}"
+                                                                                      shortDesc="#{bindings.TagId1.hints.tooltip}">
+                                                            <f:validator binding="#{bindings.TagId1.validator}"/>
+                                                            <af:convertNumber groupingUsed="false"
+                                                                              pattern="#{bindings.TagId1.format}"/>
+                                                        </af:inputComboboxListOfValues>
+                                                        <af:inputText value="#{bindings.TagDisplayLabel.inputValue}"
+                                                                      label="#{bindings.TagDisplayLabel.hints.label}"
+                                                                      required="#{bindings.TagDisplayLabel.hints.mandatory}"
+                                                                      columns="#{bindings.TagDisplayLabel.hints.displayWidth}"
+                                                                      maximumLength="#{bindings.TagDisplayLabel.hints.precision}"
+                                                                      shortDesc="#{bindings.TagDisplayLabel.hints.tooltip}"
+                                                                      id="it21">
+                                                            <f:validator binding="#{bindings.TagDisplayLabel.validator}"/>
+                                                        </af:inputText>
+                                                        <af:inputText value="#{bindings.TagCategoryDisplayLabel.inputValue}"
+                                                                      label="#{bindings.TagCategoryDisplayLabel.hints.label}"
+                                                                      required="#{bindings.TagCategoryDisplayLabel.hints.mandatory}"
+                                                                      columns="#{bindings.TagCategoryDisplayLabel.hints.displayWidth}"
+                                                                      maximumLength="#{bindings.TagCategoryDisplayLabel.hints.precision}"
+                                                                      shortDesc="#{bindings.TagCategoryDisplayLabel.hints.tooltip}"
+                                                                      id="it22">
+                                                            <f:validator binding="#{bindings.TagCategoryDisplayLabel.validator}"/>
+                                                        </af:inputText>
+                                                        <f:facet name="footer">
+                                                            <af:panelGroupLayout layout="vertical" id="pgl2">
+                                                                <af:panelGroupLayout layout="horizontal" id="pgl3">
+                                                                    <af:button actionListener="#{bindings.CreateInsert.execute}"
+                                                                               text="CreateInsert"
+                                                                               disabled="#{!bindings.CreateInsert.enabled}"
+                                                                               id="b9"/>
+                                                                    <af:button actionListener="#{bindings.First1.execute}"
+                                                                               text="First1"
+                                                                               disabled="#{!bindings.First1.enabled}"
+                                                                               partialSubmit="true" id="b3"/>
+                                                                    <af:button actionListener="#{bindings.Previous1.execute}"
+                                                                               text="Previous1"
+                                                                               disabled="#{!bindings.Previous1.enabled}"
+                                                                               partialSubmit="true" id="b4"/>
+                                                                    <af:button actionListener="#{bindings.Next1.execute}"
+                                                                               text="Next1"
+                                                                               disabled="#{!bindings.Next1.enabled}"
+                                                                               partialSubmit="true" id="b5"/>
+                                                                    <af:button actionListener="#{bindings.Last1.execute}"
+                                                                               text="Last1"
+                                                                               disabled="#{!bindings.Last1.enabled}"
+                                                                               partialSubmit="true" id="b7"/>
+                                                                </af:panelGroupLayout>
+                                                                <af:button text="Submit" id="b8"/>
+                                                            </af:panelGroupLayout>
+                                                        </f:facet>
+                                                    </af:panelFormLayout>
+                                                </af:showDetailItem>
+                                                <af:showDetailItem text="Theme Tags" id="sdi4">
+                                                    <af:table value="#{bindings.ThemeTagBindings.collectionModel}"
+                                                              var="row" rows="#{bindings.ThemeTagBindings.rangeSize}"
+                                                              emptyText="#{bindings.ThemeTagBindings.viewable ? 'No data to display.' : 'Access Denied.'}"
+                                                              rowBandingInterval="0"
+                                                              fetchSize="#{bindings.ThemeTagBindings.rangeSize}"
+                                                              id="t5" partialTriggers="::b10">
+                                                        <af:column sortProperty="#{bindings.ThemeTagBindings.hints.Id.name}"
+                                                                   sortable="true"
+                                                                   headerText="#{bindings.ThemeTagBindings.hints.Id.label}"
+                                                                   id="c15">
+                                                            <af:inputText value="#{row.bindings.Id.inputValue}"
+                                                                          label="#{bindings.ThemeTagBindings.hints.Id.label}"
+                                                                          required="#{bindings.ThemeTagBindings.hints.Id.mandatory}"
+                                                                          columns="#{bindings.ThemeTagBindings.hints.Id.displayWidth}"
+                                                                          maximumLength="#{bindings.ThemeTagBindings.hints.Id.precision}"
+                                                                          shortDesc="#{bindings.ThemeTagBindings.hints.Id.tooltip}"
+                                                                          id="it23">
+                                                                <f:validator binding="#{row.bindings.Id.validator}"/>
+                                                                <af:convertNumber groupingUsed="false"
+                                                                                  pattern="#{bindings.ThemeTagBindings.hints.Id.format}"/>
+                                                            </af:inputText>
+                                                        </af:column>
+                                                        <af:column sortProperty="#{bindings.ThemeTagBindings.hints.TagId.name}"
+                                                                   sortable="true"
+                                                                   headerText="#{bindings.ThemeTagBindings.hints.TagId.label}"
+                                                                   id="c16">
+                                                            <af:inputComboboxListOfValues id="tagIdId"
+                                                                                          popupTitle="Search and Select: #{bindings.ThemeTagBindings.hints.TagId.label}"
+                                                                                          value="#{row.bindings.TagId.inputValue}"
+                                                                                          model="#{row.bindings.TagId.listOfValuesModel}"
+                                                                                          required="#{bindings.ThemeTagBindings.hints.TagId.mandatory}"
+                                                                                          columns="#{bindings.ThemeTagBindings.hints.TagId.displayWidth}"
+                                                                                          shortDesc="#{bindings.ThemeTagBindings.hints.TagId.tooltip}">
+                                                                <f:validator binding="#{row.bindings.TagId.validator}"/>
+                                                                <af:convertNumber groupingUsed="false"
+                                                                                  pattern="#{bindings.ThemeTagBindings.hints.TagId.format}"/>
+                                                            </af:inputComboboxListOfValues>
+                                                        </af:column>
+                                                        <af:column sortProperty="#{bindings.ThemeTagBindings.hints.TagDisplayLabel.name}"
+                                                                   sortable="true"
+                                                                   headerText="#{bindings.ThemeTagBindings.hints.TagDisplayLabel.label}"
+                                                                   id="c17">
+                                                            <af:inputText value="#{row.bindings.TagDisplayLabel.inputValue}"
+                                                                          label="#{bindings.ThemeTagBindings.hints.TagDisplayLabel.label}"
+                                                                          required="#{bindings.ThemeTagBindings.hints.TagDisplayLabel.mandatory}"
+                                                                          columns="#{bindings.ThemeTagBindings.hints.TagDisplayLabel.displayWidth}"
+                                                                          maximumLength="#{bindings.ThemeTagBindings.hints.TagDisplayLabel.precision}"
+                                                                          shortDesc="#{bindings.ThemeTagBindings.hints.TagDisplayLabel.tooltip}"
+                                                                          id="it24">
+                                                                <f:validator binding="#{row.bindings.TagDisplayLabel.validator}"/>
+                                                            </af:inputText>
+                                                        </af:column>
+                                                        <af:column sortProperty="#{bindings.ThemeTagBindings.hints.TagCategoryDisplayLabel.name}"
+                                                                   sortable="true"
+                                                                   headerText="#{bindings.ThemeTagBindings.hints.TagCategoryDisplayLabel.label}"
+                                                                   id="c18">
+                                                            <af:inputText value="#{row.bindings.TagCategoryDisplayLabel.inputValue}"
+                                                                          label="#{bindings.ThemeTagBindings.hints.TagCategoryDisplayLabel.label}"
+                                                                          required="#{bindings.ThemeTagBindings.hints.TagCategoryDisplayLabel.mandatory}"
+                                                                          columns="#{bindings.ThemeTagBindings.hints.TagCategoryDisplayLabel.displayWidth}"
+                                                                          maximumLength="#{bindings.ThemeTagBindings.hints.TagCategoryDisplayLabel.precision}"
+                                                                          shortDesc="#{bindings.ThemeTagBindings.hints.TagCategoryDisplayLabel.tooltip}"
+                                                                          id="it25">
+                                                                <f:validator binding="#{row.bindings.TagCategoryDisplayLabel.validator}"/>
+                                                            </af:inputText>
+                                                        </af:column>
+                                                    </af:table>
+                                                    <af:button actionListener="#{bindings.CreateInsert1.execute}"
+                                                               text="CreateInsert1" partialSubmit="true"
+                                                               disabled="#{!bindings.CreateInsert1.enabled}" id="b10"/>
                                                 </af:showDetailItem>
                                             </af:panelTabbed>
                                         </af:panelHeader>

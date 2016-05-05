@@ -18,20 +18,26 @@
     Name="Id"
     ColumnName="ID"
     SQLType="NUMERIC"
-    Type="java.lang.Integer"
-    ColumnType="INTEGER"/>
+    Type="java.lang.Long"
+    ColumnType="NUMBER"
+    Precision="10"
+    Scale="0"/>
   <Attribute
     Name="RomId"
     ColumnName="ROM_ID"
     SQLType="NUMERIC"
-    Type="java.lang.Integer"
-    ColumnType="INTEGER"/>
+    Type="java.lang.Long"
+    ColumnType="NUMBER"
+    Precision="10"
+    Scale="0"/>
   <Attribute
     Name="SltId"
     ColumnName="SLT_ID"
     SQLType="NUMERIC"
-    Type="java.lang.Integer"
-    ColumnType="INTEGER"/>
+    Type="java.lang.Long"
+    ColumnType="NUMBER"
+    Precision="10"
+    Scale="0"/>
   <Attribute
     Name="RoomDisplayLabel"
     Precision="100"
@@ -83,8 +89,10 @@
     Name="SsnId"
     ColumnName="SSN_ID"
     SQLType="NUMERIC"
-    Type="java.lang.Integer"
-    ColumnType="INTEGER"/>
+    Type="java.lang.Long"
+    ColumnType="NUMBER"
+    Precision="10"
+    Scale="0"/>
   <Attribute
     Name="SessionTitle"
     Precision="500"
@@ -105,6 +113,25 @@
     ColumnType="VARCHAR2">
     <DesignTime>
       <Attr Name="_DisplaySize" Value="500"/>
+    </DesignTime>
+  </Attribute>
+  <Attribute
+    Name="SessionDuration"
+    Precision="2"
+    Scale="1"
+    ColumnName="SESSION_DURATION"
+    SQLType="NUMERIC"
+    Type="java.math.BigDecimal"
+    ColumnType="NUMBER"/>
+  <Attribute
+    Name="Track"
+    Precision="100"
+    ColumnName="TRACK"
+    SQLType="VARCHAR"
+    Type="java.lang.String"
+    ColumnType="VARCHAR2">
+    <DesignTime>
+      <Attr Name="_DisplaySize" Value="100"/>
     </DesignTime>
   </Attribute>
 </Domain>

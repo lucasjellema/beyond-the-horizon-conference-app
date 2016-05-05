@@ -19,6 +19,37 @@
   <DesignTime>
     <Attr Name="_codeGenFlag2" Value="Coll|Prog|VarAccess"/>
   </DesignTime>
+  <ViewAccessor
+    Name="BthTagView1"
+    ViewObjectName="nl.amis.bth.model.BthTagView"
+    RowLevelBinds="true"/>
+  <ListBinding
+    Name="LOV_TagId"
+    ListVOName="BthTagView1"
+    ListRangeSize="-1"
+    ComboRowCountHint="10"
+    NullValueFlag="none"
+    MRUCount="0">
+    <AttrArray Name="AttrNames">
+      <Item Value="TagId"/>
+    </AttrArray>
+    <AttrArray Name="AttrExpressions"/>
+    <AttrArray Name="DerivedAttrNames">
+      <Item Value="TagDisplayLabel"/>
+    </AttrArray>
+    <AttrArray Name="ListAttrNames">
+      <Item Value="Id"/>
+      <Item Value="DisplayLabel"/>
+    </AttrArray>
+    <AttrArray Name="ListDisplayAttrNames">
+      <Item Value="DisplayLabel"/>
+      <Item Value="DisplayLabel1"/>
+    </AttrArray>
+    <DisplayCriteria/>
+    <ViewCriteriaUsage
+      Name="ThemeTags"
+      FullName="nl.amis.bth.model.BthTagView.ThemeTags"/>
+  </ListBinding>
   <EntityUsage
     Name="BthTagBinding"
     Entity="nl.amis.bth.model.BthTagBinding"/>
@@ -73,7 +104,15 @@
     PrecisionRule="true"
     EntityAttrName="TagId"
     EntityUsage="BthTagBinding"
-    AliasName="TAG_ID"/>
+    AliasName="TAG_ID"
+    LOVName="LOV_TagId">
+    <Properties>
+      <SchemaBasedProperties>
+        <CONTROLTYPE
+          Value="combo_lov"/>
+      </SchemaBasedProperties>
+    </Properties>
+  </ViewAttribute>
   <ViewAttribute
     Name="PsnId"
     PrecisionRule="true"
@@ -118,6 +157,41 @@
     EntityAttrName="Id"
     EntityUsage="BthTagCategory"
     AliasName="ID1"/>
+  <ViewCriteria
+    Name="ThemeTagBindings"
+    ViewObjectName="nl.amis.bth.model.BthTagBindingView"
+    Conjunction="AND">
+    <Properties>
+      <CustomProperties>
+        <Property
+          Name="displayOperators"
+          Value="InAdvancedMode"/>
+        <Property
+          Name="autoExecute"
+          Value="false"/>
+        <Property
+          Name="allowConjunctionOverride"
+          Value="true"/>
+        <Property
+          Name="showInList"
+          Value="true"/>
+        <Property
+          Name="mode"
+          Value="Basic"/>
+      </CustomProperties>
+    </Properties>
+    <ViewCriteriaRow
+      Name="BthTagBindingViewCriteria_row_0"
+      UpperColumns="1">
+      <ViewCriteriaItem
+        Name="Id1"
+        ViewAttribute="Id1"
+        Operator="="
+        Conjunction="AND"
+        Value="166"
+        Required="Optional"/>
+    </ViewCriteriaRow>
+  </ViewCriteria>
   <AttrArray Name="KeyAttributes">
     <Item Value="Id"/>
   </AttrArray>
@@ -137,4 +211,16 @@
         Type="java.lang.Integer"/>
     </Method>
   </ClientInterface>
+  <LOVUIHints
+    ListType="113"
+    MRUCount="0"
+    ListRangeSize="-1"
+    NullValueFlag="none"
+    ComboRowCountHint="30">
+    <AttrArray Name="ListDisplayAttrNames">
+      <Item Value="TagDisplayLabel"/>
+      <Item Value="TagCategoryDisplayLabel"/>
+    </AttrArray>
+    <DisplayCriteria/>
+  </LOVUIHints>
 </ViewObject>

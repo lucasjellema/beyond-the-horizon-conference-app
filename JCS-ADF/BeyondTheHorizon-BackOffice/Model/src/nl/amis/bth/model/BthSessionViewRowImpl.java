@@ -2,7 +2,9 @@ package nl.amis.bth.model;
 
 import java.math.BigDecimal;
 
+import oracle.jbo.Row;
 import oracle.jbo.RowIterator;
+import oracle.jbo.RowSet;
 import oracle.jbo.domain.ClobDomain;
 import oracle.jbo.server.EntityImpl;
 import oracle.jbo.server.ViewRowImpl;
@@ -16,6 +18,7 @@ public class BthSessionViewRowImpl extends ViewRowImpl {
 
 
     public static final int ENTITY_BTHSESSION = 0;
+    public static final int ENTITY_BTHTAG = 1;
 
     /**
      * AttributesEnum: generated enum for identifying attributes and accessors. DO NOT MODIFY.
@@ -34,9 +37,14 @@ public class BthSessionViewRowImpl extends ViewRowImpl {
         Notes,
         Cospeakers,
         AbstractString,
+        TrackTagId,
+        DisplayLabel,
+        Id1,
         BthTagBindingView,
         BthSpeakerView,
-        BthPlanningItemView;
+        BthPlanningItemView,
+        BthTagView,
+        BthTagView1;
         static AttributesEnum[] vals = null;
         ;
         private static final int firstIndex = 0;
@@ -75,9 +83,14 @@ public class BthSessionViewRowImpl extends ViewRowImpl {
     public static final int NOTES = AttributesEnum.Notes.index();
     public static final int COSPEAKERS = AttributesEnum.Cospeakers.index();
     public static final int ABSTRACTSTRING = AttributesEnum.AbstractString.index();
+    public static final int TRACKTAGID = AttributesEnum.TrackTagId.index();
+    public static final int DISPLAYLABEL = AttributesEnum.DisplayLabel.index();
+    public static final int ID1 = AttributesEnum.Id1.index();
     public static final int BTHTAGBINDINGVIEW = AttributesEnum.BthTagBindingView.index();
     public static final int BTHSPEAKERVIEW = AttributesEnum.BthSpeakerView.index();
     public static final int BTHPLANNINGITEMVIEW = AttributesEnum.BthPlanningItemView.index();
+    public static final int BTHTAGVIEW = AttributesEnum.BthTagView.index();
+    public static final int BTHTAGVIEW1 = AttributesEnum.BthTagView1.index();
 
     /**
      * This is the default constructor (do not remove).
@@ -91,6 +104,14 @@ public class BthSessionViewRowImpl extends ViewRowImpl {
      */
     public EntityImpl getBthSession() {
         return (EntityImpl) getEntity(ENTITY_BTHSESSION);
+    }
+
+    /**
+     * Gets BthTag entity object.
+     * @return the BthTag
+     */
+    public EntityImpl getBthTag() {
+        return (EntityImpl) getEntity(ENTITY_BTHTAG);
     }
 
     /**
@@ -291,7 +312,66 @@ public class BthSessionViewRowImpl extends ViewRowImpl {
      * @return the AbstractString
      */
     public String getAbstractString() {
+        if (getAbstract1()!=null) {
        return getAbstract1().toString();
+        }
+        else return null;
+    }
+
+    /**
+     * Sets <code>value</code> as the attribute value for the calculated attribute AbstractString.
+     * @param value value to set the  AbstractString
+     */
+    public void setAbstractString(String value) {
+        setAttributeInternal(ABSTRACTSTRING, value);
+    }
+
+    /**
+     * Gets the attribute value for TRACK_TAG_ID using the alias name TrackTagId.
+     * @return the TRACK_TAG_ID
+     */
+    public Long getTrackTagId() {
+        return (Long) getAttributeInternal(TRACKTAGID);
+    }
+
+    /**
+     * Sets <code>value</code> as attribute value for TRACK_TAG_ID using the alias name TrackTagId.
+     * @param value value to set the TRACK_TAG_ID
+     */
+    public void setTrackTagId(Long value) {
+        setAttributeInternal(TRACKTAGID, value);
+    }
+
+    /**
+     * Gets the attribute value for DISPLAY_LABEL using the alias name DisplayLabel.
+     * @return the DISPLAY_LABEL
+     */
+    public String getDisplayLabel() {
+        return (String) getAttributeInternal(DISPLAYLABEL);
+    }
+
+    /**
+     * Sets <code>value</code> as attribute value for DISPLAY_LABEL using the alias name DisplayLabel.
+     * @param value value to set the DISPLAY_LABEL
+     */
+    public void setDisplayLabel(String value) {
+        setAttributeInternal(DISPLAYLABEL, value);
+    }
+
+    /**
+     * Gets the attribute value for ID using the alias name Id1.
+     * @return the ID
+     */
+    public Long getId1() {
+        return (Long) getAttributeInternal(ID1);
+    }
+
+    /**
+     * Sets <code>value</code> as attribute value for ID using the alias name Id1.
+     * @param value value to set the ID
+     */
+    public void setId1(Long value) {
+        setAttributeInternal(ID1, value);
     }
 
     /**
@@ -313,6 +393,27 @@ public class BthSessionViewRowImpl extends ViewRowImpl {
      */
     public RowIterator getBthPlanningItemView() {
         return (RowIterator) getAttributeInternal(BTHPLANNINGITEMVIEW);
+    }
+
+    /**
+     * Gets the associated <code>Row</code> using master-detail link BthTagView.
+     */
+    public Row getBthTagView() {
+        return (Row) getAttributeInternal(BTHTAGVIEW);
+    }
+
+    /**
+     * Sets the master-detail link BthTagView between this object and <code>value</code>.
+     */
+    public void setBthTagView(Row value) {
+        setAttributeInternal(BTHTAGVIEW, value);
+    }
+
+    /**
+     * Gets the view accessor <code>RowSet</code> BthTagView1.
+     */
+    public RowSet getBthTagView1() {
+        return (RowSet) getAttributeInternal(BTHTAGVIEW1);
     }
 }
 

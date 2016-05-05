@@ -22,6 +22,10 @@
     <Attr Name="_codeGenFlag2" Value="Access|Def|Coll|Prog|VarAccess"/>
     <Attr Name="_isCodegen" Value="true"/>
   </DesignTime>
+  <Variable
+    Name="bind_purpose"
+    Kind="viewcriteria"
+    Type="java.lang.String"/>
   <EntityUsage
     Name="BthDocument"
     Entity="nl.amis.bth.model.BthDocument"/>
@@ -31,7 +35,8 @@
     PrecisionRule="true"
     EntityAttrName="Id"
     EntityUsage="BthDocument"
-    AliasName="ID"/>
+    AliasName="ID"
+    IsUpdateable="while_insert"/>
   <ViewAttribute
     Name="Name"
     PrecisionRule="true"
@@ -63,4 +68,46 @@
     EntityAttrName="MasterId"
     EntityUsage="BthDocument"
     AliasName="MASTER_ID"/>
+  <ViewAttribute
+    Name="Purpose"
+    PrecisionRule="true"
+    EntityAttrName="Purpose"
+    EntityUsage="BthDocument"
+    AliasName="PURPOSE"/>
+  <ViewCriteria
+    Name="BthDocumentViewCriteria"
+    ViewObjectName="nl.amis.bth.model.BthDocumentView"
+    Conjunction="AND">
+    <Properties>
+      <CustomProperties>
+        <Property
+          Name="displayOperators"
+          Value="InAdvancedMode"/>
+        <Property
+          Name="autoExecute"
+          Value="false"/>
+        <Property
+          Name="allowConjunctionOverride"
+          Value="true"/>
+        <Property
+          Name="showInList"
+          Value="true"/>
+        <Property
+          Name="mode"
+          Value="Basic"/>
+      </CustomProperties>
+    </Properties>
+    <ViewCriteriaRow
+      Name="BthDocumentViewCriteria_row_0"
+      UpperColumns="1">
+      <ViewCriteriaItem
+        Name="Purpose"
+        ViewAttribute="Purpose"
+        Operator="="
+        Conjunction="AND"
+        Value=":bind_purpose"
+        Required="Optional"
+        IsBindVarValue="true"/>
+    </ViewCriteriaRow>
+  </ViewCriteria>
 </ViewObject>

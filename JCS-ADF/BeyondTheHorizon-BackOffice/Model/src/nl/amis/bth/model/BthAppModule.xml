@@ -92,6 +92,31 @@
   <ViewUsage
     Name="DocumentAccessView1"
     ViewObjectName="nl.amis.bth.model.DocumentAccessView"/>
+  <ViewUsage
+    Name="BthPersonView2"
+    ViewObjectName="nl.amis.bth.model.BthPersonView"/>
+  <ViewUsage
+    Name="BthDocumentView2"
+    ViewObjectName="nl.amis.bth.model.BthDocumentView"/>
+  <ViewUsage
+    Name="BthDocumentView3"
+    ViewObjectName="nl.amis.bth.model.BthDocumentView">
+    <ViewCriteriaUsage
+      Name="BthDocumentViewCriteria"
+      FullName="nl.amis.bth.model.BthDocumentView.BthDocumentViewCriteria"/>
+    <ParameterMap>
+      <PIMap Variable="bind_purpose">
+        <TransientExpression><![CDATA["PIC"]]></TransientExpression>
+      </PIMap>
+    </ParameterMap>
+  </ViewUsage>
+  <ViewUsage
+    Name="ThemeTagBindings"
+    ViewObjectName="nl.amis.bth.model.BthTagBindingView">
+    <ViewCriteriaUsage
+      Name="ThemeTagBindings"
+      FullName="nl.amis.bth.model.BthTagBindingView.ThemeTagBindings"/>
+  </ViewUsage>
   <ViewLinkUsage
     Name="SpeakerSessionsViewLink1"
     ViewLinkObjectName="nl.amis.bth.model.SpeakerSessionsViewLink"
@@ -139,5 +164,23 @@
     ViewLinkObjectName="nl.amis.bth.model.SessionPimViewLink"
     SrcViewUsageName="nl.amis.bth.model.BthAppModule.BthSessionView2"
     DstViewUsageName="nl.amis.bth.model.BthAppModule.BthPlanningItemView3"
+    Reversed="false"/>
+  <ViewLinkUsage
+    Name="PersonPictureViewLink"
+    ViewLinkObjectName="nl.amis.bth.model.PersonPictureViewLink"
+    SrcViewUsageName="nl.amis.bth.model.BthAppModule.BthPersonView2"
+    DstViewUsageName="nl.amis.bth.model.BthAppModule.BthDocumentView2"
+    Reversed="false"/>
+  <ViewLinkUsage
+    Name="PersonPictureViewLink1"
+    ViewLinkObjectName="nl.amis.bth.model.PersonPictureViewLink"
+    SrcViewUsageName="nl.amis.bth.model.BthAppModule.BthPersonView1"
+    DstViewUsageName="nl.amis.bth.model.BthAppModule.BthDocumentView3"
+    Reversed="false"/>
+  <ViewLinkUsage
+    Name="SessionTagsViewLink2"
+    ViewLinkObjectName="nl.amis.bth.model.SessionTagsViewLink"
+    SrcViewUsageName="nl.amis.bth.model.BthAppModule.BthSessionView2"
+    DstViewUsageName="nl.amis.bth.model.BthAppModule.ThemeTagBindings"
     Reversed="false"/>
 </AppModule>

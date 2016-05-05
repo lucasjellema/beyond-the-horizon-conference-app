@@ -150,15 +150,63 @@
                                               shortDesc="#{bindings.FacebookAccount.hints.tooltip}" id="it10">
                                     <f:validator binding="#{bindings.FacebookAccount.validator}"/>
                                 </af:inputText>
-                                <af:inputText value="#{bindings.Picture.inputValue}"
-                                              label="#{bindings.Picture.hints.label}"
-                                              required="#{bindings.Picture.hints.mandatory}"
-                                              columns="50"
-                                              maximumLength="#{bindings.Picture.hints.precision}"
-                                              shortDesc="#{bindings.Picture.hints.tooltip}" id="it11">
-                                    <f:validator binding="#{bindings.Picture.validator}"/>
-                                </af:inputText>
-                                                    <af:richTextEditor value="#{bindings.BiographyString.inputValue}"
+>
+                                <af:panelFormLayout id="pfl3">
+                                    <af:inputText value="#{bindings.Id1.inputValue}" label="#{bindings.Id1.hints.label}"
+                                                  required="#{bindings.Id1.hints.mandatory}" readOnly="true"
+                                                  columns="#{bindings.Id1.hints.displayWidth}"
+                                                  maximumLength="#{bindings.Id1.hints.precision}"
+                                                  shortDesc="#{bindings.Id1.hints.tooltip}" id="it11">
+                                        <f:validator binding="#{bindings.Id1.validator}"/>
+                                        <af:convertNumber groupingUsed="false" pattern="#{bindings.Id1.format}"/>
+                                    </af:inputText>
+                                    <af:inputText value="#{bindings.Name.inputValue}"
+                                                  label="#{bindings.Name.hints.label}"
+                                                  required="#{bindings.Name.hints.mandatory}" readOnly="true"
+                                                  columns="#{bindings.Name.hints.displayWidth}"
+                                                  maximumLength="#{bindings.Name.hints.precision}"
+                                                  shortDesc="#{bindings.Name.hints.tooltip}" id="it12">
+                                        <f:validator binding="#{bindings.Name.validator}"/>
+                                    </af:inputText>
+                                    <af:inputText value="#{bindings.ContentType.inputValue}"
+                                                  label="#{bindings.ContentType.hints.label}"
+                                                  required="#{bindings.ContentType.hints.mandatory}" readOnly="true"
+                                                  columns="#{bindings.ContentType.hints.displayWidth}"
+                                                  maximumLength="#{bindings.ContentType.hints.precision}"
+                                                  shortDesc="#{bindings.ContentType.hints.tooltip}" id="it17">
+                                        <f:validator binding="#{bindings.ContentType.validator}"/>
+                                    </af:inputText>
+                                     <af:image source="/docs/render_image?id=#{bindings.Id1.inputValue}"
+                                              id="i11a" shortDesc="#{bindings.Name.inputValue}"
+                                              inlineStyle="width:200px;" visible="true"/>
+                                              
+                                    <af:inputText value="#{bindings.Description.inputValue}"
+                                                  label="#{bindings.Description.hints.label}"
+                                                  required="#{bindings.Description.hints.mandatory}" readOnly="true"
+                                                  columns="#{bindings.Description.hints.displayWidth}"
+                                                  maximumLength="#{bindings.Description.hints.precision}"
+                                                  shortDesc="#{bindings.Description.hints.tooltip}" id="it19">
+                                        <f:validator binding="#{bindings.Description.validator}"/>
+                                    </af:inputText>
+                                    <af:inputText value="#{bindings.MasterId.inputValue}"
+                                                  label="#{bindings.MasterId.hints.label}"
+                                                  required="#{bindings.MasterId.hints.mandatory}" readOnly="true"
+                                                  columns="#{bindings.MasterId.hints.displayWidth}"
+                                                  maximumLength="#{bindings.MasterId.hints.precision}"
+                                                  shortDesc="#{bindings.MasterId.hints.tooltip}" id="it20">
+                                        <f:validator binding="#{bindings.MasterId.validator}"/>
+                                        <af:convertNumber groupingUsed="false" pattern="#{bindings.MasterId.format}"/>
+                                    </af:inputText>
+                                    <af:inputText value="#{bindings.Purpose.inputValue}"
+                                                  label="#{bindings.Purpose.hints.label}"
+                                                  required="#{bindings.Purpose.hints.mandatory}" readOnly="true"
+                                                  columns="#{bindings.Purpose.hints.displayWidth}"
+                                                  maximumLength="#{bindings.Purpose.hints.precision}"
+                                                  shortDesc="#{bindings.Purpose.hints.tooltip}" id="it21">
+                                        <f:validator binding="#{bindings.Purpose.validator}"/>
+                                    </af:inputText>
+                                </af:panelFormLayout>
+                                <af:richTextEditor value="#{bindings.BiographyString.inputValue}"
                                               label="#{bindings.Biography.hints.label}"
                                               required="#{bindings.Biography.hints.mandatory}"
                                               columns="#{bindings.Biography.hints.displayWidth}"

@@ -62,5 +62,21 @@ public class BthDocumentViewImpl extends ViewObjectImpl {
         long value = super.getCappedQueryHitCount(viewRowSet, masterRows, oldCap, cap);
         return value;
     }
+
+    /**
+     * Returns the variable value for bind_purpose.
+     * @return variable value for bind_purpose
+     */
+    public String getbind_purpose() {
+        return (String) ensureVariableManager().getVariableValue("bind_purpose");
+    }
+
+    /**
+     * Sets <code>value</code> for variable bind_purpose.
+     * @param value value to bind as bind_purpose
+     */
+    public void setbind_purpose(String value) {
+        ensureVariableManager().setVariableValue("bind_purpose", value);
+    }
 }
 

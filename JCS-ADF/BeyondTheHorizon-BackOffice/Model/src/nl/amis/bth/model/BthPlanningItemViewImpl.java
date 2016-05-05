@@ -87,7 +87,12 @@ public class BthPlanningItemViewImpl extends ViewObjectImpl implements BthPlanni
                                         "END;"), 0);
         try {
             statement.setInt(1, pimId);
+            // to handle a null ssnId to wipe a session allocation -- http://stackoverflow.com/questions/14514589/jdbcinserting-null-to-integer-column
+            if (ssnId == null) {
+                statement.setNull(2, java.sql.Types.INTEGER);   
+            } else {
             statement.setInt(2, ssnId);
+            }
             statement.execute();
             return;
         } catch (SQLException sqlerr) {

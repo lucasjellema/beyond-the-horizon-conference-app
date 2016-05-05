@@ -21,8 +21,7 @@
     ColumnType="NUMBER"
     TableName="BTH_TAGS"
     PrimaryKey="true">
-    <TransientExpression
-      trustMode="untrusted"><![CDATA[(new oracle.jbo.server.SequenceImpl("bth_seq", adf.object.getDBTransaction())).getSequenceNumber()]]></TransientExpression>
+    <TransientExpression><![CDATA[(new oracle.jbo.server.SequenceImpl("bth_seq", adf.object.getDBTransaction())).getSequenceNumber()]]></TransientExpression>
   </Attribute>
   <Attribute
     Name="DisplayLabel"
@@ -77,6 +76,13 @@
     Association="nl.amis.bth.model.TagTagBindingAssociation"
     AssociationEnd="nl.amis.bth.model.TagTagBindingAssociation.BthTagBinding"
     AssociationOtherEnd="nl.amis.bth.model.TagTagBindingAssociation.BthTag"
+    Type="oracle.jbo.RowIterator"
+    IsUpdateable="false"/>
+  <AccessorAttribute
+    Name="BthSession"
+    Association="nl.amis.bth.model.SessionTrackTagAssociation"
+    AssociationEnd="nl.amis.bth.model.SessionTrackTagAssociation.BthSession"
+    AssociationOtherEnd="nl.amis.bth.model.SessionTrackTagAssociation.BthTag"
     Type="oracle.jbo.RowIterator"
     IsUpdateable="false"/>
   <Key

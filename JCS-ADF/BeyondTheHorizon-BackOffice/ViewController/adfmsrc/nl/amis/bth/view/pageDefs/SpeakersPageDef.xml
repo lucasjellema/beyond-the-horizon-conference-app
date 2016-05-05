@@ -9,6 +9,8 @@
                   Customizer="oracle.jbo.uicli.binding.JUSearchBindingCustomizer" id="BthPersonView1Query"/>
     <iterator Binds="SpeakerSessionsView2" RangeSize="25" DataControl="BthAppModuleDataControl"
               id="SpeakerSessionsView2Iterator"/>
+    <iterator Binds="BthDocumentView3" RangeSize="25" DataControl="BthAppModuleDataControl"
+              id="BthDocumentView3Iterator"/>
   </executables>
   <bindings>
     <tree IterBinding="BthPersonView1Iterator" id="BthPersonView1">
@@ -128,5 +130,40 @@
         </AttrNames>
       </nodeDefinition>
     </tree>
+    <attributeValues IterBinding="BthDocumentView3Iterator" id="Id1">
+      <AttrNames>
+        <Item Value="Id"/>
+      </AttrNames>
+    </attributeValues>
+    <attributeValues IterBinding="BthDocumentView3Iterator" id="Name">
+      <AttrNames>
+        <Item Value="Name"/>
+      </AttrNames>
+    </attributeValues>
+    <attributeValues IterBinding="BthDocumentView3Iterator" id="ContentType">
+      <AttrNames>
+        <Item Value="ContentType"/>
+      </AttrNames>
+    </attributeValues>
+    <attributeValues IterBinding="BthDocumentView3Iterator" id="ContentData">
+      <AttrNames>
+        <Item Value="ContentData"/>
+      </AttrNames>
+    </attributeValues>
+    <attributeValues IterBinding="BthDocumentView3Iterator" id="Description">
+      <AttrNames>
+        <Item Value="Description"/>
+      </AttrNames>
+    </attributeValues>
+    <attributeValues IterBinding="BthDocumentView3Iterator" id="MasterId">
+      <AttrNames>
+        <Item Value="MasterId"/>
+      </AttrNames>
+    </attributeValues>
+    <attributeValues IterBinding="BthDocumentView3Iterator" id="Purpose">
+      <AttrNames>
+        <Item Value="Purpose"/>
+      </AttrNames>
+    </attributeValues>
   </bindings>
 </pageDefinition>

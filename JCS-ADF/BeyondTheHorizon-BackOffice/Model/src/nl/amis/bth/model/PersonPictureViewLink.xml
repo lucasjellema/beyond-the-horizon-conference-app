@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="windows-1252" ?>
+<!DOCTYPE ViewLink SYSTEM "jbo_03_01.dtd">
+<!---->
+<ViewLink
+  xmlns="http://xmlns.oracle.com/bc4j"
+  Name="PersonPictureViewLink"
+  Version="12.1.3.13.52"
+  InheritPersonalization="merge"
+  EntityAssociation="nl.amis.bth.model.PersonPictureAssociation">
+  <Properties>
+    <SchemaBasedProperties>
+      <LABEL
+        ResId="nl.amis.bth.model.PersonPictureViewLink_LABEL"/>
+    </SchemaBasedProperties>
+  </Properties>
+  <ViewLinkDefEnd
+    Name="BthPersonView"
+    Cardinality="1"
+    Source="true"
+    Owner="nl.amis.bth.model.BthPersonView">
+    <DesignTime>
+      <Attr Name="_finderName" Value="BthPersonView"/>
+      <Attr Name="_isUpdateable" Value="true"/>
+    </DesignTime>
+    <AttrArray Name="Attributes">
+      <Item Value="nl.amis.bth.model.BthPersonView.Id"/>
+    </AttrArray>
+  </ViewLinkDefEnd>
+  <ViewLinkDefEnd
+    Name="BthDocumentView"
+    Cardinality="-1"
+    Owner="nl.amis.bth.model.BthDocumentView">
+    <DesignTime>
+      <Attr Name="_finderName" Value="BthDocumentView"/>
+      <Attr Name="_isUpdateable" Value="true"/>
+    </DesignTime>
+    <AttrArray Name="Attributes">
+      <Item Value="nl.amis.bth.model.BthDocumentView.MasterId"/>
+    </AttrArray>
+  </ViewLinkDefEnd>
+  <ResourceBundle>
+    <PropertiesBundle
+      PropertiesFile="nl.amis.bth.model.ModelBundle"/>
+  </ResourceBundle>
+</ViewLink>

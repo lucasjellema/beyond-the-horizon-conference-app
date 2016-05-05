@@ -22,7 +22,7 @@
     TableName="BTH_SPEAKERS"
     PrimaryKey="true">
     <TransientExpression
-      trustMode="untrusted"><![CDATA[(new oracle.jbo.server.SequenceImpl("bth_seq", adf.object.getDBTransaction())).getSequenceNumber()]]></TransientExpression>
+      trustMode="trusted"><![CDATA[(new oracle.jbo.server.SequenceImpl("bth_seq", adf.object.getDBTransaction())).getSequenceNumber()]]></TransientExpression>
   </Attribute>
   <Attribute
     Name="SsnId"

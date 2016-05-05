@@ -18,9 +18,55 @@
     <Attr Name="_codeGenFlag2" Value="Access"/>
     <Attr Name="_isCodegen" Value="true"/>
   </DesignTime>
+  <ViewAccessor
+    Name="BthTagView1"
+    ViewObjectName="nl.amis.bth.model.BthTagView"
+    RowLevelBinds="true">
+    <ViewCriteriaUsage
+      Name="TrackTags"
+      FullName="nl.amis.bth.model.BthTagView.TrackTags"/>
+  </ViewAccessor>
+  <ListBinding
+    Name="LOV_TrackTagId"
+    ListVOName="BthTagView1"
+    ListRangeSize="-1"
+    NullValueFlag="start"
+    NullValueId="LOV_TrackTagId_LOVUIHints_NullValueId"
+    MRUCount="0">
+    <AttrArray Name="AttrNames">
+      <Item Value="TrackTagId"/>
+    </AttrArray>
+    <AttrArray Name="AttrExpressions"/>
+    <AttrArray Name="ListAttrNames">
+      <Item Value="Id"/>
+    </AttrArray>
+    <AttrArray Name="ListDisplayAttrNames">
+      <Item Value="DisplayLabel"/>
+    </AttrArray>
+    <DisplayCriteria/>
+  </ListBinding>
   <EntityUsage
     Name="BthSession"
     Entity="nl.amis.bth.model.BthSession"/>
+  <EntityUsage
+    Name="BthTag"
+    Entity="nl.amis.bth.model.BthTag"
+    Association="nl.amis.bth.model.SessionTrackTagAssociation"
+    AssociationEnd="nl.amis.bth.model.SessionTrackTagAssociation.BthTag"
+    SourceUsage="nl.amis.bth.model.BthSessionView.BthSession"
+    ReadOnly="true"
+    Reference="true"
+    DeleteParticipant="false"
+    JoinType="LEFT OUTER JOIN">
+    <DesignTime>
+      <AttrArray Name="_srcAttributes">
+        <Item Value="nl.amis.bth.model.BthSession.TrackTagId"/>
+      </AttrArray>
+      <AttrArray Name="_dstAttributes">
+        <Item Value="nl.amis.bth.model.BthTag.Id"/>
+      </AttrArray>
+    </DesignTime>
+  </EntityUsage>
   <ViewAttribute
     Name="Id"
     IsNotNull="true"
@@ -98,7 +144,6 @@
     AliasName="COSPEAKERS"/>
   <ViewAttribute
     Name="AbstractString"
-    IsUpdateable="false"
     IsSelected="false"
     IsPersistent="false"
     PrecisionRule="true"
@@ -107,6 +152,36 @@
     ColumnType="VARCHAR2"
     AliasName="VIEW_ATTR"
     SQLType="VARCHAR"/>
+  <ViewAttribute
+    Name="TrackTagId"
+    PrecisionRule="true"
+    EntityAttrName="TrackTagId"
+    EntityUsage="BthSession"
+    AliasName="TRACK_TAG_ID"
+    LOVName="LOV_TrackTagId">
+    <Properties>
+      <SchemaBasedProperties>
+        <CONTROLTYPE
+          Value="radio"/>
+      </SchemaBasedProperties>
+    </Properties>
+  </ViewAttribute>
+  <ViewAttribute
+    Name="DisplayLabel"
+    PrecisionRule="true"
+    EntityAttrName="DisplayLabel"
+    EntityUsage="BthTag"
+    AliasName="DISPLAY_LABEL"/>
+  <ViewAttribute
+    Name="Id1"
+    IsNotNull="true"
+    PrecisionRule="true"
+    EntityAttrName="Id"
+    EntityUsage="BthTag"
+    AliasName="ID1"/>
+  <AttrArray Name="KeyAttributes">
+    <Item Value="Id"/>
+  </AttrArray>
   <ViewLinkAccessor
     Name="BthTagBindingView"
     ViewLink="nl.amis.bth.model.SessionTagsViewLink"
@@ -122,4 +197,18 @@
     ViewLink="nl.amis.bth.model.SessionPimViewLink"
     Type="oracle.jbo.RowIterator"
     IsUpdateable="false"/>
+  <ViewLinkAccessor
+    Name="BthTagView"
+    ViewLink="nl.amis.bth.model.SessionTrackTagViewLink"
+    Type="oracle.jbo.Row"
+    Reversed="true"
+    IsUpdateable="false"/>
+  <SortCriteria>
+    <Sort
+      Attribute="Title"/>
+  </SortCriteria>
+  <ResourceBundle>
+    <PropertiesBundle
+      PropertiesFile="nl.amis.bth.model.ModelBundle"/>
+  </ResourceBundle>
 </ViewObject>

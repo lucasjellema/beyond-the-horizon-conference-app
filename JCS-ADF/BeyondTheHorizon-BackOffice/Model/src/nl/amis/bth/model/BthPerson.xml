@@ -214,6 +214,13 @@
     AssociationOtherEnd="nl.amis.bth.model.PsnSpeakerAssociation.BthPerson"
     Type="oracle.jbo.RowIterator"
     IsUpdateable="false"/>
+  <AccessorAttribute
+    Name="BthDocument"
+    Association="nl.amis.bth.model.PersonPictureAssociation"
+    AssociationEnd="nl.amis.bth.model.PersonPictureAssociation.BthDocument"
+    AssociationOtherEnd="nl.amis.bth.model.PersonPictureAssociation.BthPerson"
+    Type="oracle.jbo.RowIterator"
+    IsUpdateable="false"/>
   <Key
     Name="SysC0014954"
     PrimaryKey="true">

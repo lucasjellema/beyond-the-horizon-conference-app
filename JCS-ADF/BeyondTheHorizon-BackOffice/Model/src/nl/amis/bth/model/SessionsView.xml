@@ -18,18 +18,22 @@
         ResId="nl.amis.bth.model.SessionsView_LABEL"/>
     </SchemaBasedProperties>
   </Properties>
-  <SQLQuery><![CDATA[select ssn.title 
-  , (select LISTAGG(psn.first_name||' '||psn.last_name, ',') WITHIN GROUP (ORDER BY last_name) AS speakers 
-     from bth_people psn join bth_speakers skr on (skr.psn_id= psn.id)  
-     where skr.ssn_id = ssn.id 
-    ) speakers 
-, lower(status)  status 
-, cospeakers 
-, ssn.id ssn_id 
-, ssn.notes 
-, case (select count(*) from bth_planning_items pim where pim.ssn_id = ssn.id) when 0 then 'N' else 'Y' end planned_yn 
-, ssn.duration 
-  from   bth_sessions ssn]]></SQLQuery>
+  <SQLQuery><![CDATA[select ssn.title  
+  , (select LISTAGG(psn.first_name||' '||psn.last_name, ',') WITHIN GROUP (ORDER BY last_name) AS speakers  
+     from bth_people psn join bth_speakers skr on (skr.psn_id= psn.id)   
+     where skr.ssn_id = ssn.id  
+    ) speakers  
+, lower(status)  status  
+, cospeakers  
+, ssn.id ssn_id  
+, ssn.notes  
+, case (select count(*) from bth_planning_items pim where pim.ssn_id = ssn.id) when 0 then 'N' else 'Y' end planned_yn  
+, ssn.duration  
+, tag.display_label track 
+  from   bth_sessions ssn 
+  left outer join 
+  bth_tags tag 
+  on (ssn.track_tag_id = tag.id)]]></SQLQuery>
   <ViewAttribute
     Name="Title"
     IsUpdateable="false"
@@ -144,6 +148,21 @@
     AliasName="DURATION"
     Expression="DURATION"
     SQLType="NUMERIC"/>
+  <ViewAttribute
+    Name="Track"
+    IsUpdateable="false"
+    IsPersistent="false"
+    PrecisionRule="true"
+    Precision="100"
+    Type="java.lang.String"
+    ColumnType="VARCHAR2"
+    AliasName="TRACK"
+    Expression="TRACK"
+    SQLType="VARCHAR">
+    <DesignTime>
+      <Attr Name="_DisplaySize" Value="100"/>
+    </DesignTime>
+  </ViewAttribute>
   <AttrArray Name="KeyAttributes">
     <Item Value="SsnId"/>
   </AttrArray>

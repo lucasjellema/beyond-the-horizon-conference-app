@@ -295,5 +295,61 @@ public class BthAppModuleImpl extends ApplicationModuleImpl {
     public DocumentAccessViewImpl getDocumentAccessView1() {
         return (DocumentAccessViewImpl) findViewObject("DocumentAccessView1");
     }
+
+    /**
+     * Container's getter for BthPersonView2.
+     * @return BthPersonView2
+     */
+    public ViewObjectImpl getBthPersonView2() {
+        return (ViewObjectImpl) findViewObject("BthPersonView2");
+    }
+
+    /**
+     * Container's getter for BthDocumentView2.
+     * @return BthDocumentView2
+     */
+    public BthDocumentViewImpl getBthDocumentView2() {
+        return (BthDocumentViewImpl) findViewObject("BthDocumentView2");
+    }
+
+    /**
+     * Container's getter for PersonPictureViewLink.
+     * @return PersonPictureViewLink
+     */
+    public ViewLinkImpl getPersonPictureViewLink() {
+        return (ViewLinkImpl) findViewLink("PersonPictureViewLink");
+    }
+
+    /**
+     * Container's getter for BthDocumentView3.
+     * @return BthDocumentView3
+     */
+    public BthDocumentViewImpl getBthDocumentView3() {
+        return (BthDocumentViewImpl) findViewObject("BthDocumentView3");
+    }
+
+    /**
+     * Container's getter for PersonPictureViewLink1.
+     * @return PersonPictureViewLink1
+     */
+    public ViewLinkImpl getPersonPictureViewLink1() {
+        return (ViewLinkImpl) findViewLink("PersonPictureViewLink1");
+    }
+
+    /**
+     * Container's getter for BthTagBindingView4.
+     * @return BthTagBindingView4
+     */
+    public BthTagBindingViewImpl getThemeTagBindings() {
+        return (BthTagBindingViewImpl) findViewObject("ThemeTagBindings");
+    }
+
+    /**
+     * Container's getter for SessionTagsViewLink2.
+     * @return SessionTagsViewLink2
+     */
+    public ViewLinkImpl getSessionTagsViewLink2() {
+        return (ViewLinkImpl) findViewLink("SessionTagsViewLink2");
+    }
 }
 

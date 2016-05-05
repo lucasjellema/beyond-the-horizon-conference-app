@@ -1,6 +1,7 @@
 package nl.amis.bth.model.common;
 
 import java.lang.Integer;
+import java.lang.Long;
 import java.lang.String;
 
 import java.math.BigDecimal;
@@ -68,27 +69,27 @@ public class PlanningT extends Struct {
         return "PLANNING_T";
     }
 
-    public Integer getId() {
-        return (Integer) getAttribute(0);
+    public Long getId() {
+        return (Long) getAttribute(0);
     }
 
-    public void setId(Integer value) {
+    public void setId(Long value) {
         setAttribute(0, value);
     }
 
-    public Integer getRomId() {
-        return (Integer) getAttribute(1);
+    public Long getRomId() {
+        return (Long) getAttribute(1);
     }
 
-    public void setRomId(Integer value) {
+    public void setRomId(Long value) {
         setAttribute(1, value);
     }
 
-    public Integer getSltId() {
-        return (Integer) getAttribute(2);
+    public Long getSltId() {
+        return (Long) getAttribute(2);
     }
 
-    public void setSltId(Integer value) {
+    public void setSltId(Long value) {
         setAttribute(2, value);
     }
 
@@ -132,11 +133,11 @@ public class PlanningT extends Struct {
         setAttribute(7, value);
     }
 
-    public Integer getSsnId() {
-        return (Integer) getAttribute(8);
+    public Long getSsnId() {
+        return (Long) getAttribute(8);
     }
 
-    public void setSsnId(Integer value) {
+    public void setSsnId(Long value) {
         setAttribute(8, value);
     }
 
@@ -157,12 +158,29 @@ public class PlanningT extends Struct {
     }
 
 
+    public BigDecimal getSessionDuration() {
+        return (BigDecimal) getAttribute(11);
+    }
+
+    public void setSessionDuration(BigDecimal value) {
+        setAttribute(11, value);
+    }
+
+
+    public String getTrack() {
+        return (String) getAttribute(12);
+    }
+
+    public void setTrack(String value) {
+        setAttribute(12, value);
+    }
+
     public void initStructureDef() {
-        DomainAttributeDef[] attrs = new DomainAttributeDef[11];
+        DomainAttributeDef[] attrs = new DomainAttributeDef[13];
         if (mStructureDef == null) {
-            attrs[0] = new DomainAttributeDef("Id", "ID", 0, Integer.class, 4, "INTEGER", -127, 0, false);
-            attrs[1] = new DomainAttributeDef("RomId", "ROM_ID", 1, Integer.class, 4, "INTEGER", -127, 0, false);
-            attrs[2] = new DomainAttributeDef("SltId", "SLT_ID", 2, Integer.class, 4, "INTEGER", -127, 0, false);
+            attrs[0] = new DomainAttributeDef("Id", "ID", 0, Long.class, 2, "NUMERIC", 0, 10, false);
+            attrs[1] = new DomainAttributeDef("RomId", "ROM_ID", 1, Long.class, 2, "NUMERIC", 0, 10, false);
+            attrs[2] = new DomainAttributeDef("SltId", "SLT_ID", 2, Long.class, 2, "NUMERIC", 0, 10, false);
             attrs[3] =
                 new DomainAttributeDef("RoomDisplayLabel", "ROOM_DISPLAY_LABEL", 3, String.class, 12, "VARCHAR", -127,
                                        100, false);
@@ -177,19 +195,23 @@ public class PlanningT extends Struct {
             attrs[7] =
                 new DomainAttributeDef("SlotStartTime", "SLOT_START_TIME", 7, Timestamp.class, 93, "TIMESTAMP", -127, 0,
                                        false);
-            attrs[8] = new DomainAttributeDef("SsnId", "SSN_ID", 8, Integer.class, 4, "INTEGER", -127, 0, false);
+            attrs[8] = new DomainAttributeDef("SsnId", "SSN_ID", 8, Long.class, 2, "NUMERIC", 0, 10, false);
             attrs[9] =
                 new DomainAttributeDef("SessionTitle", "SESSION_TITLE", 9, String.class, 12, "VARCHAR", -127, 500,
                                        false);
             attrs[10] =
                 new DomainAttributeDef("Speakers", "SPEAKERS", 10, String.class, 12, "VARCHAR", -127, 500, false);
+            attrs[11] =
+                new DomainAttributeDef("SessionDuration", "SESSION_DURATION", 11, BigDecimal.class, 2, "NUMERIC", 1, 2,
+                                       false);
+            attrs[12] = new DomainAttributeDef("Track", "TRACK", 12, String.class, 12, "VARCHAR", -127, 100, false);
             mStructureDef = new DomainStructureDef(attrs);
         }
     }
 
     public ORADataFactory[] getAttrORADataFactories() {
         if (mCustDatFac == null) {
-            mCustDatFac = new ORADataFactory[11];
+            mCustDatFac = new ORADataFactory[13];
             mCustDatFac[0] = null;
             mCustDatFac[1] = null;
             mCustDatFac[2] = null;
@@ -201,6 +223,8 @@ public class PlanningT extends Struct {
             mCustDatFac[8] = null;
             mCustDatFac[9] = null;
             mCustDatFac[10] = null;
+            mCustDatFac[11] = null;
+            mCustDatFac[12] = null;
         }
         return mCustDatFac;
     }

@@ -23,8 +23,7 @@
     PrimaryKey="true"
     IsUpdateable="while_insert">
     <TransientExpression><![CDATA[(new oracle.jbo.server.SequenceImpl("BTH_SEQ",adf.object.getDBTransaction())).getSequenceNumber()]]></TransientExpression>
-     <RecalcCondition  
-      trustMode="trusted"><![CDATA[true]]></RecalcCondition>
+     <RecalcCondition><![CDATA[true]]></RecalcCondition>
       
       <!-- <RecalcCondition  
       trustMode="trusted"><![CDATA[true]]></RecalcCondition> 
@@ -84,6 +83,25 @@
     Type="java.lang.Long"
     ColumnType="NUMBER"
     TableName="BTH_DOCUMENTS"/>
+  <Attribute
+    Name="Purpose"
+    Precision="10"
+    ColumnName="PURPOSE"
+    SQLType="VARCHAR"
+    Type="java.lang.String"
+    ColumnType="VARCHAR2"
+    TableName="BTH_DOCUMENTS">
+    <DesignTime>
+      <Attr Name="_DisplaySize" Value="10"/>
+    </DesignTime>
+  </Attribute>
+  <AccessorAttribute
+    Name="BthPerson"
+    Association="nl.amis.bth.model.PersonPictureAssociation"
+    AssociationEnd="nl.amis.bth.model.PersonPictureAssociation.BthPerson"
+    AssociationOtherEnd="nl.amis.bth.model.PersonPictureAssociation.BthDocument"
+    Type="oracle.jbo.server.EntityImpl"
+    IsUpdateable="true"/>
   <Key
     Name="SysC0015057"
     PrimaryKey="true">

@@ -40,7 +40,8 @@ public class BthPersonViewRowImpl extends ViewRowImpl {
         JobTitle,
         Notes,
         BiographyString,
-        SpeakerSessionsView;
+        SpeakerSessionsView,
+        BthDocumentView;
         static AttributesEnum[] vals = null;
         ;
         private static final int firstIndex = 0;
@@ -85,6 +86,7 @@ public class BthPersonViewRowImpl extends ViewRowImpl {
     public static final int NOTES = AttributesEnum.Notes.index();
     public static final int BIOGRAPHYSTRING = AttributesEnum.BiographyString.index();
     public static final int SPEAKERSESSIONSVIEW = AttributesEnum.SpeakerSessionsView.index();
+    public static final int BTHDOCUMENTVIEW = AttributesEnum.BthDocumentView.index();
 
     /**
      * This is the default constructor (do not remove).
@@ -400,6 +402,13 @@ public class BthPersonViewRowImpl extends ViewRowImpl {
      */
     public RowIterator getSpeakerSessionsView() {
         return (RowIterator) getAttributeInternal(SPEAKERSESSIONSVIEW);
+    }
+
+    /**
+     * Gets the associated <code>RowIterator</code> using master-detail link BthDocumentView.
+     */
+    public RowIterator getBthDocumentView() {
+        return (RowIterator) getAttributeInternal(BTHDOCUMENTVIEW);
     }
 }
 

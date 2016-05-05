@@ -25,7 +25,8 @@ public class BthDocumentViewRowImpl extends ViewRowImpl implements BthDocumentVi
         ContentType,
         ContentData,
         Description,
-        MasterId;
+        MasterId,
+        Purpose;
         static AttributesEnum[] vals = null;
         ;
         private static final int firstIndex = 0;
@@ -57,6 +58,7 @@ public class BthDocumentViewRowImpl extends ViewRowImpl implements BthDocumentVi
     public static final int CONTENTDATA = AttributesEnum.ContentData.index();
     public static final int DESCRIPTION = AttributesEnum.Description.index();
     public static final int MASTERID = AttributesEnum.MasterId.index();
+    public static final int PURPOSE = AttributesEnum.Purpose.index();
 
     /**
      * This is the default constructor (do not remove).
@@ -166,6 +168,22 @@ public class BthDocumentViewRowImpl extends ViewRowImpl implements BthDocumentVi
      */
     public void setMasterId(Long value) {
         setAttributeInternal(MASTERID, value);
+    }
+
+    /**
+     * Gets the attribute value for PURPOSE using the alias name Purpose.
+     * @return the PURPOSE
+     */
+    public String getPurpose() {
+        return (String) getAttributeInternal(PURPOSE);
+    }
+
+    /**
+     * Sets <code>value</code> as attribute value for PURPOSE using the alias name Purpose.
+     * @param value value to set the PURPOSE
+     */
+    public void setPurpose(String value) {
+        setAttributeInternal(PURPOSE, value);
     }
 }
 
