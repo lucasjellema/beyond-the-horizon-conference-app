@@ -7,7 +7,7 @@ var json2csv = require('json2csv'); /* https://www.npmjs.com/package/json2csv , 
 var app = express();
 
 var PORT = process.env.PORT || 3000;
-var APP_VERSION = '0.0.1.60';
+var APP_VERSION = '0.0.1.71';
 
 //CORS middleware - taken from http://stackoverflow.com/questions/7067966/how-to-allow-cors-in-express-node-js
 var allowCrossDomain = function(req, res, next) {
@@ -43,6 +43,9 @@ app.get('/about', function (req, res) {
 app.get('/departments', function(req,res){ handleAllDepartments(req, res);} );
 app.get('/app/bth-speakers', function(req,res){ generateAppSpeakers(req, res);} );
 app.get('/app/bth-sessions', function(req,res){ generateAppSessions(req, res);} );
+app.get('/app/bth-schedule', function(req,res){ generateAppSchedule(req, res);} );
+
+
 app.get('/sessions', function(req,res){ handleAllSessions(req, res, null, req.query.search);} );
 app.get('/sessions/:sessionId', function(req,res){
     var sessionId = req.params.sessionId;
@@ -115,29 +118,9 @@ app.get('/departments/:departmentId', function(req,res){
 
 function generateAppSpeakers(request, response) {
     console.log("produce app data - speakers  ");
-    handleDatabaseOperation( request, response, function (request, response, connection) {
-	  var selectStatement = "select lines.column_value line from   table(bth_util.clob_to_string_tbl_t(bth_summary_api.json_summary)) lines";
-	  connection.execute(   selectStatement   
-		, [], { "outFormat": oracledb.OBJECT 
-              , "maxRows": 500  
-        }, function (err, result) {
-            if (err) {
-			  console.log('Error in execution of select statement'+err.message);
-              response.writeHead(500, {'Content-Type': 'application/json'});
-              response.end(JSON.stringify({
-                status: 500,
-                    message: "Error getting the sessions",
-                    detailed_message: err.message
-               })
-	          );  
-            } else {
-               // all rows in result consist of a property with a LINE object; all the line objects should be glued together to form a single string that can be JSON parsed
-               console.log('The number of result rows:'+result.rows.length);
-               var json='';
-               for (var i=0;i< result.rows.length;i++) {                   
-                   json=json + result.rows[i].LINE;               
-                }// for
-               var bthJson = JSON.parse(json);
+    getAll(request, response, function (err, bthJson) {  
+
+
                var fieldNames = ['ID','Tags'            , 'title','company', 'firstname','tussenvoegsel','lastname','email','position','image','description','phone','website','linkedInUrl','twitterurl'];  
                var fields     = ['id', 'communityTitles', 'X'    ,'company', 'firstName','X'            ,'lastName','X'    ,'X'       ,'X'    ,'biography'  ,'X'    ,'X'      ,'X'          ,'X'];
                json2csv({ data:  bthJson.speakers, fields: fields,fieldNames: fieldNames , del: '\t'  }, function(err, csv) {
@@ -152,59 +135,82 @@ function generateAppSpeakers(request, response) {
 	                  );  
                    }
                   else { 
-                   response.set({
-                     'Content-Disposition': 'attachment; filename=bth-speakers.xls',
-                     'Content-Type': 'text/csv'
-                   });
-                   response.send(csv);
+                   // explicitly treat incoming data as utf8 (avoids issues with multi-byte chars)
+                  response.set({
+                      'Content-Disposition': 'attachment; filename=bth-speakers.xls',
+                      'Content-Type': 'text/csv; charset=utf-8'
+                  });
+                  // \ufeff is to establish the content of the file is actually UTF-8 encoded; Excel seems to like it that way: http://stackoverflow.com/questions/17879198/adding-utf-8-bom-to-string-blob, 
+                  response.send("\ufeff"+csv);
                   }  
                });//json2csv
-              }//else 
-			doRelease(connection);
-          }// callback connection.execute
-	  );//connection.execute
-    });//handleDatabaseOperation
+               
+    });//getAll
 }// generateAppSpeakers
 
 
 
 function generateAppSessions(request, response) {
     console.log("produce app data - sessions  ");
-    handleDatabaseOperation( request, response, function (request, response, connection) {
-	  var selectStatement = "select lines.column_value line from   table(bth_util.clob_to_string_tbl_t(bth_summary_api.json_summary)) lines";
-	  connection.execute(   selectStatement   
-		, [], { "outFormat": oracledb.OBJECT 
-              , "maxRows": 500  
-        }, function (err, result) {
-            if (err) {
-			  console.log('Error in execution of select statement'+err.message);
-              response.writeHead(500, {'Content-Type': 'application/json'});
-              response.end(JSON.stringify({
-                status: 500,
-                    message: "Error getting the sessions",
-                    detailed_message: err.message
-               })
-	          );  
-            } else {
-               // all rows in result consist of a property with a LINE object; all the line objects should be glued together to form a single string that can be JSON parsed
-               console.log('The number of result rows:'+result.rows.length);
-               var json='';
-               for (var i=0;i< result.rows.length;i++) {                   
-                   json=json + result.rows[i].LINE;               
-                }// for
-               var bthJson = JSON.parse(json);
-               //var fieldNames = ['ID','tags'            , 'title','scheduleItemStartDateTime', 'scheduleItemEndDateTime','location-name'  ,'description','Is session','sessions','speakers'           ,'organization','image','Rating'];  
-               //var fields     = ['sessionId', 'tags','title', 'planning.slotDate'    ,'planning.slotStartTime'          , 'planning.room' ,'abstract'   ,'TRUE'     ,'X'         ,'speakers.id'       ,'X'           ,'X'   ,'X'    ,'X'     ];
-// documentation: https://www.npmjs.com/package/json2csv               
-               var fields=  [
+    getAll(request, response, function (err, bthJson) {  
+              // process and group by track
+              // iterate through all sessions - build new object              
+ var tracks = {};
+ bthJson.sessions.forEach (function (session){
+    if (!tracks[session.track]) {
+        tracks[session.track] = {"sessions": []}
+    }
+    tracks[session.track].sessions.push(session);
+});
+console.log('==================================  tracks');
+console.log(JSON.stringify(tracks));
+ 
+ var csvJson =[];
+ for (track in tracks) {
+   console.log('Track: '+track);
+   console.log("number of sessions "+tracks[track].sessions.length);
+   var t = { };
+   t.tags=track;
+   var sessionIds =[];
+   tracks[track].sessions.forEach (function (session){
+      sessionIds.push(session.sessionAppIdentifier);
+   });
+   t.sessionIds = sessionIds.toString();
+   t.isSession = 'FALSE';
+   csvJson.push(t);
+   tracks[track].sessions.forEach (function (session){
+      var s = {}; 
+      s.sessionId = session.sessionAppIdentifier;
+      s.tags  = session.tags.toString();
+      s.title = session.title;
+      if (session.planning.slotDate) {
+        s.scheduleItemStartDateTime = session.planning.slotDate+' '+session.planning.sessionStartTime;
+        s.scheduleItemEndDateTime = session.planning.slotDate+' '+session.planning.sessionEndTime;
+        s.locationName = session.planning.room;
+      }
+      s.abstract = session.abstract;
+      s.isSession = 'TRUE';
+      var skrs =[];
+      session.speakers.forEach (function (speaker){
+          console.log('speaker '+speaker.lastName);
+        skrs.push(speaker.id);
+      });
+      s.speakers = skrs.toString();
+      s.track  = session.track;
+      s.targetAudience  = session.targetAudience;
+      s.sessionType =( session.duration=='.5'? 'Quickie':(session.duration=='2'? 'Master Class':'Regular'));
+      csvJson.push(s);
+    });// all sessions in track     
+ }; // all tracks
+ var fields=  [
     {
       label: 'ID', // (optional, column will be labeled 'path.to.something' if not defined) 
       value: 'sessionId', // data.path.to.something 
-      default: 'NULL' // default if value is not found (optional, overrides `defaultValue` for column) 
+      default: '' // default if value is not found (optional, overrides `defaultValue` for column) 
     },
     {
       label: 'tags', // (optional, column will be labeled 'path.to.something' if not defined) 
-      value: 'X', // data.path.to.something 
+      value: 'tags', // data.path.to.something 
       default: 'NULL' // default if value is not found (optional, overrides `defaultValue` for column) 
     },
     {
@@ -213,31 +219,20 @@ function generateAppSessions(request, response) {
       default: 'NULL' // default if value is not found (optional, overrides `defaultValue` for column) 
     },
     {
-      label: 'scheduleItemStartDateTime', 
-      value: function(row) {
-          if (row.planning) {
-        return row.planning.slotDate + ' '+  row.planning.slotStartTime;
-          } else return ;
-      },
-      default: 'NULL' // default if value fn returns falsy 
+      label:    'scheduleItemStartDateTime', 
+      value:'scheduleItemStartDateTime'
+      ,
+      default: '-' // default if value fn returns falsy 
     } 
     , {
       label: 'scheduleItemEndDateTime', 
-      value: function(row) {
-          if (row.planning) {
-        return row.planning.slotDate + ' '+ row.planning.slotEndTime;
-          } else return ;
-      },
-      default: 'NULL' // default if value fn returns falsy 
+      value: 'scheduleItemEndDateTime',
+      default: '-' // default if value fn returns falsy 
     } 
     , {
       label: 'location-name', 
-      value: function(row) {
-          if (row.planning) {
-        return row.planning.room;
-          } else return ;
-      },
-      default: 'NULL' // default if value fn returns falsy 
+      value: 'locationName',
+      default: '-' // default if value fn returns falsy 
     } 
     , {
       label: 'description', 
@@ -246,28 +241,40 @@ function generateAppSessions(request, response) {
     } 
     , {
       label: 'Is Session', 
-      value: 'X',
+      value: 'isSession',
       default: 'TRUE' // default if value fn returns falsy 
     } 
     , {
       label: 'sessions', 
-      value: 'X',
+      value: 'sessionIds',
       default: 'null' // default if value fn returns falsy 
     } 
     , {
       label: 'speakers', // comma separated list of id's for all speakers associated with this session
-      value: function(row) {
-          if (row.speakers) {
-        return row.speakers[0].id ;// TODO: csv list for all speakers
-          } else return ;
-      },
+      value: 'speakers'
+      ,
       default: 'NULL' // default if value fn returns falsy 
     } 
-  ];
-               
-               
-               
-               json2csv({ data:  bthJson.sessions, fields: fields, del: '\t'  }, function(err, csv) {
+    , {
+      label: 'Track', // comma separated list of id's for all speakers associated with this session
+      value: 'track'
+      ,
+      default: '' // default if value fn returns falsy 
+    } 
+    , {
+      label: 'targetAudience', // comma separated list of id's for all speakers associated with this session
+      value: 'targetAudience'
+      ,
+      default: '' // default if value fn returns falsy 
+    } 
+    , {
+      label: 'session duration', // comma separated list of id's for all speakers associated with this session
+      value: 'sessionType'
+      ,
+      default: '' // default if value fn returns falsy 
+    } 
+  ];                                             
+               json2csv({ data:  csvJson, fields: fields, del: '\t'  }, function(err, csv) {
                    if (err) {
                       console.log(err);
                       response.writeHead(500, {'Content-Type': 'application/json'});
@@ -279,19 +286,142 @@ function generateAppSessions(request, response) {
 	                  );  
                    }
                   else { 
-                   response.set({
-                     'Content-Disposition': 'attachment; filename=bth-sessions.xls',
-                     'Content-Type': 'text/csv'
-                   });
-                   response.send(csv);
+                   // explicitly treat incoming data as utf8 (avoids issues with multi-byte chars)
+                  response.set({
+                      'Content-Disposition': 'attachment; filename=bth-sessions.xls',
+                      'Content-Type': 'text/csv; charset=utf-8'
+                  });
+                  // \ufeff is to establish the content of the file is actually UTF-8 encoded; Excel seems to like it that way: http://stackoverflow.com/questions/17879198/adding-utf-8-bom-to-string-blob, 
+                  response.send("\ufeff"+csv);
                   }  
                });//json2csv
-              }//else 
-			doRelease(connection);
-          }// callback connection.execute
-	  );//connection.execute
-    });//handleDatabaseOperation
+                       });
 }// generateAppSessions
+
+function findNextSlot(slotId, slots) {
+    // slots are ordered according to time
+    for (var i=0;i<slots.length;i++) {
+        if (slots[i].slotId == slotId) {
+            return slots[i+1].slotId;
+        }
+    }
+  return;    
+}
+
+function generateAppSchedule(request, response) {
+    console.log("produce app data - schedule  ");
+    getAll(request, response, function (err, bthJson) {  
+ var csvJson =[];
+ var slots = {};
+ bthJson.slots.forEach (function (slot){
+    slots['slt'+slot.slotId] = slot;
+    }
+ );// forEach Slot
+ bthJson.sessions.forEach (function (session){
+    if (session.planning.sltId) {
+        if (!slots['slt'+session.planning.sltId]) {
+            slots['slt'+session.planning.sltId]={};
+        }
+        //TODO - add all speakers
+        var speakers = '';
+        
+        session.speakers.forEach(function (speaker){
+          speakers = speakers + ','+speaker.firstName+' '+speaker.lastName
+          }
+        );// forEach speaker
+        speakers = speakers.substring(1);
+        slots['slt'+session.planning.sltId]['rom'+session.planning.romId]=
+        (session.planning.sessionDuration=='2'?'(Masterclass) ': (session.planning.sessionDuration=='.5'?'(Quickie) ':''))
+  +       session.title+' - '
+        + speakers
+        +' ('+ session.track + ')' 
+        ;
+        
+        // find 
+        if (session.planning.sessionDuration=='2') {
+            // find next slot in same room
+             var nextSlotId = findNextSlot(session.planning.sltId, bthJson.slots);
+             console.log('found next slot id '+nextSlotId);
+             
+            // then set this slot to the same  label
+        slots['slt'+nextSlotId]['rom'+session.planning.romId]=
+        (session.planning.sessionDuration=='2'?'(Masterclass - Part 2) ': (session.planning.sessionDuration=='.5'?'(Quickie) ':''))
+  +       session.title+' - '
+        + speakers
+        +' ('+ session.track + ')' 
+        ;
+
+        }
+    }   
+ });    
+
+ bthJson.slots.forEach (function (slot){
+    var s =  {"slotLabel": slot.slotLabel, "slotStartTime": slot.slotStartTime, "slotEndTime": slot.slotEndTime
+                  };
+    bthJson.rooms.forEach (function (room){
+      s['rom'+room.roomId] = slot['rom'+room.roomId];     
+    } 
+   );// forEach room
+     
+    csvJson.push( s);
+    }
+ );// forEach Slot
+ 
+    var fields=  [
+    {
+      label: 'Slot', // (optional, column will be labeled 'path.to.something' if not defined) 
+      value: 'slotLabel', // data.path.to.something 
+      default: '' // default if value is not found (optional, overrides `defaultValue` for column) 
+    },
+    {
+      label: 'Start Time', // (optional, column will be labeled 'path.to.something' if not defined) 
+      value: 'slotStartTime', // data.path.to.something 
+      default: '' // default if value is not found (optional, overrides `defaultValue` for column) 
+    },
+    {
+      label: 'End Time', // (optional, column will be labeled 'path.to.something' if not defined) 
+      value: 'slotEndTime', // data.path.to.something 
+      default: '' // default if value is not found (optional, overrides `defaultValue` for column) 
+    } 
+  ];                 
+  
+ bthJson.rooms.forEach (function (room){
+    fields.push(
+         {
+      label: room.roomLabel, 
+      value: 'rom'+room.roomId, // data.path.to.something 
+      default: '-' // default if value is not found (optional, overrides `defaultValue` for column) 
+    }         
+    );
+ } 
+ );// forEach room
+  
+               
+               
+               json2csv({ data:  csvJson, fields: fields, del: '\t'  }, function(err, csv) {
+                   if (err) {
+                      console.log(err);
+                      response.writeHead(500, {'Content-Type': 'application/json'});
+                      response.end(JSON.stringify({
+                        status: 500,
+                        message: "Error getting the data for the app",
+                        detailed_message: err.message
+                      })
+	                  );  
+                   }
+                  else { 
+                    response.set({
+                            'Content-Disposition': 'attachment; filename=bth-schedule.xls',
+                            'Content-Type': 'text/csv; charset=utf-8'
+                        });
+                        // \ufeff is to establish the content of the file is actually UTF-8 encoded; Excel seems to like it that way: http://stackoverflow.com/questions/17879198/adding-utf-8-bom-to-string-blob, 
+                    response.send("\ufeff"+csv);
+
+
+                  }  
+               });//json2csv
+        });//getAll
+}// generateAppSchedule
 
 
 function handleAllDepartments(request, response) {
@@ -471,7 +601,27 @@ function handleSession(request, response, sessionId) {
 
 
 
-function handleAll(request, response) {
+function handleAll(request, response) {    
+    console.log('all - with call to getAll');
+    getAll(request, response, function (err, bthJson) {         
+           if (err) {
+			  console.log('Error in execution of select statement'+err.message);
+              response.writeHead(500, {'Content-Type': 'application/json'});
+              response.end(JSON.stringify({
+                status: 500,
+                    message: "Error getting the sessions",
+                    detailed_message: err.message
+               })
+	          );  
+            } else {
+               response.writeHead(200, {'Content-Type': 'application/json'});
+               response.end(JSON.stringify(bthJson));
+              }
+          }
+	  );
+} //handleAll
+
+function handleAll2(request, response) {
     
     console.log('all ');
     handleDatabaseOperation( request, response, function (request, response, connection) {
@@ -505,8 +655,33 @@ function handleAll(request, response) {
 	  );
 
 	});
-} //handleAll
+} //handleAll2
 
+
+function getAll( request, response, callback) {
+    handleDatabaseOperation( request, response, function (request, response, connection) {
+	  var selectStatement = "select lines.column_value line from   table(bth_util.clob_to_string_tbl_t(bth_summary_api.json_summary)) lines";
+	  connection.execute(   selectStatement   
+		, [], { "outFormat": oracledb.OBJECT 
+              , "maxRows": 500  
+        }, function (err, result) {
+            if (err) {
+			  console.log('Error in execution of select statement'+err.message);
+              callback(err, null);
+            } else {
+              console.log('The number of result rows:'+result.rows.length);
+               var json='';
+               for (var i=0;i< result.rows.length;i++) {
+                   json=json + result.rows[i].LINE;
+               }// for
+               var sessions = JSON.parse(json);
+               callback(null, sessions);
+            }// else
+			doRelease(connection);
+          }
+	  );
+    })
+}
 
 function handleAllSpeakers(request, response) {
     var searchTerm=     request.query.search;
