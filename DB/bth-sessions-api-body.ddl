@@ -130,15 +130,27 @@ begin
               on (sp.psn_id = p.id)
        where  sp.ssn_id = ssn.id
      )
-     , ( select planning_t ( rom.id, slt.id, rom.display_label, rom.capacity, rom.location_description, slt.display_label, slt.start_time, pim.ssn_id, ssn.title, null,ssn.duration, tag.display_label)
-       from   bth_planning_items pim
-              join
-              bth_rooms rom
-              on (pim.rom_id = rom.id)
-              join
-              bth_slots slt
-              on (pim.slt_id = slt.id)
-       where  pim.ssn_id = ssn.id)
+     , ( select planning_t ( rom_id, slt_id, rom_display_label, rom_capacity, rom_location_description, slt_display_label,starttime, ssn.id,  ssn.title, null,ssn.duration,tag.display_label)
+       from   
+       ( select pim.rom_id rom_id
+         ,      min(slt.start_time) over () starttime
+         ,      max(slt.end_time) over () finishtime
+         ,      first_value(slt.id) over (order by slt.start_time) slt_id
+         ,      rom.display_label rom_display_label
+         ,      rom.capacity rom_capacity
+         ,      rom.location_description rom_location_description
+         ,      first_value(slt.display_label) over (order by slt.start_time) slt_display_label
+         from   bth_planning_items pim
+                join
+                bth_rooms rom
+                on (pim.rom_id = rom.id)
+                join
+                bth_slots slt
+                on (pim.slt_id = slt.id)
+         where  pim.ssn_id = ssn.id
+         )
+         where rownum=1
+       )  
      , ssn.submission_identifier
      , tag.display_label
      )
@@ -211,15 +223,27 @@ begin
               on (s.psn_id = p.id)
        where  s.ssn_id = ssn.id
      )
-     , ( select planning_t ( rom.id, slt.id, rom.display_label, rom.capacity, rom.location_description, slt.display_label, slt.start_time, pim.ssn_id,  ssn.title, null,ssn.duration,tag.display_label)
-       from   bth_planning_items pim
-              join
-              bth_rooms rom
-              on (pim.rom_id = rom.id)
-              join
-              bth_slots slt
-              on (pim.slt_id = slt.id)
-       where  pim.ssn_id = ssn.id)
+     , ( select planning_t ( rom_id, slt_id, rom_display_label, rom_capacity, rom_location_description, slt_display_label,starttime, ssn.id,  ssn.title, null,ssn.duration,tag.display_label)
+       from   
+       ( select pim.rom_id rom_id
+         ,      min(slt.start_time) over () starttime
+         ,      max(slt.end_time) over () finishtime
+         ,      first_value(slt.id) over (order by slt.start_time) slt_id
+         ,      rom.display_label rom_display_label
+         ,      rom.capacity rom_capacity
+         ,      rom.location_description rom_location_description
+         ,      first_value(slt.display_label) over (order by slt.start_time) slt_display_label
+         from   bth_planning_items pim
+                join
+                bth_rooms rom
+                on (pim.rom_id = rom.id)
+                join
+                bth_slots slt
+                on (pim.slt_id = slt.id)
+         where  pim.ssn_id = ssn.id
+         )
+         where rownum=1
+       )  
      , ssn.submission_identifier
      , tag.display_label
      )

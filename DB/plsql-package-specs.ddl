@@ -75,6 +75,10 @@ function json_session_tbl_summary
 ( p_sessions in session_tbl_t
 ) return clob;
 
+function get_session
+( p_session_id in number
+) return session_t
+;
 function get_session_json
 ( p_session_id in number
 ) return clob;

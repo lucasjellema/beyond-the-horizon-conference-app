@@ -6,14 +6,51 @@ is
 function json_summary
 return clob
 is
-l_json clob := to_clob('');
+  l_json clob := to_clob('');
   l_first boolean;
-begin
-  l_json := '{ "sessions":  ['; 
   
-  --  ||ltrim(l_json,',')||']';
+begin
 
+  l_json := '{';
+  
+  -- get all rooms:
+  -- room_id, room_name, room_capacity
+  l_json := l_json||' "rooms":  ['; 
+  l_first:= true;
+  
+   for rom  in (  select rom.id, rom.display_label, rom.capacity
+                  from   bth_rooms rom ) loop     
+       l_json:=  l_json||case l_first when false then ', ' end|| '{'
+       || ' "roomId": "'||rom.id||'"'
+       || ', "roomLabel": "'||rom.display_label||'"'
+       || ', "roomCapacity": "'||rom.capacity||'"'
+       ||'}';
+       l_first:= false;
+   end loop; --rooms
+   l_json := l_json||'] ';
+-- get all slots
+  -- slot id, slot display label, slot starttime slot endtime
+  
+  l_json := l_json||', "slots":  ['; 
+  l_first:= true;
+  
+   for slt in (  select slt.id, slt.display_label, slt.start_time, slt.end_time, slt.round_sequence
+                  from   bth_slots slt order by slt.start_time) loop     
+       l_json:=  l_json||case l_first when false then ', ' end|| '{'
+       || ' "slotId": "'||slt.id||'"'
+       || ', "slotLabel": "'||slt.display_label||'"'
+       || ', "slotStartTime": "'||to_char(slt.start_time,'DD-MM-YYYY HH24:MI')||'"'
+       || ', "slotEndTime": "'||to_char(slt.end_time,'DD-MM-YYYY HH24:MI')||'"'
+       ||'}';
+       l_first:= false;
+   end loop; --slots
+   l_json := l_json||'] ';
+  
+  
+  
+  
   -- get all sessions
+  l_json := l_json||', "sessions":  ['; 
   l_first:= true;
   for ssn in (  select distinct ssn.id
                 from bth_sessions ssn

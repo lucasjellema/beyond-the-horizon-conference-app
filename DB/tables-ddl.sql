@@ -67,6 +67,8 @@ create table bth_slots
 ( id number(10) default bth_seq.nextval not null primary key
 , display_label varchar2(100)
 , start_time timestamp
+, end_time timestamp
+, round_sequence number(2)
 );
 
 create table bth_planning_items

@@ -165,6 +165,9 @@ type planning_t force as object (
               , title in varchar2
               , speakers  in varchar2
               , slt_id in number
+, session_duration in number
+, track in  varchar2
+, ssn_id in  number
               ) return self as result
 , map member function map_planning_t
   return number
@@ -189,6 +192,9 @@ constructor function planning_t
               , title in varchar2
               , speakers  in varchar2
               , slt_id in number
+, session_duration in number
+, track in  varchar2
+, ssn_id in  number
               ) return self as result
 is
 begin
@@ -196,6 +202,9 @@ begin
   self.session_title := title;
   self.speakers:= speakers;
   self.slt_id:= slt_id;
+  self.session_duration:= session_duration;
+  self.track:=track;
+  self.ssn_id:= ssn_id;
   return;
 end;
 
