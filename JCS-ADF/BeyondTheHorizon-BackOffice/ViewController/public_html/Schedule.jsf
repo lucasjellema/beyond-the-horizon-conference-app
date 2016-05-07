@@ -3,6 +3,7 @@
 <f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:af="http://xmlns.oracle.com/adf/faces/rich"
         xmlns:fn="http://java.sun.com/jsp/jstl/functions" 
         >
+<!-- http://www.bigdev.org/2012/01/string-functions-in-jsf-inside-el-jsf-expression-language/ -->
     <af:document title="Schedule.jsf" id="d1">
         <af:messages id="m1"/>
         <af:form id="f1">
@@ -21,7 +22,7 @@
                                           columns="#{bindings.pimId.hints.displayWidth}"
                                           maximumLength="#{bindings.pimId.hints.precision}"
                                           shortDesc="#{bindings.pimId.hints.tooltip}" id="it1"
-                                          partialTriggers="pc2:t2:b4 pc2:t2:b42 pc2:t2:b43 pc2:t2:b44 pc2:t2:b45 pc2:t2:b46 pc2:t2:b47 pc2:t2:b48">
+                                          partialTriggers="pc2:t2:b4 pc2:t2:b42 pc2:t2:b43 pc2:t2:b44 pc2:t2:l24 pc2:t2:l14 pc2:t2:l34 pc2:t2:l44 pc2:t2:l55 pc2:t2:b5 pc2:t2:l66 pc2:t2:b6 pc2:t2:l77 pc2:t2:b7 pc2:t2:l88 pc2:t2:b8">
                                 <f:validator binding="#{bindings.pimId.validator}"/>
                                 <af:convertNumber groupingUsed="false" pattern="#{bindings.pimId.format}"/>
                             </af:inputText>
@@ -39,11 +40,11 @@
                             <af:inputText value="#{viewScope.sessionListenerBean.speakers}" label="Speakers" id="it2c"
                                           partialTriggers="pc1:t1:sessionTitleLink pc1:t1:plannedYNbutton"></af:inputText>
                             <af:inputText value="#{viewScope.sessionListenerBean.room}" label="Room" id="it2d"
-                                          partialTriggers="pc2:t2:b4 pc2:t2:b42 pc2:t2:b43 pc2:t2:b44 pc2:t2:b45 pc2:t2:b46 pc2:t2:b47 pc2:t2:b48">&gt;</af:inputText>
-                            <af:inputText value="#{viewScope.sessionListenerBean.slot}" label="Slot" id="it2e"
-                                          partialTriggers="pc2:t2:b4 pc2:t2:b42 pc2:t2:b43 pc2:t2:b44 pc2:t2:b45 pc2:t2:b46 pc2:t2:b47 pc2:t2:b48">&gt;</af:inputText>
+                                          partialTriggers="pc2:t2:b4 pc2:t2:b42 pc2:t2:b43 pc2:t2:b44 pc2:t2:l24 pc2:t2:l14 pc2:t2:l34 pc2:t2:l44 pc2:t2:l55 pc2:t2:b5 pc2:t2:l66 pc2:t2:b6 pc2:t2:l77 pc2:t2:b7 pc2:t2:l88 pc2:t2:b8">&gt;</af:inputText>
                             <af:button actionListener="#{bindings.execPlanSession.execute}" text="Plan Session"
                                        id="b1"/>
+                            <af:inputText value="#{viewScope.sessionListenerBean.slot}" label="Slot" id="it2e"
+                                          partialTriggers="pc2:t2:b4 pc2:t2:b42 pc2:t2:b43 pc2:t2:b44 pc2:t2:l24 pc2:t2:l14 pc2:t2:l34 pc2:t2:l44 pc2:t2:l55 pc2:t2:b5 pc2:t2:l66 pc2:t2:b6 pc2:t2:l77 pc2:t2:b7 pc2:t2:l88 pc2:t2:b8">&gt;</af:inputText>
                             <af:button actionListener="#{bindings.Commit.execute}" text="Commit" id="b2"/>
                             <af:image source="amis-conference.jpg" id="i1" inlineStyle="height:80px;width:300px"/>
                         </af:panelFormLayout>
@@ -85,6 +86,7 @@
                                                headerText="#{bindings.SessionsView1.hints.Track.label}" id="c2t">
                                         <af:outputText value="#{row.Track}"
                                                        shortDesc="#{bindings.SessionsView1.hints.Track.tooltip}"
+styleClass="#{fn:startsWith(row.Track, 'D')?'database':(fn:startsWith(row.Track, 'U')?'uxui':(fn:startsWith(row.Track, 'B')?'agility':(fn:startsWith(row.Track, 'S')?'integration':'none')))}Track"
                                                        id="ot2t"/>
                                     </af:column>
                                     <af:column sortProperty="#{bindings.SessionsView1.hints.Status.name}"
@@ -104,7 +106,7 @@
                                     <af:column sortProperty="#{bindings.SessionsView1.hints.Title.name}"
                                                filterable="true" sortable="true"
                                                headerText="#{bindings.SessionsView1.hints.Title.label}" id="c4">
-                                        <af:link text="#{row.Title}" id="sessionTitleLink" shortDesc="#{row.Track}">
+                                        <af:link text="#{row.Title}" id="sessionTitleLink" shortDesc="#{row.Title} (#{row.Track} )">
                                             <af:setPropertyListener from="#{row.SsnId}"
                                                                     to="#{bindings.ssnId.inputValue}" type="action"/>
                                             <af:setPropertyListener from="#{row.Title}"
@@ -157,7 +159,7 @@
                                 <f:facet name="menus"/>
                                 <f:facet name="toolbar">
                                     <af:toolbar id="t3">
-                                        <af:button actionListener="#{bindings.Execute.execute}" text="Execute"
+                                        <af:button actionListener="#{bindings.Execute.execute}" text="Refresh Schedule from Database"
                                                    disabled="#{!bindings.Execute.enabled}" id="b3"/>
                                     </af:toolbar>
                                 </f:facet>
@@ -182,17 +184,27 @@
                                         </af:outputText>
                                     </af:column>
                                     <af:column headerText="Room 1" id="c11">
-                                        <af:outputText value="#{row.Room1Pim.bindings.Speakers.inputValue} "
+                                        <af:outputText value="#{row.Room1Pim.bindings.Speakers.inputValue}"
                                                        shortDesc="#{row.Room1Pim.bindings.Track.inputValue}"
-                                                       rendered="#{row.Room1Pim != null}" id="ot11"
-                                                       inlineStyle="background-color:red;"></af:outputText>
-                                        <af:outputText value="#{row.Room1Pim.bindings.SessionTitle.inputValue} "
-                                                       shortDesc="#{row.Room1Pim.bindings.Track.inputValue}"
-                                                       rendered="#{row.Room1Pim != null}" id="ot11b"
-                                                       inlineStyle="background-color:#{fn:startsWith(row.Room1Pim.bindings.Track.inputValue, 'D')?'red':'green'};">
-                                                       </af:outputText>
+                                                       rendered="#{row.Room1Pim.bindings.SsnId.inputValue != null}"
+                                                       id="ot11"></af:outputText>
+                                        <!-- #{fn:toUpperCase(row.Room1Pim.bindings.Speakers)} -->
+                                         <af:link text="#{row.Room1Pim.bindings.SessionTitle.inputValue} " id="l14"
+                                                 shortDesc="#{row.Room1Pim.bindings.SessionTitle.inputValue} - #{row.Room1Pim.bindings.Speakers.inputValue} - #{row.Room1Pim.bindings.SessionTitle.inputValue} (duration #{row.Room1Pim.bindings.SessionDuration.inputValue})"
+                                                 rendered="#{row.Room1Pim != null}" 
+                                                 styleClass="#{fn:startsWith(row.Room1Pim.bindings.Track.inputValue, 'D')?'database':(fn:startsWith(row.Room1Pim.bindings.Track.inputValue, 'U')?'uxui':(fn:startsWith(row.Room1Pim.bindings.Track.inputValue, 'B')?'agility':(fn:startsWith(row.Room1Pim.bindings.Track.inputValue, 'S')?'integration':'none')))}Track"
+                                                 >
+                                            <af:setPropertyListener to="#{bindings.pimId.inputValue}" type="action"
+                                                                    from="#{row.Room1Pim.bindings.Id.inputValue}"/>
+                                            <af:setPropertyListener to="#{viewScope.sessionListenerBean.slot}"
+                                                                    type="action" from="#{row.Slot}"/>
+                                            <af:setPropertyListener from="#{'Room 1'}"
+                                                                    to="#{viewScope.sessionListenerBean.room}"
+                                                                    type="action"/>
+                                        </af:link>
                                         <af:link text="#{row.Room1Pim.bindings.Id.inputValue}" id="b4"
-                                                 shortDesc="#{row.Room1Pim.bindings.Speakers.inputValue} - #{row.Room1Pim.bindings.SessionTitle.inputValue}">
+                                                                                         rendered="#{row.Room1Pim.bindings.SsnId.inputValue == null}" 
+                                                 shortDesc="#{row.Room1Pim.bindings.Speakers.inputValue} - #{row.Room1Pim.bindings.SessionTitle.inputValue} (duration #{row.Room1Pim.bindings.SessionDuration.inputValue})">
                                             <af:setPropertyListener to="#{bindings.pimId.inputValue}" type="action"
                                                                     from="#{row.Room1Pim.bindings.Id.inputValue}"/>
                                             <af:setPropertyListener to="#{viewScope.sessionListenerBean.slot}"
@@ -203,11 +215,26 @@
                                         </af:link>
                                     </af:column>
                                     <af:column headerText="Room 2" id="c112">
-                                        <af:outputText value="#{row.Room2Pim.bindings.Speakers.inputValue} - #{row.Room2Pim.bindings.SessionTitle.inputValue};"
-                                                       shortDesc="#{bindings.PlanningScheduleView1.hints.Room2Pim.Id.tooltip}"
-                                                       rendered="#{row.Room1Pim != null}" id="ot221"></af:outputText>
+                                        <af:outputText value="#{row.Room2Pim.bindings.Speakers.inputValue}"
+                                                       shortDesc="#{row.Room2Pim.bindings.Track.inputValue}"
+                                                       rendered="#{row.Room2Pim.bindings.SsnId.inputValue != null}"
+                                                       id="ot22"></af:outputText>
+                                         <af:link text="#{row.Room2Pim.bindings.SessionTitle.inputValue} " id="l24"
+                                                 shortDesc="#{row.Room2Pim.bindings.SessionTitle.inputValue} - #{row.Room2Pim.bindings.Speakers.inputValue} - #{row.Room2Pim.bindings.SessionTitle.inputValue} (duration #{row.Room2Pim.bindings.SessionDuration.inputValue})"
+                                                 rendered="#{row.Room2Pim != null}" 
+                                                 styleClass="#{fn:startsWith(row.Room2Pim.bindings.Track.inputValue, 'D')?'database':(fn:startsWith(row.Room2Pim.bindings.Track.inputValue, 'U')?'uxui':(fn:startsWith(row.Room2Pim.bindings.Track.inputValue, 'B')?'agility':(fn:startsWith(row.Room2Pim.bindings.Track.inputValue, 'S')?'integration':'none')))}Track"
+                                                 >
+                                            <af:setPropertyListener to="#{bindings.pimId.inputValue}" type="action"
+                                                                    from="#{row.Room2Pim.bindings.Id.inputValue}"/>
+                                            <af:setPropertyListener to="#{viewScope.sessionListenerBean.slot}"
+                                                                    type="action" from="#{row.Slot}"/>
+                                            <af:setPropertyListener from="#{'Room 2'}"
+                                                                    to="#{viewScope.sessionListenerBean.room}"
+                                                                    type="action"/>
+                                        </af:link>
                                         <af:link text="#{row.Room2Pim.bindings.Id.inputValue}" id="b42"
-                                                 shortDesc="#{row.Room2Pim.bindings.Speakers.inputValue} - #{row.Room2Pim.bindings.SessionTitle.inputValue}">
+                                                                                         rendered="#{row.Room2Pim.bindings.SsnId.inputValue == null}" 
+                                                 shortDesc="#{row.Room2Pim.bindings.Speakers.inputValue} - #{row.Room2Pim.bindings.SessionTitle.inputValue} (duration #{row.Room2Pim.bindings.SessionDuration.inputValue})">
                                             <af:setPropertyListener to="#{bindings.pimId.inputValue}" type="action"
                                                                     from="#{row.Room2Pim.bindings.Id.inputValue}"/>
                                             <af:setPropertyListener to="#{viewScope.sessionListenerBean.slot}"
@@ -218,11 +245,26 @@
                                         </af:link>
                                     </af:column>
                                     <af:column headerText="Room 3" id="c113">
-                                        <af:outputText value="#{row.Room3Pim.bindings.Speakers.inputValue}-#{row.Room3Pim.bindings.SessionTitle.inputValue}"
-                                                       shortDesc="#{bindings.PlanningScheduleView1.hints.Room3Pim.Id.tooltip}"
-                                                       rendered="#{row.Room1Pim != null}" id="ot331"></af:outputText>
+                                        <af:outputText value="#{row.Room3Pim.bindings.Speakers.inputValue}"
+                                                       shortDesc="#{row.Room3Pim.bindings.Track.inputValue}"
+                                                       rendered="#{row.Room3Pim.bindings.SsnId.inputValue != null}"
+                                                       id="ot33"></af:outputText>
+                                         <af:link text="#{row.Room3Pim.bindings.SessionTitle.inputValue} " id="l34"
+                                                 shortDesc="#{row.Room3Pim.bindings.SessionTitle.inputValue} - #{row.Room3Pim.bindings.Speakers.inputValue} - #{row.Room3Pim.bindings.SessionTitle.inputValue} (duration #{row.Room3Pim.bindings.SessionDuration.inputValue})"
+                                                 rendered="#{row.Room3Pim != null}" 
+                                                 styleClass="#{fn:startsWith(row.Room3Pim.bindings.Track.inputValue, 'D')?'database':(fn:startsWith(row.Room3Pim.bindings.Track.inputValue, 'U')?'uxui':(fn:startsWith(row.Room3Pim.bindings.Track.inputValue, 'B')?'agility':(fn:startsWith(row.Room3Pim.bindings.Track.inputValue, 'S')?'integration':'none')))}Track"
+                                                 >
+                                            <af:setPropertyListener to="#{bindings.pimId.inputValue}" type="action"
+                                                                    from="#{row.Room3Pim.bindings.Id.inputValue}"/>
+                                            <af:setPropertyListener to="#{viewScope.sessionListenerBean.slot}"
+                                                                    type="action" from="#{row.Slot}"/>
+                                            <af:setPropertyListener from="#{'Room 3'}"
+                                                                    to="#{viewScope.sessionListenerBean.room}"
+                                                                    type="action"/>
+                                        </af:link>
                                         <af:link text="#{row.Room3Pim.bindings.Id.inputValue}" id="b43"
-                                                 shortDesc="#{row.Room3Pim.bindings.Speakers.inputValue} - #{row.Room3Pim.bindings.SessionTitle.inputValue}">
+                                                                                         rendered="#{row.Room3Pim.bindings.SsnId.inputValue == null}" 
+                                                 shortDesc="#{row.Room3Pim.bindings.Speakers.inputValue} - #{row.Room3Pim.bindings.SessionTitle.inputValue} (duration #{row.Room3Pim.bindings.SessionDuration.inputValue})">
                                             <af:setPropertyListener to="#{bindings.pimId.inputValue}" type="action"
                                                                     from="#{row.Room3Pim.bindings.Id.inputValue}"/>
                                             <af:setPropertyListener to="#{viewScope.sessionListenerBean.slot}"
@@ -233,11 +275,15 @@
                                         </af:link>
                                     </af:column>
                                     <af:column headerText="Room 4" id="c114">
-                                        <af:outputText value="#{row.Room4Pim.bindings.Speakers.inputValue} - #{row.Room4Pim.bindings.SessionTitle.inputValue}"
-                                                       shortDesc="#{bindings.PlanningScheduleView1.hints.Room4Pim.Id.tooltip}"
-                                                       rendered="#{row.Room1Pim != null}" id="ot441"></af:outputText>
-                                        <af:link text="#{row.Room4Pim.bindings.Id.inputValue}" id="b44"
-                                                 shortDesc="#{row.Room4Pim.bindings.Speakers.inputValue} - #{row.Room4Pim.bindings.SessionTitle.inputValue}">
+                                        <af:outputText value="#{row.Room4Pim.bindings.Speakers.inputValue}"
+                                                       shortDesc="#{row.Room4Pim.bindings.Track.inputValue}"
+                                                       rendered="#{row.Room4Pim.bindings.SsnId.inputValue != null}"
+                                                       id="ot44"></af:outputText>
+                                                                               <af:link text="#{row.Room4Pim.bindings.SessionTitle.inputValue} " id="l44"
+                                                 shortDesc="#{row.Room4Pim.bindings.SessionTitle.inputValue} - #{row.Room4Pim.bindings.Speakers.inputValue} - #{row.Room4Pim.bindings.SessionTitle.inputValue} (duration #{row.Room4Pim.bindings.SessionDuration.inputValue})"
+                                                 rendered="#{row.Room4Pim != null}" 
+                                                 styleClass="#{fn:startsWith(row.Room4Pim.bindings.Track.inputValue, 'D')?'database':(fn:startsWith(row.Room4Pim.bindings.Track.inputValue, 'U')?'uxui':(fn:startsWith(row.Room4Pim.bindings.Track.inputValue, 'B')?'agility':(fn:startsWith(row.Room4Pim.bindings.Track.inputValue, 'S')?'integration':'none')))}Track"
+                                                 >
                                             <af:setPropertyListener to="#{bindings.pimId.inputValue}" type="action"
                                                                     from="#{row.Room4Pim.bindings.Id.inputValue}"/>
                                             <af:setPropertyListener to="#{viewScope.sessionListenerBean.slot}"
@@ -246,13 +292,40 @@
                                                                     to="#{viewScope.sessionListenerBean.room}"
                                                                     type="action"/>
                                         </af:link>
+                                        <af:link text="#{row.Room4Pim.bindings.Id.inputValue}" id="b44"
+                                                                                         rendered="#{row.Room4Pim.bindings.SsnId.inputValue == null}" 
+                                                 shortDesc="#{row.Room4Pim.bindings.Speakers.inputValue} - #{row.Room4Pim.bindings.SessionTitle.inputValue} (duration #{row.Room4Pim.bindings.SessionDuration.inputValue})">
+                                            <af:setPropertyListener to="#{bindings.pimId.inputValue}" type="action"
+                                                                    from="#{row.Room4Pim.bindings.Id.inputValue}"/>
+                                            <af:setPropertyListener to="#{viewScope.sessionListenerBean.slot}"
+                                                                    type="action" from="#{row.Slot}"/>
+                                            <af:setPropertyListener from="#{'Room 4'}"
+                                                                    to="#{viewScope.sessionListenerBean.room}"
+                                                                    type="action"/>
+                                        </af:link>
+
                                     </af:column>
                                     <af:column headerText="Room 5" id="c115">
-                                        <af:outputText value="#{row.Room5Pim.bindings.Speakers.inputValue} - #{row.Room5Pim.bindings.SessionTitle.inputValue}"
-                                                       shortDesc="#{bindings.PlanningScheduleView1.hints.Room5Pim.Id.tooltip}"
-                                                       rendered="#{row.Room5Pim != null}" id="ot551"></af:outputText>
-                                        <af:link text="#{row.Room5Pim.bindings.Id.inputValue}" id="b45"
-                                                 shortDesc="#{row.Room5Pim.bindings.Speakers.inputValue} - #{row.Room5Pim.bindings.SessionTitle.inputValue}">
+                                        <af:outputText value="#{row.Room5Pim.bindings.Speakers.inputValue}"
+                                                       shortDesc="#{row.Room5Pim.bindings.Track.inputValue}"
+                                                       rendered="#{row.Room5Pim.bindings.SsnId.inputValue != null}"
+                                                       id="ot55"></af:outputText>
+                                         <af:link text="#{row.Room5Pim.bindings.SessionTitle.inputValue} " id="l55"
+                                                 shortDesc="#{row.Room5Pim.bindings.SessionTitle.inputValue} - #{row.Room5Pim.bindings.Speakers.inputValue} - #{row.Room5Pim.bindings.SessionTitle.inputValue} (duration #{row.Room5Pim.bindings.SessionDuration.inputValue})"
+                                                 rendered="#{row.Room5Pim != null}" 
+                                                 styleClass="#{fn:startsWith(row.Room5Pim.bindings.Track.inputValue, 'D')?'database':(fn:startsWith(row.Room5Pim.bindings.Track.inputValue, 'U')?'uxui':(fn:startsWith(row.Room5Pim.bindings.Track.inputValue, 'B')?'agility':(fn:startsWith(row.Room5Pim.bindings.Track.inputValue, 'S')?'integration':'none')))}Track"
+                                                 >
+                                            <af:setPropertyListener to="#{bindings.pimId.inputValue}" type="action"
+                                                                    from="#{row.Room5Pim.bindings.Id.inputValue}"/>
+                                            <af:setPropertyListener to="#{viewScope.sessionListenerBean.slot}"
+                                                                    type="action" from="#{row.Slot}"/>
+                                            <af:setPropertyListener from="#{'Room 5'}"
+                                                                    to="#{viewScope.sessionListenerBean.room}"
+                                                                    type="action"/>
+                                        </af:link>
+                                        <af:link text="#{row.Room5Pim.bindings.Id.inputValue}" id="b5"
+                                                                                         rendered="#{row.Room5Pim.bindings.SsnId.inputValue == null}" 
+                                                 shortDesc="#{row.Room5Pim.bindings.Speakers.inputValue} - #{row.Room5Pim.bindings.SessionTitle.inputValue} (duration #{row.Room5Pim.bindings.SessionDuration.inputValue})">
                                             <af:setPropertyListener to="#{bindings.pimId.inputValue}" type="action"
                                                                     from="#{row.Room5Pim.bindings.Id.inputValue}"/>
                                             <af:setPropertyListener to="#{viewScope.sessionListenerBean.slot}"
@@ -263,11 +336,15 @@
                                         </af:link>
                                     </af:column>
                                     <af:column headerText="Room 6" id="c116">
-                                        <af:outputText value="#{row.Room6Pim.bindings.Speakers.inputValue} - #{row.Room6Pim.bindings.SessionTitle.inputValue}"
-                                                       shortDesc="#{bindings.PlanningScheduleView1.hints.Room6Pim.Id.tooltip}"
-                                                       rendered="#{row.Room6Pim != null}" id="ot661"></af:outputText>
-                                        <af:link text="#{row.Room6Pim.bindings.Id.inputValue}" id="b46"
-                                                 shortDesc="#{row.Room6Pim.bindings.Speakers.inputValue} - #{row.Room6Pim.bindings.SessionTitle.inputValue}">
+                                        <af:outputText value="#{row.Room6Pim.bindings.Speakers.inputValue}"
+                                                       shortDesc="#{row.Room6Pim.bindings.Track.inputValue}"
+                                                       rendered="#{row.Room6Pim.bindings.SsnId.inputValue != null}"
+                                                       id="ot66"></af:outputText>
+                                          <af:link text="#{row.Room6Pim.bindings.SessionTitle.inputValue} " id="l66"
+                                                 shortDesc="#{row.Room6Pim.bindings.SessionTitle.inputValue} - #{row.Room6Pim.bindings.Speakers.inputValue} - #{row.Room6Pim.bindings.SessionTitle.inputValue} (duration #{row.Room6Pim.bindings.SessionDuration.inputValue})"
+                                                 rendered="#{row.Room6Pim != null}" 
+                                                 styleClass="#{fn:startsWith(row.Room6Pim.bindings.Track.inputValue, 'D')?'database':(fn:startsWith(row.Room6Pim.bindings.Track.inputValue, 'U')?'uxui':(fn:startsWith(row.Room6Pim.bindings.Track.inputValue, 'B')?'agility':(fn:startsWith(row.Room6Pim.bindings.Track.inputValue, 'S')?'integration':'none')))}Track"
+                                                 >
                                             <af:setPropertyListener to="#{bindings.pimId.inputValue}" type="action"
                                                                     from="#{row.Room6Pim.bindings.Id.inputValue}"/>
                                             <af:setPropertyListener to="#{viewScope.sessionListenerBean.slot}"
@@ -276,13 +353,39 @@
                                                                     to="#{viewScope.sessionListenerBean.room}"
                                                                     type="action"/>
                                         </af:link>
-                                    </af:column>
+                                        <af:link text="#{row.Room6Pim.bindings.Id.inputValue}" id="b6"
+                                                                                         rendered="#{row.Room6Pim.bindings.SsnId.inputValue == null}" 
+                                                 shortDesc="#{row.Room6Pim.bindings.Speakers.inputValue} - #{row.Room6Pim.bindings.SessionTitle.inputValue} (duration #{row.Room6Pim.bindings.SessionDuration.inputValue})">
+                                            <af:setPropertyListener to="#{bindings.pimId.inputValue}" type="action"
+                                                                    from="#{row.Room6Pim.bindings.Id.inputValue}"/>
+                                            <af:setPropertyListener to="#{viewScope.sessionListenerBean.slot}"
+                                                                    type="action" from="#{row.Slot}"/>
+                                            <af:setPropertyListener from="#{'Room 6'}"
+                                                                    to="#{viewScope.sessionListenerBean.room}"
+                                                                    type="action"/>
+                                        </af:link>
+                                   </af:column>
                                     <af:column headerText="Room 7" id="c117">
-                                        <af:outputText value="#{row.Room7Pim.bindings.Speakers.inputValue} - #{row.Room7Pim.bindings.SessionTitle.inputValue}"
-                                                       shortDesc="#{row.Room7Pim.bindings.Speakers.inputValue} - #{row.Room7Pim.bindings.SessionTitle.inputValue}"
-                                                       rendered="#{row.Room1Pim != null}" id="ot771"></af:outputText>
-                                        <af:link text="#{row.Room7Pim.bindings.Id.inputValue}" id="b47"
-                                                 shortDesc="#{row.Room7Pim.bindings.Speakers.inputValue} - #{row.Room7Pim.bindings.SessionTitle.inputValue}">
+                                        <af:outputText value="#{row.Room7Pim.bindings.Speakers.inputValue}"
+                                                       shortDesc="#{row.Room7Pim.bindings.Track.inputValue}"
+                                                       rendered="#{row.Room7Pim.bindings.SsnId.inputValue != null}"
+                                                       id="ot77"></af:outputText>
+                                         <af:link text="#{row.Room7Pim.bindings.SessionTitle.inputValue} " id="l77"
+                                                 shortDesc="#{row.Room7Pim.bindings.SessionTitle.inputValue} - #{row.Room7Pim.bindings.Speakers.inputValue} - #{row.Room7Pim.bindings.SessionTitle.inputValue} (duration #{row.Room7Pim.bindings.SessionDuration.inputValue})"
+                                                 rendered="#{row.Room7Pim != null}" 
+                                                 styleClass="#{fn:startsWith(row.Room7Pim.bindings.Track.inputValue, 'D')?'database':(fn:startsWith(row.Room7Pim.bindings.Track.inputValue, 'U')?'uxui':(fn:startsWith(row.Room7Pim.bindings.Track.inputValue, 'B')?'agility':(fn:startsWith(row.Room7Pim.bindings.Track.inputValue, 'S')?'integration':'none')))}Track"
+                                                 >
+                                            <af:setPropertyListener to="#{bindings.pimId.inputValue}" type="action"
+                                                                    from="#{row.Room7Pim.bindings.Id.inputValue}"/>
+                                            <af:setPropertyListener to="#{viewScope.sessionListenerBean.slot}"
+                                                                    type="action" from="#{row.Slot}"/>
+                                            <af:setPropertyListener from="#{'Room 7'}"
+                                                                    to="#{viewScope.sessionListenerBean.room}"
+                                                                    type="action"/>
+                                        </af:link>
+                                        <af:link text="#{row.Room7Pim.bindings.Id.inputValue}" id="b7"
+                                                                                         rendered="#{row.Room7Pim.bindings.SsnId.inputValue == null}" 
+                                                 shortDesc="#{row.Room7Pim.bindings.Speakers.inputValue} - #{row.Room7Pim.bindings.SessionTitle.inputValue} (duration #{row.Room7Pim.bindings.SessionDuration.inputValue})">
                                             <af:setPropertyListener to="#{bindings.pimId.inputValue}" type="action"
                                                                     from="#{row.Room7Pim.bindings.Id.inputValue}"/>
                                             <af:setPropertyListener to="#{viewScope.sessionListenerBean.slot}"
@@ -293,11 +396,26 @@
                                         </af:link>
                                     </af:column>
                                     <af:column headerText="Room 8" id="c118">
-                                        <af:outputText value="#{row.Room8Pim.bindings.Speakers.inputValue} - #{row.Room8Pim.bindings.SessionTitle.inputValue}"
-                                                       shortDesc="#{bindings.PlanningScheduleView1.hints.Room8Pim.Id.tooltip}"
-                                                       rendered="#{row.Room1Pim != null}" id="ot881"></af:outputText>
-                                        <af:link text="#{row.Room8Pim.bindings.Id.inputValue}" id="b48"
-                                                 shortDesc="#{row.Room8Pim.bindings.Speakers.inputValue} - #{row.Room8Pim.bindings.SessionTitle.inputValue}">
+                                        <af:outputText value="#{row.Room8Pim.bindings.Speakers.inputValue}"
+                                                       shortDesc="#{row.Room8Pim.bindings.Track.inputValue}"
+                                                       rendered="#{row.Room8Pim.bindings.SsnId.inputValue != null}"
+                                                       id="ot88"></af:outputText>
+                                         <af:link text="#{row.Room8Pim.bindings.SessionTitle.inputValue} " id="l88"
+                                                 shortDesc="#{row.Room8Pim.bindings.SessionTitle.inputValue} - #{row.Room8Pim.bindings.Speakers.inputValue} - #{row.Room8Pim.bindings.SessionTitle.inputValue} (duration #{row.Room8Pim.bindings.SessionDuration.inputValue})"
+                                                 rendered="#{row.Room8Pim != null}" 
+                                                 styleClass="#{fn:startsWith(row.Room8Pim.bindings.Track.inputValue, 'D')?'database':(fn:startsWith(row.Room8Pim.bindings.Track.inputValue, 'U')?'uxui':(fn:startsWith(row.Room8Pim.bindings.Track.inputValue, 'B')?'agility':(fn:startsWith(row.Room8Pim.bindings.Track.inputValue, 'S')?'integration':'none')))}Track"
+                                                 >
+                                            <af:setPropertyListener to="#{bindings.pimId.inputValue}" type="action"
+                                                                    from="#{row.Room8Pim.bindings.Id.inputValue}"/>
+                                            <af:setPropertyListener to="#{viewScope.sessionListenerBean.slot}"
+                                                                    type="action" from="#{row.Slot}"/>
+                                            <af:setPropertyListener from="#{'Room 8'}"
+                                                                    to="#{viewScope.sessionListenerBean.room}"
+                                                                    type="action"/>
+                                        </af:link>
+                                        <af:link text="#{row.Room8Pim.bindings.Id.inputValue}" id="b8"
+                                                                                         rendered="#{row.Room8Pim.bindings.SsnId.inputValue == null}" 
+                                                 shortDesc="#{row.Room8Pim.bindings.Speakers.inputValue} - #{row.Room8Pim.bindings.SessionTitle.inputValue} (duration #{row.Room8Pim.bindings.SessionDuration.inputValue})">
                                             <af:setPropertyListener to="#{bindings.pimId.inputValue}" type="action"
                                                                     from="#{row.Room8Pim.bindings.Id.inputValue}"/>
                                             <af:setPropertyListener to="#{viewScope.sessionListenerBean.slot}"

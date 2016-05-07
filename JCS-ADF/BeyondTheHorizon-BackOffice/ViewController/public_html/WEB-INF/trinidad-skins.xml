@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<skins xmlns="http://myfaces.apache.org/trinidad/skin">
+  <skin>
+    <id>bth-backoff.desktop</id>
+    <family>bth-backoff</family>
+    <extends>skyros-v1.desktop</extends>
+    <render-kit-id>org.apache.myfaces.trinidad.desktop</render-kit-id>
+    <style-sheet-name>skins/bth-backoff/bth-backoff.css</style-sheet-name>
+    <bundle-name>nl.amis.bth.view.skinBundle</bundle-name>
+    <metadata>
+      <description-bundle>nl.amis.bth.view.skinBundle</description-bundle>
+    </metadata>
+  </skin>
+</skins>

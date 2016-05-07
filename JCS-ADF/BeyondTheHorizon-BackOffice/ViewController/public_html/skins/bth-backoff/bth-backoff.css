@@ -1,0 +1,17 @@
+@charset "UTF-8";
+/**ADFFaces_Skin_File / DO NOT REMOVE**/
+@namespace af "http://xmlns.oracle.com/adf/faces/rich";
+@namespace dvt "http://xmlns.oracle.com/dss/adf/faces";
+
+.databaseTrack {
+    background-color: #ffb5b5; 
+}
+.uxuiTrack {
+    background-color: #ffff94; 
+}
+.integrationTrack {
+    background-color: #b5ffb5; 
+}
+.agilityTrack {
+    background-color: #73ffff; 
+}
